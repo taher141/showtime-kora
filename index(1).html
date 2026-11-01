@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شوتايم كورة</title>
+<style>
+:root{--bg:#000;--card:#2b2b2b;--card2:#3a3a3a;--team:#86efac;--text:#e5e5e5;--muted:#a3a3a3;--live:#ef4444}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.5}
+header{position:relative;padding:14px 16px;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between}
+h1{font-size:22px;margin:0;color:var(--team)}
+#menuBtn{background:none;border:0;padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:5px}
+#menuBtn i{display:block;width:24px;height:3px;border-radius:2px;background:var(--text)}
+#ov{position:fixed;inset:0;z-index:5}
+#menu{position:absolute;left:12px;top:100%;z-index:6;min-width:230px;background:var(--card);border:1px solid #444;border-radius:12px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.8)}
+#menu button,#menu .soon{display:block;width:100%;text-align:right;background:none;border:0;color:var(--text);font:inherit;padding:12px 14px;border-radius:8px}
+#menu button{cursor:pointer}
+#menu button:hover{background:var(--card2)}
+#menu button.on{color:var(--team);font-weight:700}
+#menu .soon{color:var(--muted);font-size:14px;border-top:1px solid #3d3d3d;margin-top:4px}
+.ad{background:linear-gradient(120deg,#2e0a4f 0%,#000 55%,#3b0764 100%);border-bottom:1px solid #222;padding:16px 0 14px;text-align:center}
+.ad h2{margin:0 16px 14px;font-size:15px;font-weight:700;line-height:1.6;color:#fff}
+.lgs{display:flex;gap:10px;overflow-x:auto;padding:4px 16px}
+.lgs>:first-child{margin-inline-start:auto}
+.lgs>:last-child{margin-inline-end:auto}
+.lp{flex:none;display:flex;align-items:center;gap:8px;background:#f4f1ea;color:#000;font-weight:700;font-size:14px;padding:8px 14px;border-radius:999px;white-space:nowrap}
+.lp img{width:28px;height:28px;object-fit:contain}
+#admin{display:grid;gap:14px}
+#admin .box{background:var(--card);border-radius:12px;padding:14px}
+#admin h2{font-size:16px;margin:0 0 12px;color:#fff}
+#admin label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
+#admin input,#admin textarea{width:100%;background:#1c1c1c;border:1px solid #444;color:var(--text);border-radius:8px;padding:9px 10px;font:inherit}
+#admin textarea{min-height:150px;direction:ltr;font-family:monospace;font-size:12px}
+#admin input.l{direction:ltr;text-align:left}
+#admin .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#admin .row{display:grid;grid-template-columns:84px 1fr auto auto;gap:6px;margin-bottom:8px}
+#admin button{border:1px solid #444;background:var(--card2);color:var(--text);border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
+#admin button.p{background:#7e22ce;border-color:#7e22ce;color:#fff;font-weight:700}
+#admin button.d{color:#fca5a5}
+#admin .bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+#admin .it{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #3d3d3d}
+#admin .it:first-of-type{border-top:0}
+#admin .it small{color:var(--muted);display:block}
+#admin .note{color:var(--muted);font-size:13px;margin:8px 0 0}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#7e22ce;color:#fff;padding:10px 18px;border-radius:10px;z-index:20;font-weight:700;max-width:90%;text-align:center}
+#atp{background:#111;border-radius:10px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:8px}
+#atp video,#atp iframe{width:100%;height:100%;border:0;background:#000}
+main{max-width:960px;margin:0 auto;padding:16px}
+.hide{display:none!important}
+.tabs{display:flex;gap:8px;margin-bottom:12px;justify-content:center}
+.tabs button{border:1px solid #444;background:var(--card);color:var(--text);padding:8px 22px;border-radius:999px;font:inherit;cursor:pointer}
+.tabs button.on{background:var(--team);border-color:var(--team);color:#000;font-weight:700}
+.ttl{text-align:center;color:var(--team);font-weight:700;margin:0 0 12px}
+.list{display:grid;gap:12px}
+.m{background:var(--card);border-radius:12px;padding:16px 14px;text-align:center}
+.teams{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px}
+.tb{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:16px;width:100%;background:#f4f1ea;border:1px solid #d8d3c7;border-radius:10px;padding:12px 14px;box-shadow:0 5px 14px rgba(0,0,0,.55)}
+.tm{display:flex;align-items:center;gap:10px}
+.tb .n{font-weight:800;font-size:22px;color:#2e0a4f;background:linear-gradient(100deg,#1a0033 0%,#4c1d95 25%,#000 50%,#3b0764 75%,#1a0033 100%) 0 0/110px 100% repeat-x;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lg{width:34px;height:34px;border-radius:50%;object-fit:contain;flex:none}
+.x{color:#7a7468;font-size:15px}
+.meta{color:var(--muted);font-size:13px;margin:8px 0 12px}
+.go{display:block;width:100%;border:0;border-radius:10px;background:#7e22ce;color:#fff;font:inherit;font-weight:700;font-size:16px;padding:10px;cursor:pointer}
+.go:hover{opacity:.9}
+.empty{color:var(--muted);text-align:center;padding:24px}
+.back{border:1px solid #444;background:var(--card);color:var(--text);padding:6px 14px;border-radius:8px;font:inherit;cursor:pointer;margin-bottom:12px}
+#wt{margin-bottom:12px}
+#player{background:#111;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:8px}
+#player video,#player iframe{width:100%;height:100%;border:0;background:#000}
+#srv{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+#srv button{border:1px solid #555;background:var(--card);color:var(--text);padding:8px 18px;border-radius:8px;font:inherit;cursor:pointer}
+#srv button.on{background:var(--team);border-color:var(--team);color:#000;font-weight:700}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚽ شوتايم كورة</h1>
+  <button id="menuBtn" aria-label="القائمة"><i></i><i></i><i></i></button>
+  <div id="menu" class="hide">
+    <button data-m="home" class="on">الصفحة الرئيسية</button>
+    <button data-m="live">بث مباشر</button>
+    <div class="soon">قريباً قنوات بث مباشر</div>
+  </div>
+</header>
+<div id="ov" class="hide"></div>
+<div class="ad">
+  <h2>تابع كل الدوريات ودوري أبطال أوروبا وكأس العالم</h2>
+  <div class="lgs" id="lgs"></div>
+</div>
+<main>
+  <section id="home">
+    <div class="tabs" id="tabs">
+      <button data-f="-1">أمس</button>
+      <button data-f="0" class="on">اليوم</button>
+      <button data-f="1">غداً</button>
+    </div>
+    <h2 class="ttl hide" id="liveTtl">المباريات المباشرة الآن</h2>
+    <div id="list" class="list"></div>
+  </section>
+
+  <section id="watch" class="hide">
+    <button class="back" id="back">→ رجوع</button>
+    <div id="wt" class="teams"></div>
+    <div id="player"></div>
+    <div id="srv"></div>
+  </section>
+
+  <section id="admin" class="hide">
+    <button class="back" id="aexit">→ رجوع للموقع</button>
+    <div class="box hide" id="alogin">
+      <h2>دخول الأدمن</h2>
+      <input id="alogEmail" type="email" class="l hide" placeholder="الإيميل" style="margin-bottom:8px">
+      <input id="alogPw" type="password" class="l" placeholder="كلمة السر">
+      <div class="bar"><button class="p" id="alogBtn">دخول</button></div>
+    </div>
+    <div id="apanel" style="display:grid;gap:14px">
+    <div class="box">
+      <h2 id="aft">إضافة مباراة</h2>
+      <div class="g2">
+        <div><label>الفريق الأول</label><input id="ahome"></div>
+        <div><label>الفريق الثاني</label><input id="aaway"></div>
+        <div><label>شعار الأول (رابط أو مسار)</label><input id="ahl" class="l"></div>
+        <div><label>شعار الثاني (رابط أو مسار)</label><input id="aal" class="l"></div>
+        <div><label>الدوري</label><input id="aleague"></div>
+        <div><label>موعد المباراة</label><input id="atime" type="datetime-local" class="l"></div>
+      </div>
+      <label>السيرفرات (أي رابط بث)</label>
+      <div id="arows"></div>
+      <div class="bar">
+        <button id="aaddSrc">+ سيرفر</button>
+        <button class="p" id="asave">حفظ المباراة</button>
+        <button class="d" id="acancel" style="display:none">إلغاء التعديل</button>
+      </div>
+    </div>
+    <div class="box">
+      <h2>تجربة الرابط</h2>
+      <div id="atp">اضغط "تجربة" بجانب أي سيرفر</div>
+      <p class="note">لو الرابط ما اشتغل، فبعض المصادر تمنع تضمينها داخل مواقع أخرى، جرّب سيرفراً آخر.</p>
+    </div>
+    <div class="box">
+      <h2>المباريات (<span id="acnt">0</span>)</h2>
+      <div id="alist"></div>
+    </div>
+    <div class="box">
+      <h2>النشر للزوار</h2>
+      <p class="note" id="apub" style="margin-top:0">تعديلاتك تظهر على جهازك فوراً. لتظهر لكل الزوار: نزّل الملف باسم <b>matches.json</b> وارفعه بجانب هذه الصفحة على استضافتك.</p>
+      <textarea id="ajson" spellcheck="false"></textarea>
+      <div class="bar">
+        <button class="p" id="adl">تنزيل matches.json</button>
+        <button id="acp">نسخ</button>
+        <button id="aapply">تطبيق النص الملصق</button>
+        <button id="aload">تحميل من الموقع</button>
+        <button class="d hide" id="alogout">تسجيل خروج</button>
+      </div>
+    </div>
+    </div>
+  </section>
+</main>
+<div id="toast" class="hide"></div>
+
+<script>
+/* ===== النشر المباشر عبر Firebase: الصق هنا إعدادات مشروعك (انظر الشرح). اتركها فارغة لتعمل الطريقة القديمة ===== */
+const FIREBASE_CONFIG = {apiKey:"AIzaSyBaCSKjngxUrCPjzMSJmpEtqPxkG-n1jK4", authDomain:"showtime-kora.firebaseapp.com", projectId:"showtime-kora", appId:"1:174459325225:web:2a3ea7888c9134e5fa4538"};
+
+const ADMIN_PASSWORD = ""; /* اتركها فارغة ليُفتح الأدمن مباشرة، أو اكتب كلمة سر لتظهر خانة إدخالها */
+
+/* ===== عدّل القائمة هنا =====
+   homeLogo / awayLogo: رابط شعار الفريق أو مسار صورة بجانب الملف (مثل "logos/barca.png").
+   وإن تُرك فارغاً يظهر اسم الفريق فقط.
+   sources: أي عدد من السيرفرات، وأي رابط في url يُحدَّد تشغيله تلقائياً:
+   .m3u8 -> HLS | .mp4/.webm -> فيديو مباشر | يوتيوب -> تضمين | غير ذلك -> إطار تضمين.
+   time: وقت البداية بصيغة ISO مع المنطقة الزمنية */
+let MATCHES = [
+  {home:"برشلونة", away:"ريال مدريد", homeLogo:"", awayLogo:"", league:"الدوري الإسباني", time:"2026-10-30T22:00:00+03:00",
+   sources:[{name:"سيرفر 1", url:""},{name:"سيرفر 2", url:""}]},
+  {home:"مانشستر سيتي", away:"ليفربول", homeLogo:"", awayLogo:"", league:"الدوري الإنجليزي", time:"2026-10-30T19:30:00+03:00",
+   sources:[{name:"سيرفر 1", url:""},{name:"سيرفر 2", url:""}]},
+  {home:"يوفنتوس", away:"ميلان", homeLogo:"", awayLogo:"", league:"الدوري الإيطالي", time:"2026-10-30T21:45:00+03:00",
+   sources:[{name:"سيرفر 1", url:""},{name:"سيرفر 2", url:""}]},
+  {home:"بايرن ميونخ", away:"بوروسيا دورتموند", homeLogo:"", awayLogo:"", league:"الدوري الألماني", time:"2026-10-30T20:30:00+03:00",
+   sources:[{name:"سيرفر 1", url:""},{name:"سيرفر 2", url:""}]},
+  {home:"باريس سان جيرمان", away:"مارسيليا", homeLogo:"", awayLogo:"", league:"الدوري الفرنسي", time:"2026-10-30T22:00:00+03:00",
+   sources:[{name:"سيرفر 1", url:""},{name:"سيرفر 2", url:""}]},
+  {home:"الهلال", away:"النصر", homeLogo:"", awayLogo:"", league:"الدوري السعودي", time:"2026-10-30T18:00:00+03:00",
+   sources:[{name:"سيرفر 1", url:""},{name:"سيرفر 2", url:""}]},
+  {home:"الأهلي", away:"الزمالك", homeLogo:"", awayLogo:"", league:"الدوري المصري", time:"2026-10-30T20:00:00+03:00",
+   sources:[{name:"سيرفر 1", url:""},{name:"سيرفر 2", url:""}]},
+  {home:"الفريق ج", away:"الفريق د", homeLogo:"", awayLogo:"", league:"الكأس", time:"2026-10-31T18:30:00+03:00",
+   sources:[{name:"سيرفر 1", url:""}]}
+];
+const DURATION_MIN = 120;
+
+const $ = s => document.querySelector(s);
+const fmt = new Intl.DateTimeFormat("ar", {weekday:"short", day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"});
+let filter = 0, mode = "home", hls = null;
+
+function isLive(m){
+  const s = new Date(m.time).getTime(), n = Date.now();
+  return n >= s && n <= s + DURATION_MIN*60000;
+}
+function dayOffset(m){
+  const a = new Date(m.time), b = new Date();
+  a.setHours(0,0,0,0); b.setHours(0,0,0,0);
+  return Math.round((a - b) / 86400000);
+}
+
+function teamBox(name, logo){
+  const d = document.createElement("div");
+  d.className = "tm";
+  if (logo){
+    const l = document.createElement("img");
+    l.src = logo; l.alt = ""; l.className = "lg";
+    l.onerror = () => l.remove();
+    d.appendChild(l);
+  }
+  const n = document.createElement("span");
+  n.className = "n"; n.textContent = name;
+  d.appendChild(n);
+  return d;
+}
+function teamsRow(el, m){
+  el.innerHTML = "";
+  const box = document.createElement("div");
+  box.className = "tb";
+  const x = document.createElement("span");
+  x.className = "x"; x.textContent = "×";
+  box.append(teamBox(m.home, m.homeLogo), x, teamBox(m.away, m.awayLogo));
+  el.appendChild(box);
+}
+
+function render(){
+  const box = $("#list");
+  box.innerHTML = "";
+  const live = mode === "live";
+  $("#tabs").classList.toggle("hide", live);
+  $("#liveTtl").classList.toggle("hide", !live);
+  const rows = MATCHES.map((m, i) => ({m, i}))
+    .filter(r => live ? isLive(r.m) : dayOffset(r.m) === filter)
+    .sort((a, b) => new Date(a.m.time) - new Date(b.m.time));
+  if (!rows.length){
+    box.innerHTML = '<div class="empty">' + (live ? "لا توجد مباريات مباشرة الآن" : "لا توجد مباريات في هذا اليوم") + "</div>";
+    return;
+  }
+  rows.forEach(({m, i}) => {
+    const el = document.createElement("div");
+    el.className = "m";
+    el.innerHTML = '<div class="teams"></div><div class="meta"></div><button class="go">مباشر</button>';
+    teamsRow(el.querySelector(".teams"), m);
+    el.querySelector(".meta").textContent = m.league + " · " + fmt.format(new Date(m.time));
+    el.querySelector(".go").onclick = () => openMatch(i);
+    box.appendChild(el);
+  });
+}
+
+function openMatch(i){
+  const m = MATCHES[i];
+  $("#home").classList.add("hide");
+  $("#watch").classList.remove("hide");
+  teamsRow($("#wt"), m);
+  const srv = $("#srv");
+  srv.innerHTML = "";
+  (m.sources || []).forEach((s, k) => {
+    const b = document.createElement("button");
+    b.textContent = s.name || ("سيرفر " + (k + 1));
+    b.onclick = () => { srv.querySelectorAll("button").forEach(x => x.classList.remove("on")); b.classList.add("on"); playUrl(s.url); };
+    srv.appendChild(b);
+  });
+  const first = srv.querySelector("button");
+  if (first) first.click(); else playUrl("");
+  window.scrollTo(0, 0);
+}
+
+function showHome(){
+  stop();
+  $("#admin").classList.add("hide");
+  $("#player").innerHTML = "";
+  $("#watch").classList.add("hide");
+  $("#home").classList.remove("hide");
+  render();
+}
+$("#back").onclick = showHome;
+
+/* القائمة */
+function menu(open){
+  $("#menu").classList.toggle("hide", !open);
+  $("#ov").classList.toggle("hide", !open);
+}
+$("#menuBtn").onclick = () => menu($("#menu").classList.contains("hide"));
+$("#ov").onclick = () => menu(false);
+document.querySelectorAll("#menu button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#menu button").forEach(x => x.classList.remove("on"));
+  b.classList.add("on");
+  menu(false);
+  if (b.dataset.m === "admin"){ openAdmin(); return; }
+  mode = b.dataset.m;
+  showHome();
+});
+
+function stop(){ if (hls){ hls.destroy(); hls = null; } }
+
+/* يقبل رابطاً عادياً أو كود التضمين كاملاً (iframe) ويستخرج الرابط منه */
+function normUrl(t){
+  t = (t || "").trim();
+  const m = t.match(/<(?:iframe|video|source)[^>]*?\ssrc\s*=\s*["']([^"']+)["']/i);
+  if (m) t = m[1].trim();
+  if (t.startsWith("//")) t = "https:" + t;
+  if (location.protocol === "https:" && t.startsWith("http://")) t = "https://" + t.slice(7);
+  return t.replace(/&amp;/g, "&");
+}
+
+function toEmbed(u){
+  const m = u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/live\/)([\w-]{11})/);
+  return m ? "https://www.youtube.com/embed/" + m[1] + "?autoplay=1" : u;
+}
+
+function playUrl(url, target){
+  const p = target || $("#player");
+  stop();
+  p.innerHTML = "";
+  url = normUrl(url);
+  if (!url){ p.textContent = "لم يتم إضافة مصدر البث لهذا السيرفر بعد"; return; }
+  const path = url.split("?")[0].toLowerCase();
+  if (/\.m3u8$/.test(path) || /\.(mp4|webm|ogg)$/.test(path)){
+    const v = document.createElement("video");
+    v.controls = true; v.autoplay = true; v.playsInline = true;
+    p.appendChild(v);
+    const startHls = () => {
+      if (!v.isConnected) return;
+      if (window.Hls && Hls.isSupported()){
+        hls = new Hls(); hls.loadSource(url); hls.attachMedia(v);
+        hls.on(Hls.Events.ERROR, (e, d) => { if (d.fatal) p.textContent = "تعذر تشغيل هذا السيرفر، جرّب سيرفراً آخر"; });
+      } else v.src = url;
+    };
+    if (/\.m3u8$/.test(path)){
+      if (window.Hls) startHls();
+      else loadScript("https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js").then(startHls).catch(() => { if (v.isConnected) v.src = url; });
+    } else v.src = url;
+  } else {
+    const f = document.createElement("iframe");
+    f.src = toEmbed(url); f.allow = "autoplay; fullscreen; encrypted-media"; f.allowFullscreen = true;
+    p.appendChild(f);
+  }
+}
+
+document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#tabs button").forEach(x => x.classList.remove("on"));
+  b.classList.add("on"); filter = Number(b.dataset.f); render();
+});
+
+/* شعارات الدوريات في المساحة الإعلانية: ضع مسار الصورة في logo، وإن تُرك فارغاً يظهر الاسم فقط */
+const LEAGUES = [
+  {name:"الدوري الإنجليزي", logo:""},
+  {name:"الدوري الإسباني", logo:""},
+  {name:"الدوري الإيطالي", logo:""},
+  {name:"الدوري الفرنسي", logo:""},
+  {name:"الدوري الألماني", logo:""},
+  {name:"الدوري المصري", logo:""},
+  {name:"الدوري السعودي", logo:""}
+];
+LEAGUES.forEach(l => {
+  const d = document.createElement("div");
+  d.className = "lp";
+  if (l.logo){
+    const i = document.createElement("img");
+    i.src = l.logo; i.alt = ""; i.onerror = () => i.remove();
+    d.appendChild(i);
+  }
+  const t = document.createElement("span");
+  t.textContent = l.name;
+  d.appendChild(t);
+  document.getElementById("lgs").appendChild(d);
+});
+
+/* ===== الأدمن ===== */
+let adminOK = false, editing = -1;
+
+let toastT = null;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg; t.classList.remove("hide");
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.add("hide"), 2500);
+}
+
+/* ===== Firebase ===== */
+let fbOn = !!FIREBASE_CONFIG.apiKey, fbDb = null, fbAuth = null, fbUser = null;
+const FB_BASE = "https://www.gstatic.com/firebasejs/10.12.2/";
+
+function loadScript(src){
+  return new Promise((res, rej) => {
+    const x = document.createElement("script");
+    x.src = src; x.onload = res; x.onerror = rej;
+    document.head.appendChild(x);
+  });
+}
+
+function loadJsonFallback(){
+  fetch("matches.json", {cache:"no-store"}).then(r => r.ok ? r.json() : null)
+    .then(d => { if (Array.isArray(d) && !MATCHES.length){ MATCHES = d; render(); } }).catch(() => {});
+}
+
+async function initFirebase(){
+  await loadScript(FB_BASE + "firebase-app-compat.js");
+  await loadScript(FB_BASE + "firebase-firestore-compat.js");
+  firebase.initializeApp(FIREBASE_CONFIG);
+  fbDb = firebase.firestore();
+  fbDb.doc("site/matches").onSnapshot(snap => {
+    const d = snap.exists ? snap.data() : null;
+    MATCHES = d && Array.isArray(d.list) ? d.list : [];
+    render();
+    if (!$("#admin").classList.contains("hide") && !editingBusy()) aList();
+  }, () => loadJsonFallback());
+}
+function editingBusy(){ return editing >= 0; }
+
+async function ensureAuth(){
+  if (fbAuth) return fbAuth;
+  await loadScript(FB_BASE + "firebase-auth-compat.js");
+  fbAuth = firebase.auth();
+  fbAuth.onAuthStateChanged(u => {
+    fbUser = u;
+    if (!$("#admin").classList.contains("hide")) adminGate();
+  });
+  return fbAuth;
+}
+
+function publishFb(){
+  if (!(fbOn && fbDb && fbUser)) return;
+  fbDb.doc("site/matches").set({list: JSON.parse(JSON.stringify(MATCHES))})
+    .then(() => toast("تم النشر للجميع ✓"))
+    .catch(() => toast("فشل النشر: تأكد من الدخول بإيميل الأدمن ومن قواعد الأمان"));
+}
+
+function showPanel(){
+  $("#alogin").classList.add("hide");
+  $("#apanel").style.display = "grid";
+  $("#alogout").classList.toggle("hide", !fbOn);
+  if (fbOn) $("#apub").textContent = "النشر مباشر: أي مباراة تحفظها أو تحذفها تظهر لكل الزوار فوراً من غير رفع ملفات. ويمكنك أيضاً تنزيل نسخة احتياطية من هنا.";
+  aReset(); aList();
+  $("#ajson").value = JSON.stringify(MATCHES, null, 2);
+}
+
+function adminGate(){
+  const needLogin = fbOn ? !fbUser : (ADMIN_PASSWORD && !adminOK);
+  $("#alogEmail").classList.toggle("hide", !fbOn);
+  if (needLogin){
+    $("#apanel").style.display = "none";
+    $("#alogin").classList.remove("hide");
+  } else showPanel();
+}
+
+function openAdmin(){
+  stop();
+  $("#player").innerHTML = "";
+  $("#home").classList.add("hide");
+  $("#watch").classList.add("hide");
+  $("#admin").classList.remove("hide");
+  adminGate();
+  if (fbOn) ensureAuth().catch(() => toast("تعذر تحميل نظام الدخول، تأكد من الاتصال"));
+  window.scrollTo(0, 0);
+}
+
+$("#alogBtn").onclick = async () => {
+  if (fbOn){
+    const btn = $("#alogBtn");
+    btn.disabled = true; btn.textContent = "جاري الدخول...";
+    try {
+      await ensureAuth();
+      await fbAuth.signInWithEmailAndPassword($("#alogEmail").value.trim(), $("#alogPw").value);
+    } catch (e) { toast("تعذر الدخول: راجع الإيميل وكلمة السر والاتصال"); }
+    btn.disabled = false; btn.textContent = "دخول";
+    return;
+  }
+  if ($("#alogPw").value === ADMIN_PASSWORD){ adminOK = true; adminGate(); }
+  else toast("كلمة السر غير صحيحة");
+};
+$("#alogout").onclick = () => { if (fbAuth) fbAuth.signOut(); };
+$("#aexit").onclick = () => {
+  mode = "home";
+  document.querySelectorAll("#menu button").forEach(x => x.classList.toggle("on", x.dataset.m === "home"));
+  showHome();
+};
+
+function aSave(){
+  try { localStorage.setItem("sk_matches", JSON.stringify(MATCHES)); } catch (e) {}
+  $("#ajson").value = JSON.stringify(MATCHES, null, 2);
+  aList(); render();
+  publishFb();
+}
+
+function toLocalInput(iso){
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  const z = n => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()) + "T" + z(d.getHours()) + ":" + z(d.getMinutes());
+}
+
+function aRow(name, url){
+  const r = document.createElement("div");
+  r.className = "row";
+  r.innerHTML = '<input class="n" placeholder="الاسم"><input class="u l" placeholder="رابط البث"><button class="tst">تجربة</button><button class="d rm">✕</button>';
+  r.querySelector(".n").value = name || "";
+  r.querySelector(".u").value = url || "";
+  r.querySelector(".tst").onclick = () => { playUrl(r.querySelector(".u").value, $("#atp")); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
+  r.querySelector(".rm").onclick = () => r.remove();
+  $("#arows").appendChild(r);
+}
+
+function aReset(){
+  ["ahome","aaway","ahl","aal","aleague","atime"].forEach(id => $("#" + id).value = "");
+  $("#arows").innerHTML = ""; aRow();
+  editing = -1;
+  $("#aft").textContent = "إضافة مباراة";
+  $("#acancel").style.display = "none";
+}
+$("#aaddSrc").onclick = () => aRow();
+$("#acancel").onclick = aReset;
+
+$("#asave").onclick = () => {
+  const m = {
+    home: $("#ahome").value.trim(), away: $("#aaway").value.trim(),
+    homeLogo: $("#ahl").value.trim(), awayLogo: $("#aal").value.trim(),
+    league: $("#aleague").value.trim(),
+    time: $("#atime").value ? new Date($("#atime").value).toISOString() : "",
+    sources: []
+  };
+  if (!m.home || !m.away || !m.time){ toast("اكتب اسمي الفريقين وحدّد الموعد"); return; }
+  document.querySelectorAll("#arows .row").forEach((r, i) => {
+    const url = normUrl(r.querySelector(".u").value);
+    if (url) m.sources.push({name: r.querySelector(".n").value.trim() || "سيرفر " + (i + 1), url});
+  });
+  if (editing >= 0) MATCHES[editing] = m; else MATCHES.push(m);
+  aSave(); aReset();
+};
+
+function aList(){
+  $("#acnt").textContent = MATCHES.length;
+  const box = $("#alist");
+  box.innerHTML = "";
+  if (!MATCHES.length){ box.innerHTML = '<p class="note">لا توجد مباريات بعد</p>'; return; }
+  MATCHES.map((m, i) => ({m, i})).sort((a, b) => new Date(a.m.time) - new Date(b.m.time)).forEach(({m, i}) => {
+    const d = document.createElement("div");
+    d.className = "it";
+    d.innerHTML = '<div><b class="tt"></b><small></small></div><div><button class="ed">تعديل</button> <button class="d rm">حذف</button></div>';
+    d.querySelector(".tt").textContent = m.home + " × " + m.away;
+    d.querySelector("small").textContent = (m.league || "") + " · " + fmt.format(new Date(m.time)) + " · " + (m.sources || []).length + " سيرفر";
+    d.querySelector(".ed").onclick = () => {
+      editing = i;
+      $("#ahome").value = m.home; $("#aaway").value = m.away;
+      $("#ahl").value = m.homeLogo || ""; $("#aal").value = m.awayLogo || "";
+      $("#aleague").value = m.league || ""; $("#atime").value = toLocalInput(m.time);
+      $("#arows").innerHTML = "";
+      (m.sources && m.sources.length ? m.sources : [{}]).forEach(x => aRow(x.name, x.url));
+      $("#aft").textContent = "تعديل مباراة";
+      $("#acancel").style.display = "";
+      window.scrollTo(0, 0);
+    };
+    const rm = d.querySelector(".rm");
+    let armed = false;
+    rm.onclick = () => {
+      if (!armed){ armed = true; rm.textContent = "تأكيد الحذف؟"; setTimeout(() => { armed = false; rm.textContent = "حذف"; }, 3000); return; }
+      MATCHES.splice(i, 1); aSave(); aReset();
+    };
+    box.appendChild(d);
+  });
+}
+
+$("#adl").onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([$("#ajson").value], {type:"application/json"}));
+  a.download = "matches.json"; a.click();
+};
+$("#acp").onclick = async () => {
+  try { await navigator.clipboard.writeText($("#ajson").value); toast("تم النسخ"); }
+  catch (e) { $("#ajson").select(); document.execCommand("copy"); toast("تم النسخ"); }
+};
+$("#aapply").onclick = () => {
+  try {
+    const d = JSON.parse($("#ajson").value);
+    if (!Array.isArray(d)) throw 0;
+    MATCHES = d; aSave(); aReset();
+  } catch (e) { toast("النص ليس JSON صحيحاً"); }
+};
+$("#aload").onclick = async () => {
+  try {
+    const r = await fetch("matches.json", {cache:"no-store"});
+    const d = await r.json();
+    if (!Array.isArray(d)) throw 0;
+    MATCHES = d; aSave(); aReset();
+  } catch (e) { toast("لم أجد matches.json على الموقع"); }
+};
+
+/* ===== التشغيل: مسودة الأدمن على هذا الجهاز، ثم matches.json، ثم القائمة المكتوبة أعلاه ===== */
+/* فتح الأدمن بشكل مخفي: اضغط على اسم الموقع 5 مرات متتالية، أو افتح رابط الموقع وفي آخره #admin */
+let tapN = 0, tapT = null;
+document.querySelector("h1").onclick = () => {
+  tapN++; clearTimeout(tapT); tapT = setTimeout(() => { tapN = 0; }, 1500);
+  if (tapN >= 5){ tapN = 0; openAdmin(); }
+};
+function hashAdmin(){ if (location.hash === "#admin") openAdmin(); }
+window.addEventListener("hashchange", hashAdmin);
+
+let draft = null;
+if (!fbOn){ try { draft = JSON.parse(localStorage.getItem("sk_matches") || "null"); } catch (e) {} }
+if (fbOn) MATCHES = [];
+else if (Array.isArray(draft)) MATCHES = draft;
+render();
+hashAdmin();
+if (fbOn){
+  initFirebase().catch(() => loadJsonFallback());
+  setTimeout(() => { if (!fbDb) loadJsonFallback(); }, 8000);
+} else if (!Array.isArray(draft)){
+  loadJsonFallback();
+}
+</script>
+</body>
+</html>
