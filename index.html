@@ -81,6 +81,8 @@ main{max-width:960px;margin:0 auto;padding:16px}
   .tr>.tm:first-child,.tr>.tm:last-child{justify-self:center}
 }
 .sb{font-size:13px;font-weight:700;color:#3b3548;line-height:1.3;overflow-wrap:anywhere}
+.sb.ch{display:inline-flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;direction:ltr;background:transparent;color:#000;padding:0;font-weight:800;letter-spacing:.2px}
+.sb.ch .sp{color:#6b21a8}
 .mc{display:flex;flex-direction:column;align-items:center}
 .cm{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:12px;font-size:15px;font-weight:800;color:#3b3548;max-width:150px;line-height:1.3}
 .cm svg{width:16px;height:16px;flex:none;color:#7e22ce}
@@ -116,7 +118,7 @@ main{max-width:960px;margin:0 auto;padding:16px}
 #wt{margin-bottom:12px}
 #player{background:#111;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#a3a3a3;text-align:center;padding:8px}
 #player video,#player iframe{width:100%;height:100%;border:0;background:#000}
-#srv{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+#srv{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px}
 #srv button{border:1px solid var(--bd);background:var(--card);color:var(--text);padding:8px 18px;border-radius:8px;font:inherit;cursor:pointer}
 #srv button.on{background:var(--team);border-color:var(--team);color:var(--onteam);font-weight:700}
 .tabs2{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
@@ -205,8 +207,8 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
   <section id="watch" class="hide">
     <button class="back" id="back">→ رجوع</button>
     <div id="wt" class="m"></div>
-    <div id="player"></div>
     <div id="srv"></div>
+    <div id="player"></div>
   </section>
 
   <section id="multi" class="hide">
@@ -233,6 +235,35 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
       <div class="bar"><button class="p" id="alogBtn">دخول</button></div>
     </div>
     <div id="apanel" style="display:grid;gap:14px">
+    <div class="box">
+      <h2 id="aft">إضافة مباراة</h2>
+      <div class="g2">
+        <div><label>الفريق الأول</label><input id="ahome"></div>
+        <div><label>الفريق الثاني</label><input id="aaway"></div>
+        <div><label>شعار الأول (رابط أو مسار)</label><input id="ahl" class="l"><label>أو ارفع صورة الشعار من جهازك</label><input type="file" accept="image/*" data-t="ahl"></div>
+        <div><label>شعار الثاني (رابط أو مسار)</label><input id="aal" class="l"><label>أو ارفع صورة الشعار من جهازك</label><input type="file" accept="image/*" data-t="aal"></div>
+        <div><label>الدوري</label><input id="aleague"></div>
+        <div><label>موعد المباراة</label><input id="atime" type="datetime-local" class="l"></div>
+        <div><label>القناة الناقلة (تظهر تحت الفريق الأول على اليمين)</label><input id="achan" placeholder="مثال: beIN Sports 1"></div>
+        <div><label>المعلّق (يظهر تحت التوقيت مع أيقونة مايك)</label><input id="acomm" placeholder="مثال: عصام الشوالي"></div>
+        <div><label>نتيجة الفريق الأول</label><input id="asch" type="number" inputmode="numeric" min="0" class="l"></div>
+        <div><label>نتيجة الفريق الثاني</label><input id="asca" type="number" inputmode="numeric" min="0" class="l"></div>
+        <div style="grid-column:1/-1"><label style="display:flex;align-items:center;gap:8px;color:var(--text);font-size:14px"><input id="aended" type="checkbox" style="width:auto"> انتهت المباراة (تظهر بالنتيجة في الخارج وتختفي كلمة مباشر)</label></div>
+        <div style="grid-column:1/-1"><label>نص يظهر مكان زر "مباشر" (اختياري)</label><input id="anote" placeholder="مثال: البث بعد قليل"><p class="note">لو كتبت هنا نصاً يظهر بدل الزر مهما كان الوقت، وسيبه فاضياً ليشتغل تلقائياً (قبل الموعد بـ 9 ساعات يظهر زر مباشر). ولو أضفت رابط بث، يتحول الكارت تلقائياً إلى "مباشر" وتفتح البث عند حلول موعد المباراة حتى لو النص موجود.</p></div>
+      </div>
+      <label>السيرفرات (أي رابط بث)</label>
+      <div id="arows"></div>
+      <div class="bar">
+        <button id="aaddSrc">+ سيرفر</button>
+        <button class="p" id="asave">حفظ المباراة</button>
+        <button class="d" id="acancel" style="display:none">إلغاء التعديل</button>
+      </div>
+    </div>
+    <div class="box">
+      <h2>تجربة الرابط</h2>
+      <div id="atp">اضغط "تجربة" بجانب أي سيرفر</div>
+      <p class="note">لو الرابط ما اشتغل، فبعض المصادر تمنع تضمينها داخل مواقع أخرى، جرّب سيرفراً آخر.</p>
+    </div>
     <div class="box">
       <h2>إعدادات الموقع</h2>
       <label>النص بجانب "جدول المباريات" (مثال: الاثنين). اتركه فارغاً ليظهر اسم اليوم تلقائياً</label>
@@ -264,35 +295,6 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
       <input id="nicon" class="l" placeholder="nba.png أو https://...">
       <div id="nrows" style="margin-top:14px"></div>
       <div class="bar"><button id="nadd">+ إضافة مباراة</button><button class="p" id="nsave">حفظ مباريات NBA</button></div>
-    </div>
-    <div class="box">
-      <h2 id="aft">إضافة مباراة</h2>
-      <div class="g2">
-        <div><label>الفريق الأول</label><input id="ahome"></div>
-        <div><label>الفريق الثاني</label><input id="aaway"></div>
-        <div><label>شعار الأول (رابط أو مسار)</label><input id="ahl" class="l"><label>أو ارفع صورة الشعار من جهازك</label><input type="file" accept="image/*" data-t="ahl"></div>
-        <div><label>شعار الثاني (رابط أو مسار)</label><input id="aal" class="l"><label>أو ارفع صورة الشعار من جهازك</label><input type="file" accept="image/*" data-t="aal"></div>
-        <div><label>الدوري</label><input id="aleague"></div>
-        <div><label>موعد المباراة</label><input id="atime" type="datetime-local" class="l"></div>
-        <div><label>القناة الناقلة (تظهر تحت الفريق الأول على اليمين)</label><input id="achan" placeholder="مثال: beIN Sports 1"></div>
-        <div><label>المعلّق (يظهر تحت التوقيت مع أيقونة مايك)</label><input id="acomm" placeholder="مثال: عصام الشوالي"></div>
-        <div><label>نتيجة الفريق الأول</label><input id="asch" type="number" inputmode="numeric" min="0" class="l"></div>
-        <div><label>نتيجة الفريق الثاني</label><input id="asca" type="number" inputmode="numeric" min="0" class="l"></div>
-        <div style="grid-column:1/-1"><label style="display:flex;align-items:center;gap:8px;color:var(--text);font-size:14px"><input id="aended" type="checkbox" style="width:auto"> انتهت المباراة (تظهر بالنتيجة في الخارج وتختفي كلمة مباشر)</label></div>
-        <div style="grid-column:1/-1"><label>نص يظهر مكان زر "مباشر" (اختياري)</label><input id="anote" placeholder="مثال: البث بعد قليل"><p class="note">لو كتبت هنا نصاً يظهر بدل الزر مهما كان الوقت، وسيبه فاضياً ليشتغل تلقائياً (قبل الموعد بـ 9 ساعات يظهر زر مباشر). ولو أضفت رابط بث، يتحول الكارت تلقائياً إلى "مباشر" وتفتح البث عند حلول موعد المباراة حتى لو النص موجود.</p></div>
-      </div>
-      <label>السيرفرات (أي رابط بث)</label>
-      <div id="arows"></div>
-      <div class="bar">
-        <button id="aaddSrc">+ سيرفر</button>
-        <button class="p" id="asave">حفظ المباراة</button>
-        <button class="d" id="acancel" style="display:none">إلغاء التعديل</button>
-      </div>
-    </div>
-    <div class="box">
-      <h2>تجربة الرابط</h2>
-      <div id="atp">اضغط "تجربة" بجانب أي سيرفر</div>
-      <p class="note">لو الرابط ما اشتغل، فبعض المصادر تمنع تضمينها داخل مواقع أخرى، جرّب سيرفراً آخر.</p>
     </div>
     <div class="box">
       <h2>المباريات (<span id="acnt">0</span>)</h2>
@@ -482,7 +484,7 @@ function checkLogo(u){
   return new Promise(r => { if (!u) return r(true); const i = new Image(); i.onload = () => r(true); loadLogo(i, u, () => r(false)); });
 }
 const MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3" fill="currentColor" fill-opacity=".25"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>';
-function teamBox(name, logo, sub){
+function teamBox(name, logo, sub, isChan){
   const d = document.createElement("div");
   d.className = "tm";
   const w = document.createElement("div");
@@ -503,7 +505,16 @@ function teamBox(name, logo, sub){
   d.appendChild(n);
   if (sub && String(sub).trim()){
     const b = document.createElement("span");
-    b.className = "sb"; b.textContent = String(sub).trim();
+    b.className = "sb";
+    if (isChan){
+      b.classList.add("ch");
+      String(sub).trim().split(/\s+/).forEach(w => {
+        const s = document.createElement("span");
+        s.textContent = w;
+        if (/^(sports?|سبورت[سز]?)$/i.test(w)) s.className = "sp";
+        b.appendChild(s);
+      });
+    } else b.textContent = String(sub).trim();
     d.appendChild(b);
   }
   return d;
@@ -523,7 +534,7 @@ function teamsRow(el, m, mid){
     c.appendChild(t);
     midEl.append(mid, c);
   }
-  r.append(teamBox(m.home, m.homeLogo, m.channel), midEl, teamBox(m.away, m.awayLogo, m.league));
+  r.append(teamBox(m.home, m.homeLogo, m.channel, true), midEl, teamBox(m.away, m.awayLogo, m.league));
   el.appendChild(r);
 }
 function xNode(){
@@ -744,7 +755,7 @@ async function initFirebase(){
     const d = snap.exists ? snap.data() : null;
     MATCHES = d && Array.isArray(d.list) ? d.list : [];
     render();
-    if (!$("#admin").classList.contains("hide") && !editingBusy()) aList();
+    if (!$("#admin").classList.contains("hide") && !editingBusy()){ if (pruneOld()) aSave(); else aList(); }
   }, () => loadJsonFallback());
   fbDb.doc("site/settings").onSnapshot(snap => { if (snap.exists) mergeSettings(snap.data()); }, () => {});
   countVisit();
@@ -793,6 +804,15 @@ function startPresence(){
 }
 function editingBusy(){ return editing >= 0; }
 
+/* حذف المباريات اللي عدّى عليها يومين تلقائياً (يتم فقط والأدمن مسجّل دخول) */
+const KEEP_DAYS = 2;
+function pruneOld(){
+  if (fbOn && !fbUser) return false;
+  const lim = Date.now() - KEEP_DAYS * 86400000, n = MATCHES.length;
+  MATCHES = MATCHES.filter(m => { const x = new Date(m.time).getTime(); return isNaN(x) || x >= lim; });
+  return MATCHES.length !== n;
+}
+
 async function ensureAuth(){
   if (fbAuth) return fbAuth;
   await loadScript(FB_BASE + "firebase-auth-compat.js");
@@ -817,6 +837,7 @@ function showPanel(){
   $("#alogout").classList.toggle("hide", !fbOn);
   if (fbOn) $("#apub").textContent = "النشر مباشر: أي مباراة تحفظها أو تحذفها تظهر لكل الزوار فوراً من غير رفع ملفات. ويمكنك أيضاً تنزيل نسخة احتياطية من هنا.";
   $("#sday").value = SETTINGS.day || ""; $("#swa").value = SETTINGS.wa || ""; $("#sfb").value = SETTINGS.fb || ""; $("#smail").value = SETTINGS.mail || ""; fillMulti(); fillNba(); $("#nicon").value = SETTINGS.nbaIcon || ""; $("#snews").value = SETTINGS.news || "";
+  if (pruneOld()) aSave();
   aReset(); aList();
   $("#ajson").value = JSON.stringify(MATCHES, null, 2);
 }
