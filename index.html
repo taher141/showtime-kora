@@ -152,6 +152,13 @@ main{max-width:960px;margin:0 auto;padding:16px}
 #admin .nrow label.ne{display:flex;align-items:center;gap:8px;color:var(--text);font-size:14px;margin:0}
 #admin .nrow label.ne input{width:auto}
 #admin .nrow .na{grid-column:1/-1;display:flex;gap:6px}
+.cb{position:relative}
+#admin .cb input{padding-inline-end:34px}
+#admin .cb .cbt{position:absolute;inset-inline-end:4px;top:50%;transform:translateY(-50%);padding:2px 8px;border:0;background:none;color:var(--muted);font-size:14px;line-height:1}
+.cbl{position:absolute;inset-inline:0;top:100%;z-index:30;max-height:260px;overflow:auto;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:4px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.cbl .gh{position:sticky;top:0;background:var(--card2);color:var(--muted);font-size:12px;font-weight:700;padding:5px 12px}
+#admin .cbl button{display:block;width:100%;text-align:start;background:none;border:0;border-radius:0;padding:10px 12px;color:var(--text)}
+#admin .cbl button:hover{background:var(--card2)}
 @media(max-width:640px){.tabs button{padding:8px 14px}}
 footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid var(--bd2);margin-top:20px}
 .fr{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -252,6 +259,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
         <div style="grid-column:1/-1"><label>نص يظهر مكان زر "مباشر" (اختياري)</label><input id="anote" placeholder="مثال: البث بعد قليل"><p class="note">لو كتبت هنا نصاً يظهر بدل الزر مهما كان الوقت، وسيبه فاضياً ليشتغل تلقائياً (قبل الموعد بـ 9 ساعات يظهر زر مباشر). ولو أضفت رابط بث، يتحول الكارت تلقائياً إلى "مباشر" وتفتح البث عند حلول موعد المباراة حتى لو النص موجود.</p></div>
       </div>
       <label>السيرفرات (أي رابط بث)</label>
+      <p class="note" style="margin-top:0">الروابط المدعومة: m3u8 (HLS) · mpd (DASH) · mp4 / webm · ts / flv · embed أو iframe (الصق الكود كامل) · يوتيوب · WebRTC بصيغة WHEP. روابط RTMP لا تعمل داخل المتصفح، حوّلها إلى HLS من سيرفر البث. لو الرابط بلا امتداد واضح اكتب نوعه قبله مثل hls: أو dash: أو ts: أو iframe:</p>
       <div id="arows"></div>
       <div class="bar">
         <button id="aaddSrc">+ سيرفر</button>
@@ -347,7 +355,7 @@ let SETTINGS = {day:"", wa:"", fb:"", mail:"", multi:[], nba:[], nbaIcon:"", new
 
 const $ = s => document.querySelector(s);
 const fmt = new Intl.DateTimeFormat("ar", {weekday:"short", day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"});
-let filter = 0, mode = "home", hls = null;
+let filter = 0, mode = "home";
 
 const OPEN_BEFORE_MIN = 0;
 const AUTO_END_MIN = 180;
@@ -666,15 +674,23 @@ document.querySelectorAll("#menu button").forEach(b => b.onclick = () => {
   showHome();
 });
 
-function stop(){ if (hls){ hls.destroy(); hls = null; } }
+/* ===== مشغّل البث الشامل: m3u8 / mpd / mp4 / ts / flv / embed / iframe / WebRTC(WHEP) ===== */
+let curKill = null;
+function stop(){ if (curKill){ try { curKill(); } catch (e) {} curKill = null; } }
+
+/* لو الرابط بلا امتداد واضح اكتب نوعه قبله، مثال: hls:https://site/live/1  أو  ts:https://site/live/1 */
+const STREAM_PREFIX = /^(hls|dash|mpd|mp4|ts|flv|iframe|embed|webrtc|whep):(?!\/\/)/i;
 
 function normUrl(t){
   t = (t || "").trim();
-  const m = t.match(/<(?:iframe|video|source)[^>]*?\ssrc\s*=\s*["']([^"']+)["']/i);
+  const m = t.match(/<(?:iframe|video|source|embed)[^>]*?\ssrc\s*=\s*["']([^"']+)["']/i);
   if (m) t = m[1].trim();
+  let pre = "";
+  const pm = t.match(STREAM_PREFIX);
+  if (pm){ pre = pm[0]; t = t.slice(pre.length).trim(); }
   if (t.startsWith("//")) t = "https:" + t;
   if (location.protocol === "https:" && t.startsWith("http://")) t = "https://" + t.slice(7);
-  return t.replace(/&amp;/g, "&");
+  return pre + t.replace(/&amp;/g, "&");
 }
 
 function toEmbed(u){
@@ -682,33 +698,165 @@ function toEmbed(u){
   return m ? "https://www.youtube.com/embed/" + m[1] + "?autoplay=1" : u;
 }
 
+function streamKind(u){
+  let forced = "";
+  const pm = u.match(STREAM_PREFIX);
+  if (pm){ forced = pm[1].toLowerCase(); u = u.slice(pm[0].length).trim(); }
+  const low = u.toLowerCase(), path = low.split(/[?#]/)[0];
+  if (/^(rtmps?|rtsp):\/\//.test(low)) return {k:"nobrowser", u, p: low.split(":")[0].toUpperCase()};
+  if (/^webrtc:\/\//.test(low)){
+    const qi = u.search(/[?#]/), base = qi < 0 ? u : u.slice(0, qi), rest = qi < 0 ? "" : u.slice(qi);
+    return {k:"whep", u: "https://" + base.slice(9).replace(/\/$/, "") + (/whep/i.test(base) ? "" : "/whep") + rest};
+  }
+  if (forced === "iframe" || forced === "embed") return {k:"iframe", u};
+  if (forced === "hls") return {k:"hls", u};
+  if (forced === "dash" || forced === "mpd") return {k:"dash", u};
+  if (forced === "mp4") return {k:"video", u};
+  if (forced === "ts") return {k:"mpegts", u, t:"mpegts"};
+  if (forced === "flv") return {k:"mpegts", u, t:"flv"};
+  if (forced === "webrtc" || forced === "whep") return {k:"whep", u};
+  if (/^wss?:\/\//.test(low)) return {k:"mpegts", u, t: /\.flv(?![a-z0-9])/.test(path) ? "flv" : "mpegts"};
+  if (/\/whep\/?$/.test(path)) return {k:"whep", u};
+  if (/\.m3u8(?![a-z0-9])/.test(path)) return {k:"hls", u};
+  if (/\.mpd(?![a-z0-9])/.test(path)) return {k:"dash", u};
+  if (/\.(mp4|m4v|webm|ogg|ogv|mov)$/.test(path)) return {k:"video", u};
+  if (/\.(ts|m2ts)$/.test(path)) return {k:"mpegts", u, t:"mpegts"};
+  if (/\.flv$/.test(path)) return {k:"mpegts", u, t:"flv"};
+  return {k:"iframe", u};
+}
+
+/* المكتبات تُحمَّل عند الحاجة فقط: من cdnjs ولو فشلت من jsDelivr */
+const LIBS = {
+  hls:  ["https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js", "https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"],
+  dash: ["https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.min.js", "https://cdn.jsdelivr.net/npm/dashjs@4.7.4/dist/dash.all.min.js"],
+  ts:   ["https://cdnjs.cloudflare.com/ajax/libs/mpegts.js/1.7.3/mpegts.min.js", "https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.js"]
+};
+const LIBT = {hls: () => window.Hls, dash: () => window.dashjs, ts: () => window.mpegts};
+const libP = {};
+function loadLib(k){
+  if (LIBT[k]()) return Promise.resolve();
+  if (libP[k]) return libP[k];
+  libP[k] = LIBS[k]
+    .reduce((p, u) => p.catch(() => loadScript(u).then(() => { if (!LIBT[k]()) throw new Error("lib"); })), Promise.reject())
+    .catch(e => { delete libP[k]; throw e; });
+  return libP[k];
+}
+
+const MSG_FAIL = "تعذر تشغيل هذا السيرفر، جرّب سيرفراً آخر";
+
+/* يرجع دالة إيقاف (أو null) */
+function mountStream(raw, p, o){
+  o = o || {};
+  p.innerHTML = "";
+  const url = normUrl(raw);
+  if (!url){ p.textContent = o.empty || "لم يتم إضافة مصدر البث لهذا السيرفر بعد"; return null; }
+  const s = streamKind(url);
+  let dead = false, kill = null;
+  const fail = msg => {
+    if (dead) return;
+    if (kill){ try { kill(); } catch (e) {} kill = null; }
+    p.textContent = msg || o.fail || MSG_FAIL;
+  };
+  if (s.k === "nobrowser"){
+    p.textContent = "روابط " + s.p + " لا تعمل مباشرة داخل المتصفح. حوّلها من سيرفر البث إلى HLS (m3u8) أو WebRTC ثم ضع الرابط الجديد";
+    return null;
+  }
+  if (s.k === "iframe"){
+    const f = document.createElement("iframe");
+    f.src = toEmbed(s.u); f.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture"; f.allowFullscreen = true;
+    p.appendChild(f);
+    return null;
+  }
+  const v = document.createElement("video");
+  v.controls = true; v.autoplay = true; v.playsInline = true;
+  if (o.muted) v.muted = true;
+  p.appendChild(v);
+  const stopVideo = () => { try { v.pause(); v.removeAttribute("src"); v.srcObject = null; v.load(); } catch (e) {} };
+
+  if (s.k === "video"){
+    v.addEventListener("error", () => fail());
+    v.src = s.u;
+    kill = stopVideo;
+  } else if (s.k === "hls"){
+    const native = v.canPlayType("application/vnd.apple.mpegurl");
+    loadLib("hls").then(() => {
+      if (dead) return;
+      if (Hls.isSupported()){
+        const h = new Hls();
+        let net = 0, med = 0;
+        h.loadSource(s.u); h.attachMedia(v);
+        h.on(Hls.Events.ERROR, (e, d) => {
+          if (!d.fatal) return;
+          if (d.type === Hls.ErrorTypes.NETWORK_ERROR && net++ < 2) h.startLoad();
+          else if (d.type === Hls.ErrorTypes.MEDIA_ERROR && med++ < 2) h.recoverMediaError();
+          else fail();
+        });
+        kill = () => { try { h.destroy(); } catch (e) {} stopVideo(); };
+      } else if (native){
+        v.addEventListener("error", () => fail());
+        v.src = s.u; kill = stopVideo;
+      } else fail();
+    }).catch(() => {
+      if (dead) return;
+      if (native){ v.addEventListener("error", () => fail()); v.src = s.u; kill = stopVideo; }
+      else fail();
+    });
+  } else if (s.k === "dash"){
+    loadLib("dash").then(() => {
+      if (dead) return;
+      const d = dashjs.MediaPlayer().create();
+      let bad = false;
+      d.on("error", () => { bad = true; });
+      v.addEventListener("playing", () => { bad = false; });
+      const tm = setTimeout(() => { if (bad && v.readyState < 3) fail(); }, 15000);
+      d.initialize(v, s.u, true);
+      kill = () => { clearTimeout(tm); try { if (d.destroy) d.destroy(); else d.reset(); } catch (e) {} stopVideo(); };
+    }).catch(() => fail());
+  } else if (s.k === "mpegts"){
+    loadLib("ts").then(() => {
+      if (dead) return;
+      if (!mpegts.isSupported()){ fail("هذا المتصفح لا يدعم تشغيل بث TS/FLV، جرّب متصفحاً آخر أو رابط HLS"); return; }
+      const m = mpegts.createPlayer({type: s.t, isLive: true, url: s.u}, {enableWorker: true, liveBufferLatencyChasing: true});
+      m.attachMediaElement(v);
+      m.on(mpegts.Events.ERROR, () => fail());
+      m.load();
+      try { const r = m.play(); if (r && r.catch) r.catch(() => {}); } catch (e) {}
+      kill = () => { try { m.pause(); m.unload(); m.detachMediaElement(); m.destroy(); } catch (e) {} stopVideo(); };
+    }).catch(() => fail());
+  } else if (s.k === "whep"){
+    if (!window.RTCPeerConnection){ fail("هذا المتصفح لا يدعم WebRTC"); }
+    else {
+      const pc = new RTCPeerConnection({iceServers: [{urls: "stun:stun.l.google.com:19302"}]});
+      const ms = new MediaStream();
+      v.srcObject = ms;
+      pc.ontrack = e => { ms.addTrack(e.track); };
+      pc.onconnectionstatechange = () => { if (pc.connectionState === "failed") fail(); };
+      kill = () => { try { pc.close(); } catch (e) {} stopVideo(); };
+      pc.addTransceiver("video", {direction: "recvonly"});
+      pc.addTransceiver("audio", {direction: "recvonly"});
+      (async () => {
+        try {
+          await pc.setLocalDescription(await pc.createOffer());
+          await new Promise(res => {
+            if (pc.iceGatheringState === "complete") return res();
+            const t = setTimeout(res, 2500);
+            pc.addEventListener("icegatheringstatechange", () => { if (pc.iceGatheringState === "complete"){ clearTimeout(t); res(); } });
+          });
+          if (dead) return;
+          const r = await fetch(s.u, {method: "POST", headers: {"Content-Type": "application/sdp"}, body: pc.localDescription.sdp});
+          if (!r.ok) throw new Error("whep");
+          await pc.setRemoteDescription({type: "answer", sdp: await r.text()});
+        } catch (e) { fail("تعذر الاتصال ببث WebRTC، تأكد أن الرابط بصيغة WHEP"); }
+      })();
+    }
+  }
+  return () => { dead = true; if (kill){ try { kill(); } catch (e) {} kill = null; } };
+}
+
 function playUrl(url, target){
   const p = target || $("#player");
   stop();
-  p.innerHTML = "";
-  url = normUrl(url);
-  if (!url){ p.textContent = "لم يتم إضافة مصدر البث لهذا السيرفر بعد"; return; }
-  const path = url.split("?")[0].toLowerCase();
-  if (/\.m3u8$/.test(path) || /\.(mp4|webm|ogg)$/.test(path)){
-    const v = document.createElement("video");
-    v.controls = true; v.autoplay = true; v.playsInline = true;
-    p.appendChild(v);
-    const startHls = () => {
-      if (!v.isConnected) return;
-      if (window.Hls && Hls.isSupported()){
-        hls = new Hls(); hls.loadSource(url); hls.attachMedia(v);
-        hls.on(Hls.Events.ERROR, (e, d) => { if (d.fatal) p.textContent = "تعذر تشغيل هذا السيرفر، جرّب سيرفراً آخر"; });
-      } else v.src = url;
-    };
-    if (/\.m3u8$/.test(path)){
-      if (window.Hls) startHls();
-      else loadScript("https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js").then(startHls).catch(() => { if (v.isConnected) v.src = url; });
-    } else v.src = url;
-  } else {
-    const f = document.createElement("iframe");
-    f.src = toEmbed(url); f.allow = "autoplay; fullscreen; encrypted-media"; f.allowFullscreen = true;
-    p.appendChild(f);
-  }
+  curKill = mountStream(url, p);
 }
 
 document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
@@ -926,7 +1074,7 @@ function fillMulti(){
     const m = (SETTINGS.multi && SETTINGS.multi[k]) || {};
     const r = document.createElement("div");
     r.className = "mrow";
-    r.innerHTML = '<input class="h" placeholder="الفريق الأول"><input class="a" placeholder="الفريق الثاني"><small>شاشة ' + (k + 1) + '</small><input class="u l" placeholder="رابط البث"><button class="tst">تجربة</button>';
+    r.innerHTML = '<input class="h" placeholder="الفريق الأول"><input class="a" placeholder="الفريق الثاني"><small>شاشة ' + (k + 1) + '</small><input class="u l" placeholder="رابط البث: m3u8 / mpd / mp4 / ts / embed / iframe / WebRTC"><button class="tst">تجربة</button>';
     r.querySelector(".h").value = m.home || "";
     r.querySelector(".a").value = m.away || "";
     r.querySelector(".u").value = m.url || "";
@@ -952,7 +1100,7 @@ function toLocalInput(iso){
 function aRow(name, url){
   const r = document.createElement("div");
   r.className = "row";
-  r.innerHTML = '<input class="n" placeholder="الاسم"><input class="u l" placeholder="رابط البث"><button class="tst">تجربة</button><button class="d rm">✕</button>';
+  r.innerHTML = '<input class="n" placeholder="الاسم"><input class="u l" placeholder="رابط البث: m3u8 / mpd / mp4 / ts / embed / iframe / WebRTC"><button class="tst">تجربة</button><button class="d rm">✕</button>';
   r.querySelector(".n").value = name || "";
   r.querySelector(".u").value = url || "";
   r.querySelector(".tst").onclick = () => { playUrl(r.querySelector(".u").value, $("#atp")); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
@@ -1076,36 +1224,13 @@ $("#aload").onclick = async () => {
 /* ===== شاشة أكثر من مباراة في وقت واحد ===== */
 let mHls = [];
 function stopMulti(){
-  mHls.forEach(h => { try { h.destroy(); } catch (e) {} });
+  mHls.forEach(k => { try { k(); } catch (e) {} });
   mHls = [];
   $("#mgrid").innerHTML = "";
 }
 function playTile(p, url){
-  url = normUrl(url);
-  p.innerHTML = "";
-  if (!url){ p.textContent = "لا يوجد بث"; return; }
-  const path = url.split("?")[0].toLowerCase();
-  if (/\.m3u8$/.test(path) || /\.(mp4|webm|ogg)$/.test(path)){
-    const v = document.createElement("video");
-    v.controls = true; v.autoplay = true; v.muted = true; v.playsInline = true;
-    p.appendChild(v);
-    if (/\.m3u8$/.test(path)){
-      const go = () => {
-        if (!v.isConnected) return;
-        if (window.Hls && Hls.isSupported()){
-          const h = new Hls(); mHls.push(h);
-          h.loadSource(url); h.attachMedia(v);
-          h.on(Hls.Events.ERROR, (e, d) => { if (d.fatal) p.textContent = "تعذر تشغيل هذه الشاشة"; });
-        } else v.src = url;
-      };
-      if (window.Hls) go();
-      else loadScript("https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js").then(go).catch(() => { if (v.isConnected) v.src = url; });
-    } else v.src = url;
-  } else {
-    const f = document.createElement("iframe");
-    f.src = toEmbed(url); f.allow = "autoplay; fullscreen; encrypted-media"; f.allowFullscreen = true;
-    p.appendChild(f);
-  }
+  const k = mountStream(url, p, {muted: true, empty: "لا يوجد بث", fail: "تعذر تشغيل هذه الشاشة"});
+  if (k) mHls.push(k);
 }
 function buildMulti(){
   stopMulti();
@@ -1209,6 +1334,70 @@ $("#nsave").onclick = () => {
     .filter(x => x.url || x.home || x.away);
   persistSettings();
 };
+
+/* ===== قوائم القنوات والمعلّقين في الأدمن (اضغط على الخانة تظهر القائمة، واكتب لتصفيتها، ويمكنك كتابة اسم غير موجود) ===== */
+/* لإضافة قناة أو معلّق: أضف الاسم داخل القوس المناسب في القائمتين التاليتين */
+const CHANNELS = [
+  ["beIN Sports", ["beIN Sports 1","beIN Sports 2","beIN Sports 3","beIN Sports 4","beIN Sports 5","beIN Sports 6","beIN Sports 7","beIN Sports 8","beIN Sports 9","beIN Sports Premium 1","beIN Sports Premium 2","beIN Sports Premium 3","beIN Sports Max 1","beIN Sports Max 2","beIN Sports Max 3","beIN Sports Max 4","beIN Sports News"]],
+  ["SSC السعودية", ["SSC 1","SSC 2","SSC 3","SSC 4","SSC 5","SSC Extra 1","SSC Extra 2","SSC News","السعودية الرياضية"]],
+  ["الإمارات", ["أبوظبي الرياضية 1","أبوظبي الرياضية 2","دبي الرياضية 1","دبي الرياضية 2","دبي الرياضية 3","الشارقة الرياضية"]],
+  ["قطر", ["الكأس 1","الكأس 2","الكأس 3","الكأس 4"]],
+  ["الكويت وعمان والبحرين", ["الكويت الرياضية","عمان الرياضية","البحرين الرياضية"]],
+  ["مصر", ["أون سبورت","أون سبورت 2","أون تايم سبورتس","أون تايم سبورتس 2","النيل للرياضة","قناة الأهلي","قناة الزمالك","القناة الأولى المصرية"]],
+  ["المغرب العربي", ["الرياضية المغربية","الأولى المغربية","الجزائرية الأرضية","الشروق TV","النهار TV","الوطنية 1 التونسية","الوطنية 2 التونسية","ليبيا الرياضية"]],
+  ["العراق والأردن", ["الرياضية العراقية","الأردن الرياضية"]],
+  ["قنوات أخرى", ["شاهد VIP","يوتيوب","ESPN","Sky Sports","TNT Sports","DAZN","Eurosport","Canal+","Fox Sports"]]
+];
+const COMMENTATORS = [
+  ["معلّقو beIN", ["عصام الشوالي","حفيظ دراجي","رؤوف خليف","خليل البلوشي","يوسف سيف","علي سعيد الكعبي","عدنان حمد"]],
+  ["السعودية والمغرب", ["فهد العتيبي","جواد بدة"]],
+  ["مصر", ["مدحت شلبي","أحمد الطيب","علاء صادق"]]
+];
+
+function makeCombo(id, groups){
+  const inp = $("#" + id);
+  if (!inp) return;
+  const wrap = document.createElement("div");
+  wrap.className = "cb";
+  inp.parentNode.insertBefore(wrap, inp);
+  wrap.appendChild(inp);
+  inp.setAttribute("autocomplete", "off");
+  const tg = document.createElement("button");
+  tg.type = "button"; tg.className = "cbt"; tg.tabIndex = -1; tg.textContent = "▾"; tg.setAttribute("aria-label", "عرض القائمة");
+  const list = document.createElement("div");
+  list.className = "cbl hide";
+  wrap.append(tg, list);
+  let typed = false;
+  const close = () => list.classList.add("hide");
+  const build = () => {
+    const q = typed ? inp.value.trim().toLowerCase() : "";
+    list.innerHTML = "";
+    let n = 0;
+    groups.forEach(g => {
+      const items = g[1].filter(x => !q || x.toLowerCase().includes(q));
+      if (!items.length) return;
+      const h = document.createElement("div");
+      h.className = "gh"; h.textContent = g[0];
+      list.appendChild(h);
+      items.forEach(x => {
+        const b = document.createElement("button");
+        b.type = "button"; b.textContent = x;
+        b.onclick = () => { inp.value = x; typed = false; close(); };
+        list.appendChild(b); n++;
+      });
+    });
+    list.classList.toggle("hide", n === 0);
+  };
+  const open = () => { typed = false; build(); };
+  inp.addEventListener("focus", open);
+  inp.addEventListener("click", open);
+  inp.addEventListener("input", () => { typed = true; build(); });
+  inp.addEventListener("keydown", e => { if (e.key === "Escape" || e.key === "Enter") close(); });
+  tg.onclick = () => { if (list.classList.contains("hide")){ inp.blur(); open(); } else close(); };
+  document.addEventListener("pointerdown", e => { if (!wrap.contains(e.target)) close(); });
+}
+makeCombo("achan", CHANNELS);
+makeCombo("acomm", COMMENTATORS);
 
 /* فتح الأدمن بشكل مخفي: اضغط على اسم الموقع 5 مرات متتالية، أو افتح الرابط وفي آخره #admin */
 let tapN = 0, tapT = null;
