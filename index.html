@@ -5,13 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>شوتايم كورة</title>
 <style>
-:root{--bg:#000;--card:#2b2b2b;--card2:#3a3a3a;--team:#86efac;--onteam:#000;--text:#e5e5e5;--muted:#a3a3a3;--bd:#444;--bd2:#222;--in:#1c1c1c;--live:#ef4444}
-:root[data-theme=light]{--bg:#eef0f3;--card:#fff;--card2:#e5e7eb;--team:#15803d;--onteam:#fff;--text:#111827;--muted:#6b7280;--bd:#d1d5db;--bd2:#e5e7eb;--in:#f9fafb}
+:root{--wt:#fff;--bg:#000;--card:#2b2b2b;--card2:#3a3a3a;--team:#86efac;--onteam:#000;--text:#e5e5e5;--muted:#a3a3a3;--bd:#444;--bd2:#222;--in:#1c1c1c;--live:#ef4444}
+:root[data-theme=light]{--wt:#111827;--bg:#eef0f3;--card:#fff;--card2:#e5e7eb;--team:#15803d;--onteam:#fff;--text:#111827;--muted:#6b7280;--bd:#d1d5db;--bd2:#e5e7eb;--in:#f9fafb}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.5}
 header{position:relative;padding:12px 16px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;justify-content:space-between;gap:8px}
 h1{font-size:22px;margin:0;color:var(--team);cursor:default;user-select:none;line-height:1.2}
 .brand small{display:block;font-size:12px;letter-spacing:3px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:2px;direction:ltr;text-align:right}
+.brand small.anim{display:flex;align-items:center;gap:1px;letter-spacing:0;font-size:16px;font-weight:900;color:var(--wt);margin-top:3px;justify-content:flex-end}
+.anim i:nth-child(n+10){color:var(--team)}
+.anim i{font-style:normal;display:inline-block;animation:wv 1.6s ease-in-out infinite;animation-delay:calc(var(--i)*.1s)}
+.anim i.sp{width:8px}
+.anim .bl{width:.95em;height:.95em;display:block;animation:sp 1.2s linear infinite}
+.anim i:nth-child(3) .bl circle{fill:var(--team);stroke:var(--team)}
+.anim i:nth-child(3) .bl path:nth-of-type(1){fill:#111}
+.anim i:nth-child(3) .bl path:nth-of-type(2){stroke:#111}
+@keyframes wv{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes sp{to{transform:rotate(360deg)}}
+.w{color:var(--wt)}
+.rw{display:inline-block;width:44px;vertical-align:middle}
+.kw{display:inline-block;animation:bump 2.4s linear infinite}
+.rb{display:inline-block;animation:rl 2.4s infinite}
+@keyframes rl{0%{transform:translateX(0) rotate(0);animation-timing-function:ease-out}50%{transform:translateX(-26px) rotate(-540deg);animation-timing-function:ease-in}100%{transform:translateX(0) rotate(0)}}
+@keyframes bump{0%{transform:translateX(2px)}7%{transform:translateX(0)}93%{transform:translateX(0)}100%{transform:translateX(2px)}}
+@media(prefers-reduced-motion:reduce){.anim i,.anim .bl,.rb,.kw{animation:none}}
 .tools{display:flex;align-items:center;gap:8px}
 .ib{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;text-decoration:none}
 .ib svg{width:22px;height:22px;display:block}
@@ -177,7 +194,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 </head>
 <body>
 <header>
-  <div class="brand"><h1>⚽ شوتايم كورة</h1><small>ShowTime Kora</small></div>
+  <div class="brand"><h1><span class="w">شوتايم</span> <span class="kw">كورة</span><span class="rw"><span class="rb">⚽</span></span></h1><small class="anim" aria-label="ShowTime Kora"><i style="--i:0">S</i><i style="--i:1">H</i><i style="--i:2"><svg class="bl" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#111" stroke="#fff" stroke-width="1.2"/><path d="M12 7.2l4.2 3-1.6 5h-5.2l-1.6-5z" fill="#fff"/><path d="M12 7.2V1.5M16.2 10.2l5.3-1.8M14.6 15.2l3.3 4.4M9.4 15.2l-3.3 4.4M7.8 10.2L2.5 8.4" stroke="#fff" stroke-width="1.4" fill="none"/></svg></i><i style="--i:3">W</i><i style="--i:4">T</i><i style="--i:5">I</i><i style="--i:6">M</i><i style="--i:7">E</i><i class="sp"></i><i style="--i:9">K</i><i style="--i:10"><svg class="bl" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#111" stroke="#fff" stroke-width="1.2"/><path d="M12 7.2l4.2 3-1.6 5h-5.2l-1.6-5z" fill="#fff"/><path d="M12 7.2V1.5M16.2 10.2l5.3-1.8M14.6 15.2l3.3 4.4M9.4 15.2l-3.3 4.4M7.8 10.2L2.5 8.4" stroke="#fff" stroke-width="1.4" fill="none"/></svg></i><i style="--i:11">R</i><i style="--i:12">A</i></small></div>
   <div class="tools">
     <a class="ib" id="waBtn" target="_blank" rel="noopener" aria-label="واتساب"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#25d366"/><path fill="#fff" d="M12 4.2a7.8 7.8 0 0 0-6.7 11.8L4.2 19.8l3.9-1A7.8 7.8 0 1 0 12 4.2z"/><g transform="translate(6.7 6.5) scale(.45)" fill="#25d366"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></g></svg></a>
     <a class="ib" id="fbBtn" target="_blank" rel="noopener" aria-label="فيسبوك"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#1877f2"/><g transform="translate(3.6 3.6) scale(.7)"><path fill="#fff" d="M14 8h3V4h-3c-2.8 0-4 1.8-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8.5c0-.3.2-.5.5-.5z"/></g></svg></a>
