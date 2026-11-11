@@ -10,7 +10,7 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.5}
 header{position:relative;padding:12px 16px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;justify-content:space-between;gap:8px}
-h1{font-size:22px;margin:0;color:var(--team);cursor:default;user-select:none;line-height:1.2}
+h1{font-size:22px;margin:0;color:var(--team);cursor:default;user-select:none;line-height:1.2;white-space:nowrap}
 .brand small{display:block;font-size:12px;letter-spacing:3px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:2px;direction:ltr;text-align:right}
 .brand small.anim{display:flex;align-items:center;gap:1px;letter-spacing:0;font-size:16px;font-weight:900;color:var(--wt);margin-top:3px;justify-content:flex-end}
 .anim i:nth-child(n+10){color:var(--team)}
@@ -31,7 +31,7 @@ h1{font-size:22px;margin:0;color:var(--team);cursor:default;user-select:none;lin
 @keyframes kick{0%,35%{transform:translateX(0) rotate(0)}41%{transform:translateX(-5px) rotate(-7deg)}52%{transform:translateX(1px) rotate(2deg)}64%,100%{transform:translateX(0) rotate(0)}}
 @keyframes bump{0%{transform:translateX(2px)}7%{transform:translateX(0)}93%{transform:translateX(0)}100%{transform:translateX(2px)}}
 @media(prefers-reduced-motion:reduce){.anim i,.anim .bl,.rb,.kw,.w{animation:none}}
-.tools{display:flex;align-items:center;gap:8px}
+.tools{display:flex;align-items:center;gap:8px;flex:none}
 .ib{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;text-decoration:none}
 .ib svg{width:22px;height:22px;display:block}
 .ib:hover{opacity:.85}
@@ -43,6 +43,9 @@ h1{font-size:22px;margin:0;color:var(--team);cursor:default;user-select:none;lin
 #menu button{cursor:pointer}
 #menu button:hover{background:var(--card2)}
 #menu button.on{color:var(--team);font-weight:700}
+#menu #themeBtn{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#menu #themeBtn svg{width:20px;height:20px;display:block}
+#menu #themeBtn.on{color:var(--text);font-weight:400}
 #menu .soon{color:var(--muted);font-size:14px;border-top:1px solid var(--bd);margin-top:4px}
 .ad{background:#000;border-bottom:1px solid var(--bd2);line-height:0}
 .ad img{display:block;width:100%;max-width:none;height:auto;margin:0}
@@ -281,6 +284,96 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
   .lgw{width:34px;height:34px}
   .tools{gap:6px}
 }
+
+/* ===== الراديو ===== */
+#radioBtn{position:relative;width:40px;height:40px;border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.12),0 0 14px rgba(245,158,11,.3)}
+#radioBtn svg{width:26px;height:26px;color:#f59e0b}
+@media(max-width:420px){#radioBtn{width:36px;height:36px}#radioBtn svg{width:23px;height:23px}}
+#radio .st{text-align:center;margin:0 0 12px}
+#rdEmpty{padding:30px 10px;color:var(--muted);text-align:center}
+.tvside.closed #rdList{display:none}
+#rdList{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding:8px;max-height:calc(100vh - 130px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--team) var(--bd2)}
+#rdList button{--c:#d97706;--c2:#fbbf24;display:flex;align-items:center;gap:8px;width:100%;text-align:right;background:linear-gradient(135deg,var(--c),var(--c2));border:2px solid transparent;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);border-radius:12px;padding:13px 10px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.25);transition:transform .15s,filter .15s}
+#rdList button:hover{filter:brightness(1.1)}
+#rdList button svg{width:22px;height:22px;flex:none;color:#fff}
+#rdList button.on{border-color:#fff;transform:scale(1.03);box-shadow:0 0 0 2px var(--c),0 4px 14px rgba(0,0,0,.4);font-weight:900}
+#rdList button.on::after{content:"●";margin-right:auto;font-size:10px;animation:bl 1.2s ease-in-out infinite}
+@media(max-width:600px){#rdList{padding:6px;gap:6px}#rdList button{padding:11px 6px;font-size:12.5px;gap:6px}#rdList button svg{display:none}}
+#rdName{font-size:16px;margin:4px 0 10px}
+#rdName .tvlg{height:42px;max-width:100%;object-fit:contain;background:#fff;border-radius:10px;padding:3px 8px;vertical-align:middle}
+#rdSrv{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+#rdSrv:empty{display:none}
+#rdSrv button{border:1px solid var(--bd);background:var(--card);color:var(--text);padding:8px 16px;border-radius:8px;font:inherit;cursor:pointer}
+#rdSrv button.on{background:var(--team);border-color:var(--team);color:var(--onteam);font-weight:700}
+#rdp{background:#111;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#a3a3a3;text-align:center;padding:8px}
+#rdp iframe{width:100%;height:100%;border:0;background:#000}
+#rdp.rdbox,#atp.rdbox{aspect-ratio:auto;min-height:220px;flex-direction:column;gap:16px;background:radial-gradient(circle at 50% 0%,#4a3206,#111 72%);padding:16px}
+#rdp audio,#atp audio{width:100%;max-width:420px}
+.rdeq{display:flex;align-items:flex-end;gap:5px;height:54px}
+.rdeq i{display:block;width:8px;height:8px;border-radius:4px;background:linear-gradient(#fbbf24,#f59e0b);transition:height .25s}
+.rdeq.on i{animation:rdq 1s ease-in-out infinite}
+.rdeq.on i:nth-child(2){animation-delay:-.7s}.rdeq.on i:nth-child(3){animation-delay:-.4s}.rdeq.on i:nth-child(4){animation-delay:-.9s}.rdeq.on i:nth-child(5){animation-delay:-.2s}.rdeq.on i:nth-child(6){animation-delay:-.6s}.rdeq.on i:nth-child(7){animation-delay:-.1s}
+#admin #rdRows .row{grid-template-columns:1fr auto auto;grid-template-areas:"su su su" "sn st d"}
+#admin #rdRows .row .su{grid-area:su;min-width:0}#admin #rdRows .row .sn{grid-area:sn;min-width:0}#admin #rdRows .row .st2{grid-area:st}#admin #rdRows .row .d{grid-area:d}
+@keyframes rdq{0%,100%{height:8px}50%{height:50px}}
+
+/* ===== قائمة القنوات: تصميم احترافي ===== */
+.tvside{background:linear-gradient(180deg,var(--card),var(--bg));border:1px solid var(--bd);border-radius:18px;box-shadow:0 14px 34px rgba(0,0,0,.38);width:230px}
+.tvsh{position:relative;padding:15px 12px;font-size:15px;font-weight:900;letter-spacing:.2px;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border-bottom:1px solid var(--bd)}
+.tvsh::after{content:"";position:absolute;right:14px;left:14px;bottom:-1px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--team),transparent);opacity:.8}
+.tvsh .tvt{display:inline-flex;align-items:center;gap:9px}
+.tvsh .tvt::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--live);box-shadow:0 0 0 3px rgba(239,68,68,.22),0 0 10px rgba(239,68,68,.7);animation:bl 1.2s ease-in-out infinite}
+.tvside.closed .tvsh::after{display:none}
+#tvList{padding:12px 10px;gap:10px;scrollbar-width:thin}
+#tvList::-webkit-scrollbar{width:6px}
+#tvList::-webkit-scrollbar-track{background:transparent}
+#tvList::-webkit-scrollbar-thumb{background:var(--bd);border-radius:6px;border:0}
+#tvList::-webkit-scrollbar-thumb:hover{background:var(--team)}
+.tvarr button{border-radius:10px;background:var(--card);border-color:var(--bd)}
+/* عنوان المجموعة */
+.tvgh{background:transparent;border:0;border-bottom:1px solid var(--bd);border-radius:0;padding:8px 4px 8px 6px;font-size:12px;font-weight:800;letter-spacing:.6px;color:var(--muted);gap:8px;position:relative}
+.tvgh::before{content:"";width:4px;height:14px;border-radius:3px;background:var(--c,var(--team));flex:none;order:3}
+.tvgh .gn{order:2;color:var(--text);font-size:13px}
+.tvgh .gc{order:1;min-width:22px;height:20px;padding:0 7px;border-radius:999px;background:var(--card2);border:1px solid var(--bd);display:inline-flex;align-items:center;justify-content:center;color:var(--text);font-size:11px;font-weight:800}
+.tvgh .ar{order:0;font-size:10px;color:var(--muted);margin-inline-start:auto}
+.tvgh:hover{filter:none;color:var(--text)}
+.tvgh:hover .gc{border-color:var(--c,var(--team))}
+.tvg{gap:7px}
+.tvgb{gap:7px;padding-top:4px}
+/* بطاقة القناة */
+#tvList button{--c:#16a34a;position:relative;background:var(--card2);background-image:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,0));border:1px solid var(--bd);border-right:4px solid var(--c);color:var(--text);text-shadow:none;border-radius:12px;padding:10px 12px 10px 10px;font-size:13.5px;font-weight:700;gap:11px;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform .18s,box-shadow .18s,border-color .18s,background .18s;overflow:hidden}
+#tvList button:hover{filter:none;transform:translateX(-3px);border-color:var(--c);box-shadow:0 6px 16px rgba(0,0,0,.32)}
+#tvList button>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tvList button svg{width:34px;height:34px;padding:7px;border-radius:10px;background:var(--c);color:#fff;flex:none;box-shadow:0 3px 8px rgba(0,0,0,.3)}
+#tvList .chl{width:34px;height:34px;border-radius:10px;padding:3px;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.28)}
+#tvList button.on{transform:none;border-color:var(--c);border-right-width:4px;background:var(--card2);background-image:linear-gradient(135deg,var(--c),transparent 160%);font-weight:900;color:#fff;box-shadow:0 0 0 1px var(--c),0 8px 22px rgba(0,0,0,.4)}
+:root[data-theme=light] #tvList button.on{color:var(--text);background-image:linear-gradient(135deg,var(--c),transparent 110%);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+#tvList button.on::after{content:"LIVE";margin:0;margin-inline-start:auto;flex:none;font-size:9px;font-weight:900;letter-spacing:1px;padding:3px 7px;border-radius:999px;background:var(--live);color:#fff;text-shadow:none;animation:bl 1.2s ease-in-out infinite}
+#tvList button:active{transform:scale(.98)}
+#tvList button.lgo{height:66px;border:1px solid var(--c);border-right-width:4px;background-color:var(--card2)}
+/* منطقة المشاهدة */
+#tvName{display:flex;align-items:center;justify-content:center;gap:10px;font-size:18px;font-weight:900;padding:10px 14px;margin:0 0 12px;background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--bd);border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#tvName.hide{display:none}
+#tvSrv{gap:8px;margin-bottom:12px}
+#tvSrv button{border-radius:999px;padding:8px 18px;font-size:13.5px;font-weight:700;background:var(--card);border:1px solid var(--bd);transition:all .18s}
+#tvSrv button:hover{border-color:var(--team);color:var(--team)}
+#tvSrv button.on{background:var(--team);border-color:var(--team);color:var(--onteam);box-shadow:0 0 14px rgba(134,239,172,.35)}
+#tvp{background:radial-gradient(circle at 50% 0%,#1d2230,#07090d 72%);border:1px solid var(--bd);border-radius:16px;box-shadow:0 14px 34px rgba(0,0,0,.45);color:#9ca3af;font-size:15px;font-weight:700;padding:16px}
+#tv .st{font-size:22px}
+@media(max-width:600px){
+  .tvside{width:158px;border-radius:14px}
+  .tvsh{padding:12px 6px;font-size:13px}
+  #tvList{padding:8px 6px;gap:8px}
+  .tvgh{padding:7px 2px}
+  .tvgh .gc{display:inline-flex}
+  #tvList button{padding:9px 8px;font-size:12.5px;gap:7px}
+  #tvList button svg{display:block;width:26px;height:26px;padding:5px;border-radius:8px}
+  #tvList .chl{width:26px;height:26px}
+  #tvList button.on::after{display:none}
+  #tvList button.on::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--live);position:absolute;top:7px;left:7px;box-shadow:0 0 8px var(--live);animation:bl 1.2s ease-in-out infinite}
+  #tvName{font-size:15px}
+}
+@media(prefers-reduced-motion:reduce){#tvList button,.tvsh .tvt::before,#tvList button.on::after{animation:none;transition:none}}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -289,13 +382,14 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
   <div class="brand"><h1><span class="w">شوتايم</span> <span class="kw">كورة</span><span class="rw"><span class="rb">⚽</span></span></h1><small class="anim" aria-label="ShowTime Kora"><i style="--i:0">S</i><i style="--i:1">H</i><i style="--i:2"><svg class="bl" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#111" stroke="#fff" stroke-width="1.2"/><path d="M12 7.2l4.2 3-1.6 5h-5.2l-1.6-5z" fill="#fff"/><path d="M12 7.2V1.5M16.2 10.2l5.3-1.8M14.6 15.2l3.3 4.4M9.4 15.2l-3.3 4.4M7.8 10.2L2.5 8.4" stroke="#fff" stroke-width="1.4" fill="none"/></svg></i><i style="--i:3">W</i><i style="--i:4">T</i><i style="--i:5">I</i><i style="--i:6">M</i><i style="--i:7">E</i><i class="sp"></i><i style="--i:9">K</i><i style="--i:10"><svg class="bl" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#111" stroke="#fff" stroke-width="1.2"/><path d="M12 7.2l4.2 3-1.6 5h-5.2l-1.6-5z" fill="#fff"/><path d="M12 7.2V1.5M16.2 10.2l5.3-1.8M14.6 15.2l3.3 4.4M9.4 15.2l-3.3 4.4M7.8 10.2L2.5 8.4" stroke="#fff" stroke-width="1.4" fill="none"/></svg></i><i style="--i:11">R</i><i style="--i:12">A</i></small></div>
   <div class="tools">
     <button class="ib" id="tvBtn" aria-label="القنوات"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2.8l4 3.4 4-3.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><rect x="2.5" y="6.5" width="19" height="12.5" rx="3.2" fill="currentColor"/><rect x="4.6" y="8.6" width="11.6" height="8.3" rx="1.8" fill="#0b0b0b"/><path d="M9 10.6v4.2l3.6-2.1z" fill="currentColor"/><circle cx="19" cy="10.6" r="1" fill="#0b0b0b"/><circle cx="19" cy="14" r="1" fill="#0b0b0b"/><path d="M7 19v2M17 19v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+    <button class="ib" id="radioBtn" aria-label="الراديو"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.6 7.4L7.2 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="2.5" y="7.5" width="19" height="13" rx="3.2" fill="currentColor"/><circle cx="8.4" cy="14" r="3.5" fill="#0b0b0b"/><circle cx="8.4" cy="14" r="1.3" fill="currentColor"/><path d="M14.4 11.2h5M14.4 14h5" stroke="#0b0b0b" stroke-width="1.5" stroke-linecap="round"/><circle cx="17" cy="17.5" r="1" fill="#0b0b0b"/></svg></button>
     <button class="ib" id="nbaBtn" aria-label="مباريات NBA"><img id="nbaImg" class="hide" alt="NBA"><span id="nbaSvg" class="nbat"><b>N</b><b>B</b><b>A</b></span></button>
-    <button class="ib" id="themeBtn" aria-label="تغيير الوضع"></button>
     <button id="menuBtn" aria-label="القائمة"><i></i><i></i><i></i></button>
   </div>
   <div id="menu" class="hide">
     <button data-m="home" class="on">الصفحة الرئيسية</button>
     <button data-m="live">بث مباشر</button>
+    <button id="themeBtn" aria-label="تغيير الوضع"><span class="tl"></span><span class="ti"></span></button>
     <div class="soon">قريباً قنوات بث مباشر</div>
   </div>
 </header>
@@ -332,11 +426,25 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
     <h2 class="st">📺 القنوات</h2>
     <div id="tvEmpty" class="hide">لا توجد قنوات حالياً</div>
     <div class="tvwrap" id="tvWrap">
-      <div class="tvside"><button type="button" class="tvsh" id="tvToggle"><span>📺 قائمة القنوات</span><span class="ar">▼</span></button><div class="tvbody"><div class="tvarr hide" id="tvArr"><button type="button" id="tvUp" aria-label="لفوق">▲</button><button type="button" id="tvDn" aria-label="لتحت">▼</button></div><div id="tvList"></div></div></div>
+      <div class="tvside"><button type="button" class="tvsh" id="tvToggle"><span class="tvt">قائمة القنوات</span><span class="ar">▼</span></button><div class="tvbody"><div class="tvarr hide" id="tvArr"><button type="button" id="tvUp" aria-label="لفوق">▲</button><button type="button" id="tvDn" aria-label="لتحت">▼</button></div><div id="tvList"></div></div></div>
       <div class="tvmain">
         <h3 id="tvName" class="st hide"></h3>
         <div id="tvSrv"></div>
         <div id="tvp"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="radio" class="hide">
+    <button class="back" id="rdback">→ رجوع</button>
+    <h2 class="st">📻 الراديو</h2>
+    <div id="rdEmpty" class="hide">لا توجد محطات راديو حالياً</div>
+    <div class="tvwrap" id="rdWrap">
+      <div class="tvside"><button type="button" class="tvsh" id="rdToggle"><span>📻 قائمة المحطات</span><span class="ar">▼</span></button><div class="tvbody"><div id="rdList"></div></div></div>
+      <div class="tvmain">
+        <h3 id="rdName" class="st hide"></h3>
+        <div id="rdSrv"></div>
+        <div id="rdp"></div>
       </div>
     </div>
   </section>
@@ -365,7 +473,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
       <div class="bar"><button class="p" id="alogBtn">دخول</button></div>
     </div>
     <div id="apanel" style="display:grid;gap:14px">
-    <div class="atabs" id="atabs"><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
+    <div class="atabs" id="atabs"><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="radio"><span class="ic">📻</span><span>الراديو</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
     <div class="box">
       <h2 id="aft">إضافة مباراة</h2>
       <div class="g2">
@@ -430,6 +538,12 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
     </div>
     <datalist id="chNames"></datalist>
     <div class="box">
+      <h2>📻 قائمة الراديو</h2>
+      <p class="note" style="margin-top:0">أضف محطات الراديو التي تظهر للزائر عند الضغط على أيقونة الراديو بجانب التلفزيون. تقدر تضيف أي عدد من المحطات، ولكل محطة أكثر من مصدر بث، وكل مصدر يظهر للزائر كسيرفر مستقل (سيرفر 1، سيرفر 2...). الروابط تقبل أي نوع: mp3 أو aac أو ogg أو روابط Icecast / Shoutcast (حتى لو من غير امتداد) أو m3u8 أو pls أو m3u أو ts أو webrtc أو يوتيوب أو embed أو iframe، ويمكنك لصق كود iframe كامل. زر «تجربة» بجانب كل مصدر يشغّله في المعاينة بالأعلى.</p>
+      <div id="rdRows" style="margin-top:12px"></div>
+      <div class="bar"><button type="button" id="rdAdd">+ إضافة محطة</button><button class="p" id="rdSave">حفظ الراديو</button></div>
+    </div>
+    <div class="box">
       <h2>🏀 مباريات NBA</h2>
       <p class="note" style="margin-top:0">تظهر داخل أيقونة NBA فقط ولا تختلط بمباريات كرة القدم. لكل مباراة اسما الفريقين ورابط بث (أي مصدر، حتى يوتيوب أو كود iframe كامل).</p>
       <label>صورة أيقونة NBA (اختياري): رابط أو مسار صورة مثل nba.png</label>
@@ -484,7 +598,7 @@ let MATCHES = [
 ];
 
 /* إعدادات الموقع (تُعدَّل من الأدمن): day = النص بجانب "جدول المباريات"، wa = واتساب، fb = فيسبوك */
-let SETTINGS = {day:"", wa:"", fb:"", mail:"", multi:[], nba:[], channels:[], nbaIcon:"", news:""};
+let SETTINGS = {day:"", wa:"", fb:"", mail:"", multi:[], nba:[], channels:[], radio:[], nbaIcon:"", news:""};
 
 const $ = s => document.querySelector(s);
 const fmt = new Intl.DateTimeFormat("ar", {weekday:"short", day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"});
@@ -521,11 +635,15 @@ const SUN = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12
 function setTheme(t){
   if (t === "light") document.documentElement.setAttribute("data-theme", "light");
   else document.documentElement.removeAttribute("data-theme");
-  $("#themeBtn").innerHTML = t === "light" ? SUN : MOON;
+  themeUi(t);
   try { localStorage.setItem("sk_theme", t); } catch (e) {}
 }
-$("#themeBtn").onclick = () => setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light");
-$("#themeBtn").innerHTML = document.documentElement.getAttribute("data-theme") === "light" ? SUN : MOON;
+function themeUi(t){
+  $("#themeBtn .tl").textContent = t === "light" ? "الوضع الليلي" : "الوضع النهاري";
+  $("#themeBtn .ti").innerHTML = t === "light" ? MOON : SUN;
+}
+$("#themeBtn").onclick = (e) => { e.stopPropagation(); setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"); };
+themeUi(document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark");
 
 /* ===== إعدادات الموقع (جدول المباريات + روابط التواصل) ===== */
 function waLink(v){
@@ -599,7 +717,7 @@ function applySettings(){
   } else { im.onerror = null; im.onload = null; if (im.getAttribute("src") !== NBA_DEF) im.src = NBA_DEF; im.classList.remove("hide"); sv.classList.add("hide"); }
 }
 var NBA_DEF = "data:image/png;base64,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";
-function mergeSettings(d){ SETTINGS = Object.assign({day:"", wa:"", fb:"", mail:"", multi:[], nba:[], channels:[], nbaIcon:"", news:""}, d || {}); applySettings(); }
+function mergeSettings(d){ SETTINGS = Object.assign({day:"", wa:"", fb:"", mail:"", multi:[], nba:[], channels:[], radio:[], nbaIcon:"", news:""}, d || {}); applySettings(); }
 
 /* ===== بطاقات المباريات ===== */
 function logoUrl(t){
@@ -810,8 +928,8 @@ function menu(open){
 }
 $("#menuBtn").onclick = () => menu($("#menu").classList.contains("hide"));
 $("#ov").onclick = () => menu(false);
-document.querySelectorAll("#menu button").forEach(b => b.onclick = () => {
-  document.querySelectorAll("#menu button").forEach(x => x.classList.remove("on"));
+document.querySelectorAll("#menu button[data-m]").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#menu button[data-m]").forEach(x => x.classList.remove("on"));
   b.classList.add("on");
   menu(false);
   if (b.dataset.m === "admin"){ openAdmin(); return; }
@@ -892,7 +1010,7 @@ const MSG_FAIL = "تعذر تشغيل هذا السيرفر، جرّب سيرف�
 /* يرجع دالة إيقاف (أو null) */
 function mountStream(raw, p, o){
   o = o || {};
-  p.innerHTML = "";
+  p.innerHTML = ""; p.classList.remove("rdbox");
   const url = normUrl(raw);
   if (!url){ p.textContent = o.empty || "لم يتم إضافة مصدر البث لهذا السيرفر بعد"; return null; }
   const s = streamKind(url);
@@ -1129,7 +1247,7 @@ function showPanel(){
   $("#apanel").style.display = "grid";
   $("#alogout").classList.toggle("hide", !fbOn);
   if (fbOn) $("#apub").textContent = "النشر مباشر: أي مباراة تحفظها أو تحذفها تظهر لكل الزوار فوراً من غير رفع ملفات. ويمكنك أيضاً تنزيل نسخة احتياطية من هنا.";
-  $("#sday").value = SETTINGS.day || ""; $("#swa").value = SETTINGS.wa || ""; $("#sfb").value = SETTINGS.fb || ""; $("#smail").value = SETTINGS.mail || ""; fillMulti(); fillNba(); fillCh(); $("#nicon").value = SETTINGS.nbaIcon || ""; $("#snews").value = SETTINGS.news || "";
+  $("#sday").value = SETTINGS.day || ""; $("#swa").value = SETTINGS.wa || ""; $("#sfb").value = SETTINGS.fb || ""; $("#smail").value = SETTINGS.mail || ""; fillMulti(); fillNba(); fillCh(); fillRd(); $("#nicon").value = SETTINGS.nbaIcon || ""; $("#snews").value = SETTINGS.news || "";
   if (pruneOld()) aSave();
   aReset(); aList();
   $("#ajson").value = JSON.stringify(MATCHES, null, 2);
@@ -1548,7 +1666,7 @@ makeCombo("acomm", COMMENTATORS);
 /* ===== قنوات البث: أيقونة التلفزيون تفتح صفحة داخلية فيها قائمة القنوات ===== */
 let curCh = -1;
 const CH_COLORS = [["#059669","#34d399"],["#1d4ed8","#60a5fa"],["#ea580c","#fbbf24"],["#be123c","#fb7185"],["#7e22ce","#c084fc"],["#0e7490","#22d3ee"],["#be185d","#f472b6"],["#4d7c0f","#a3e635"]];
-function stopTv(){ if (!$("#tv")) return; $("#tv").classList.add("hide"); $("#tvp").innerHTML = ""; $("#tvName").classList.add("hide"); $("#tvSrv").innerHTML = ""; curCh = -1; }
+function stopTv(){ stopRadio(); if (!$("#tv")) return; $("#tv").classList.add("hide"); $("#tvp").innerHTML = ""; $("#tvName").classList.add("hide"); $("#tvSrv").innerHTML = ""; curCh = -1; }
 const LOGO_ON = "data:image/webp;base64,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";
 const LOGO_MAX = "data:image/webp;base64,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";
 const DEFAULT_LOGOS = {"onsport":LOGO_ON, "أونسبورت":LOGO_ON, "onsportmax":LOGO_MAX, "أونسبورتماكس":LOGO_MAX};
@@ -1632,7 +1750,7 @@ $("#tvUp").onclick = () => $("#tvList").scrollBy({top: -140, behavior: "smooth"}
 $("#tvDn").onclick = () => $("#tvList").scrollBy({top: 140, behavior: "smooth"});
 window.addEventListener("resize", tvArrows);
 function openTv(){
-  stop(); stopMulti(); $("#player").innerHTML = "";
+  stop(); stopMulti(); stopRadio(); $("#player").innerHTML = "";
   ["#home", "#watch", "#admin", "#multi", "#nba"].forEach(x => $(x).classList.add("hide"));
   $("#tvp").textContent = "اختر قناة من القائمة لبدء المشاهدة"; $("#tvName").classList.add("hide"); $("#tvSrv").innerHTML = "";
   curCh = -1;
@@ -1843,6 +1961,298 @@ $("#chSave").onclick = () => {
   buildCh();
 };
 
+/* ===== الراديو: أيقونة بجانب التلفزيون، محطات متعددة، ولكل محطة أكثر من مصدر بث ===== */
+var curRd = -1, rdKill = null;
+const RD_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.6 7.4L7.2 3"/><rect x="2.5" y="7.5" width="19" height="13" rx="3"/><circle cx="8.4" cy="14" r="3"/><path d="M14.4 11.2h5M14.4 14h5"/></svg>';
+const MSG_RD_PLS = "تعذّر قراءة ملف قائمة التشغيل (PLS/M3U) لأن الموقع صاحبه يمنع قراءته. افتح الملف وانسخ رابط البث الموجود بداخله وضعه هنا بدل رابط الملف";
+function stopRadio(){
+  if (rdKill){ try { rdKill(); } catch (e) {} rdKill = null; }
+  const r = $("#radio"); if (!r) return;
+  r.classList.add("hide");
+  const p = $("#rdp"); p.innerHTML = ""; p.classList.remove("rdbox");
+  $("#rdName").classList.add("hide"); $("#rdSrv").innerHTML = ""; curRd = -1;
+}
+function rdAll(){ const c = SETTINGS.radio; return Array.isArray(c) ? c.filter(x => x && (x.name || "").trim()) : []; }
+
+/* يشغّل أي رابط راديو: mp3/aac/ogg/Icecast/Shoutcast (حتى بدون امتداد) و m3u8 و mpd و ts و flv و webrtc و pls و m3u و يوتيوب و iframe */
+function mountRadio(raw, p){
+  p.innerHTML = ""; p.classList.remove("rdbox");
+  raw = String(raw || "");
+  const am = raw.match(/<(?:audio|source)[^>]*?\ssrc\s*=\s*["']([^"']+)["']/i);
+  if (am) raw = am[1];
+  const isCode = /<iframe/i.test(raw);
+  const url0 = normUrl(raw);
+  let dead = false, kill = null, mode = "";
+  const stopKill = () => { if (kill){ try { kill(); } catch (e) {} kill = null; } };
+  const done = () => { dead = true; stopKill(); };
+  const fail = msg => { if (dead) return; dead = true; stopKill(); p.classList.remove("rdbox"); p.textContent = msg || MSG_FAIL; };
+  const showIframe = u => {
+    if (dead) return;
+    mode = "iframe"; stopKill(); p.innerHTML = ""; p.classList.remove("rdbox");
+    const f = document.createElement("iframe");
+    f.src = toEmbed(u); f.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture"; f.allowFullscreen = true;
+    p.appendChild(f);
+  };
+  if (!url0){ p.textContent = "لم يتم إضافة مصدر البث لهذا السيرفر بعد"; return done; }
+  const card = () => {
+    p.innerHTML = ""; p.classList.add("rdbox");
+    const eq = document.createElement("div"); eq.className = "rdeq"; eq.innerHTML = "<i></i><i></i><i></i><i></i><i></i><i></i><i></i>";
+    const a = document.createElement("audio"); a.controls = true; a.autoplay = true;
+    a.addEventListener("playing", () => eq.classList.add("on"));
+    ["pause", "waiting", "ended", "error", "emptied"].forEach(ev => a.addEventListener(ev, () => eq.classList.remove("on")));
+    p.appendChild(eq); p.appendChild(a);
+    return a;
+  };
+  const playlist = u => {
+    p.textContent = "جاري تحميل قائمة التشغيل…";
+    fetch(u).then(r => { if (!r.ok) throw 0; return r.text(); }).then(t => {
+      let f = (t.match(/^\s*File\d*\s*=\s*(\S+)/im) || [])[1] || "";
+      if (!f) f = t.split(/\r?\n/).map(x => x.trim()).find(x => x && x[0] !== "#") || "";
+      if (!/^(https?:)?\/\//i.test(f)) throw 0;
+      return f;
+    }).then(f => start(normUrl(f), 1), () => fail(MSG_RD_PLS));
+  };
+  const start = (u, depth) => {
+    if (dead) return;
+    const s = streamKind(u), real = s.u || u;
+    if (s.k === "nobrowser"){ fail("روابط " + s.p + " لا تعمل مباشرة داخل المتصفح. حوّلها من سيرفر البث إلى رابط HLS (m3u8) أو mp3/aac ثم ضع الرابط الجديد"); return; }
+    if (isCode || /^(iframe|embed):(?!\/\/)/i.test(u) || /(?:youtube\.com|youtu\.be)\//i.test(real)){ showIframe(real); return; }
+    const path = real.toLowerCase().split(/[?#]/)[0];
+    if (depth < 1 && /\.(pls|m3u)$/.test(path)){ playlist(real); return; }
+    const a = card(); mode = "audio";
+    const stopA = () => { try { a.pause(); a.removeAttribute("src"); a.srcObject = null; a.load(); } catch (e) {} };
+    const strict = s.k === "video" || /\.(mp3|mp2|aac|aacp|m4a|oga|opus|wav|flac|weba)$/.test(path);
+    if (s.k === "hls"){
+      const native = a.canPlayType("application/vnd.apple.mpegurl");
+      const useNative = () => { if (dead) return; a.addEventListener("error", () => fail()); a.src = real; kill = stopA; };
+      loadLib("hls").then(() => {
+        if (dead) return;
+        if (Hls.isSupported()){
+          const h = new Hls();
+          let net = 0, med = 0;
+          h.loadSource(real); h.attachMedia(a);
+          h.on(Hls.Events.ERROR, (e, d) => {
+            if (!d.fatal) return;
+            if (d.type === Hls.ErrorTypes.NETWORK_ERROR && net++ < 2) h.startLoad();
+            else if (d.type === Hls.ErrorTypes.MEDIA_ERROR && med++ < 2) h.recoverMediaError();
+            else fail();
+          });
+          kill = () => { try { h.destroy(); } catch (e) {} stopA(); };
+        } else if (native) useNative(); else fail();
+      }).catch(() => { if (native) useNative(); else fail(); });
+    } else if (s.k === "dash"){
+      loadLib("dash").then(() => {
+        if (dead) return;
+        const d = dashjs.MediaPlayer().create();
+        let bad = false;
+        d.on("error", () => { bad = true; });
+        a.addEventListener("playing", () => { bad = false; });
+        const tm = setTimeout(() => { if (bad && a.readyState < 3) fail(); }, 15000);
+        d.initialize(a, real, true);
+        kill = () => { clearTimeout(tm); try { if (d.destroy) d.destroy(); else d.reset(); } catch (e) {} stopA(); };
+      }).catch(() => fail());
+    } else if (s.k === "mpegts"){
+      loadLib("ts").then(() => {
+        if (dead) return;
+        if (!mpegts.isSupported()){ fail("هذا المتصفح لا يدعم تشغيل بث TS/FLV، جرّب متصفحاً آخر أو رابط HLS"); return; }
+        const m = mpegts.createPlayer({type: s.t, isLive: true, url: real}, {enableWorker: true, liveBufferLatencyChasing: true});
+        m.attachMediaElement(a);
+        m.on(mpegts.Events.ERROR, () => fail());
+        m.load();
+        try { const r = m.play(); if (r && r.catch) r.catch(() => {}); } catch (e) {}
+        kill = () => { try { m.pause(); m.unload(); m.detachMediaElement(); m.destroy(); } catch (e) {} stopA(); };
+      }).catch(() => fail());
+    } else if (s.k === "whep"){
+      if (!window.RTCPeerConnection){ fail("هذا المتصفح لا يدعم WebRTC"); return; }
+      const pc = new RTCPeerConnection({iceServers: [{urls: "stun:stun.l.google.com:19302"}]});
+      const ms = new MediaStream();
+      a.srcObject = ms;
+      pc.ontrack = e => { ms.addTrack(e.track); };
+      pc.onconnectionstatechange = () => { if (pc.connectionState === "failed") fail(); };
+      kill = () => { try { pc.close(); } catch (e) {} stopA(); };
+      pc.addTransceiver("audio", {direction: "recvonly"});
+      (async () => {
+        try {
+          await pc.setLocalDescription(await pc.createOffer());
+          await new Promise(res => {
+            if (pc.iceGatheringState === "complete") return res();
+            const t = setTimeout(res, 2500);
+            pc.addEventListener("icegatheringstatechange", () => { if (pc.iceGatheringState === "complete"){ clearTimeout(t); res(); } });
+          });
+          if (dead) return;
+          const r = await fetch(s.u, {method: "POST", headers: {"Content-Type": "application/sdp"}, body: pc.localDescription.sdp});
+          if (!r.ok) throw new Error("whep");
+          await pc.setRemoteDescription({type: "answer", sdp: await r.text()});
+        } catch (e) { fail("تعذر الاتصال ببث WebRTC، تأكد أن الرابط بصيغة WHEP"); }
+      })();
+    } else {
+      /* أي رابط آخر (Icecast / Shoutcast / mp3 / aac / ogg / رابط بلا امتداد): يُجرَّب كصوت مباشر، ولو فشل يُفتح كصفحة مدمجة */
+      const cands = [real], r0 = raw.trim();
+      if (/^http:\/\//i.test(r0) && /^https:\/\//i.test(real)) cands.push(r0.replace(/&amp;/g, "&"));
+      let ci = 0;
+      const tryNext = () => {
+        if (dead || mode !== "audio") return;
+        if (ci < cands.length){ a.src = cands[ci++]; const r = a.play(); if (r && r.catch) r.catch(() => {}); return; }
+        if (strict) fail(); else showIframe(real);
+      };
+      a.addEventListener("error", tryNext);
+      kill = stopA;
+      tryNext();
+    }
+  };
+  start(url0, 0);
+  return done;
+}
+
+function buildRd(){
+  const box = $("#rdList"), l = rdAll();
+  box.innerHTML = "";
+  $("#rdEmpty").classList.toggle("hide", l.length > 0); $("#rdWrap").classList.toggle("hide", l.length === 0);
+  l.forEach((c, i) => {
+    const b = document.createElement("button");
+    b.dataset.i = i;
+    b.innerHTML = RD_ICO + "<span></span>";
+    b.querySelector("span").textContent = c.name; b.title = c.name;
+    const cc = chColors(c, i); b.style.setProperty("--c", cc[0]); b.style.setProperty("--c2", cc[1]);
+    const lg = logoUrl(c.logo || "");
+    if (lg){
+      const im = new Image(), sv = b.querySelector("svg");
+      im.className = "chl hide"; im.alt = "";
+      im.onload = () => { im.classList.remove("hide"); sv.classList.add("hide"); };
+      b.insertBefore(im, b.firstChild);
+      loadLogo(im, lg);
+    }
+    if (i === curRd) b.classList.add("on");
+    b.onclick = () => playRd(i);
+    box.appendChild(b);
+  });
+}
+function openRadio(){
+  stop(); stopMulti(); stopTv(); $("#player").innerHTML = "";
+  ["#home", "#watch", "#admin", "#multi", "#nba", "#tv"].forEach(x => $(x).classList.add("hide"));
+  const p = $("#rdp"); p.classList.remove("rdbox"); p.textContent = "اختر محطة من القائمة لبدء الاستماع";
+  $("#rdName").classList.add("hide"); $("#rdSrv").innerHTML = "";
+  curRd = -1;
+  $("#radio").classList.remove("hide");
+  $("#radio .tvside").classList.remove("closed");
+  buildRd();
+  window.scrollTo(0, 0);
+}
+function playRd(i){
+  const c = rdAll()[i]; if (!c) return;
+  if (rdKill){ try { rdKill(); } catch (e) {} rdKill = null; }
+  curRd = i;
+  const tn = $("#rdName");
+  tn.textContent = c.name; tn.classList.remove("hide");
+  const lg = logoUrl(c.logo || "");
+  if (lg){
+    const im = new Image(); im.className = "tvlg"; im.alt = c.name;
+    im.onload = () => { if (curRd === i){ tn.textContent = ""; tn.appendChild(im); } };
+    loadLogo(im, lg);
+  }
+  $("#rdList").querySelectorAll("button[data-i]").forEach(b => b.classList.toggle("on", +b.dataset.i === i));
+  const sv = $("#rdSrv"), tp = $("#rdp"), src = chSrcs(c);
+  sv.innerHTML = ""; tp.innerHTML = ""; tp.classList.remove("rdbox");
+  if (!src.length){ tp.textContent = "البث غير متاح حالياً على هذه المحطة"; return; }
+  const go = k => {
+    sv.querySelectorAll("button").forEach((b, j) => b.classList.toggle("on", j === k));
+    if (rdKill){ try { rdKill(); } catch (e) {} rdKill = null; }
+    if (DEMO){ tp.innerHTML = ""; tp.classList.remove("rdbox"); tp.textContent = "وضع المعاينة: هنا يظهر بث المحطة"; return; }
+    rdKill = mountRadio(src[k].url, tp);
+  };
+  if (src.length > 1) src.forEach((x, k) => {
+    const b = document.createElement("button");
+    b.textContent = (x.name || "").trim() || ("سيرفر " + (k + 1));
+    b.onclick = () => go(k);
+    sv.appendChild(b);
+  });
+  go(0);
+}
+$("#radioBtn").onclick = openRadio;
+$("#rdToggle").onclick = () => $("#radio .tvside").classList.toggle("closed");
+$("#rdback").onclick = showHome;
+
+/* ----- الأدمن: إضافة محطات الراديو ومصادرها ----- */
+function addRdSrc(card, x){
+  x = x || {};
+  const r = document.createElement("div");
+  r.className = "row";
+  r.innerHTML = '<input class="sn" placeholder="اسم السيرفر"><input class="su l" placeholder="رابط البث (mp3 / aac / Icecast / m3u8 / pls / iframe …)"><button type="button" class="st2">تجربة</button><button type="button" class="d">حذف</button>';
+  r.querySelector(".sn").value = x.name || "";
+  r.querySelector(".su").value = x.url || "";
+  r.querySelector(".st2").onclick = () => { stop(); curKill = mountRadio(r.querySelector(".su").value, $("#atp")); $("#atp").scrollIntoView({behavior: "smooth", block: "center"}); };
+  r.querySelector(".d").onclick = () => r.remove();
+  card.querySelector(".csrc").appendChild(r);
+}
+function addRdRow(c){
+  c = c || {};
+  const card = document.createElement("div");
+  card.className = "chc";
+  card.innerHTML = '<div class="cmv"><button type="button" class="cup" title="لفوق">▲</button><button type="button" class="cdn" title="لتحت">▼</button><span></span></div>' +
+    '<div class="chh2"><input class="cn" placeholder="اسم المحطة (مثال: إذاعة القرآن الكريم)"><input type="color" class="cc" title="لون خلفية المحطة" aria-label="لون خلفية المحطة"><button type="button" class="d crm">حذف المحطة</button></div>' +
+    '<div class="chlg"><span class="lgp"><img class="lgi hide" alt=""><span class="lgn">شعار</span></span><input class="cl l" placeholder="شعار المحطة (اختياري: رابط أو مسار صورة)"><label class="lgu">رفع صورة<input type="file" accept="image/*" hidden></label></div>' +
+    '<div class="csrc"></div><div class="bar" style="margin-top:4px"><button type="button" class="cadd">+ إضافة مصدر بث</button></div>';
+  card.querySelector(".cn").value = c.name || "";
+  card.querySelector(".cc").value = chColors(c, document.querySelectorAll("#rdRows .chc").length)[0].toLowerCase();
+  const li = card.querySelector(".cl"), pi = card.querySelector(".lgi"), pn = card.querySelector(".lgn");
+  const prev = () => {
+    const u = logoUrl(li.value);
+    if (!u){ pi.classList.add("hide"); pn.classList.remove("hide"); return; }
+    pi.onload = () => { pi.classList.remove("hide"); pn.classList.add("hide"); };
+    loadLogo(pi, u, () => { pi.classList.add("hide"); pn.classList.remove("hide"); });
+  };
+  li.value = c.logo || "";
+  li.addEventListener("change", prev);
+  card.querySelector("input[type=file]").onchange = ev => {
+    const f = ev.target, file = f.files && f.files[0]; if (!file) return;
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const S = 96, cv = document.createElement("canvas"); cv.width = cv.height = S;
+      const k = Math.min(S / img.width, S / img.height), w = img.width * k, h = img.height * k;
+      cv.getContext("2d").drawImage(img, (S - w) / 2, (S - h) / 2, w, h);
+      let d = cv.toDataURL("image/webp", 0.85);
+      if (!/^data:image\/webp/.test(d)) d = cv.toDataURL("image/png");
+      li.value = d; prev();
+      URL.revokeObjectURL(url); f.value = "";
+      toast("تم رفع الشعار، اضغط حفظ الراديو");
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); toast("تعذّر قراءة الصورة"); };
+    img.src = url;
+  };
+  prev();
+  card.querySelector(".crm").onclick = () => card.remove();
+  card.querySelector(".cadd").onclick = () => addRdSrc(card);
+  card.querySelector(".cup").onclick = () => { const pv = card.previousElementSibling; if (pv) pv.before(card); card.scrollIntoView({block: "nearest"}); };
+  card.querySelector(".cdn").onclick = () => { const nx = card.nextElementSibling; if (nx) nx.after(card); card.scrollIntoView({block: "nearest"}); };
+  const src = chSrcs(c);
+  (src.length ? src : [{}]).forEach(x => addRdSrc(card, x));
+  $("#rdRows").appendChild(card);
+  return card;
+}
+function fillRd(){
+  $("#rdRows").innerHTML = "";
+  const l = Array.isArray(SETTINGS.radio) ? SETTINGS.radio.filter(Boolean) : [];
+  if (l.length) l.forEach(c => addRdRow(c)); else addRdRow();
+}
+$("#rdAdd").onclick = () => { const c = addRdRow(); c.scrollIntoView({block: "center"}); c.querySelector(".cn").focus(); };
+$("#rdSave").onclick = () => {
+  const list = [];
+  document.querySelectorAll("#rdRows .chc").forEach(card => {
+    const x = {
+      name: card.querySelector(".cn").value.trim(),
+      color: card.querySelector(".cc").value,
+      logo: logoUrl(card.querySelector(".cl").value),
+      sources: [...card.querySelectorAll(".csrc .row")]
+        .map(r => ({name: r.querySelector(".sn").value.trim(), url: normUrl(r.querySelector(".su").value)}))
+        .filter(y => y.url)
+    };
+    if (x.name) list.push(x);
+  });
+  SETTINGS.radio = list;
+  persistSettings();
+  if (!$("#radio").classList.contains("hide")) buildRd();
+};
+
 /* تبويبات الأدمن: كل قسم بأيقونة لوحده */
 let adminTab = function(){};
 (function(){
@@ -1852,8 +2262,9 @@ let adminTab = function(){};
   kids.forEach(k => {
     let t = "set";
     if (has(k, "#aft")) t = "addm";
-    else if (has(k, "#atp")) t = "addm ch nba multi";
+    else if (has(k, "#atp")) t = "addm ch nba multi radio";
     else if (has(k, "#chRows")) t = "ch";
+    else if (has(k, "#rdRows")) t = "radio";
     else if (has(k, "#nrows")) t = "nba";
     else if (has(k, "#mrows")) t = "multi";
     else if (has(k, "#snews")) t = "news";
@@ -1913,6 +2324,7 @@ if (DEMO){
   applyNews();
   SETTINGS.nba = [{home:"ليكرز", away:"ووريرز", url:"demo"}, {home:"سيلتكس", away:"هيت", url:"demo", note:"المباراة بعد قليل"}, {home:"بولز", away:"نيكس", url:"demo", ended:true}, {home:"ناغتس", away:"صنز", url:"demo"}];
   SETTINGS.channels = [{name:"beIN Sports 1", sources:[{name:"سيرفر 1", url:"demo"}, {name:"سيرفر 2", url:"demo"}]}, {name:"beIN Sports 2", sources:[{url:"demo"}]}, {name:"SSC 1", sources:[{url:"demo"}]}, {name:"أون سبورت", sources:[{url:"demo"}]}];
+  SETTINGS.radio = [{name:"إذاعة القرآن الكريم", sources:[{name:"سيرفر 1", url:"demo"}, {name:"سيرفر 2", url:"demo"}]}, {name:"نجوم إف إم", sources:[{url:"demo"}]}, {name:"راديو مصر", sources:[{url:"demo"}]}];
   setStat("vc", 1234);
   setStat("oc", 87);
   toast("وضع المعاينة: بيانات تجريبية ولا يُحفظ شيء", 4000);
