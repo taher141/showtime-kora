@@ -209,6 +209,14 @@ main{max-width:960px;margin:0 auto;padding:16px}
 #admin .atabs button{flex:1 0 auto;min-width:76px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 12px;font-weight:700;font-size:12.5px;white-space:nowrap}
 #admin .atabs button .ic{font-size:22px;line-height:1}
 #admin .atabs button.on{background:#7e22ce;border-color:#7e22ce;color:#fff}
+#admin .chga{border:2px solid var(--bd);border-radius:14px;padding:10px;margin-bottom:14px;background:var(--card)}
+#admin .chgh{display:grid;grid-template-columns:1fr auto auto auto auto;gap:6px;align-items:center}
+#admin .chgh .gnm{font-weight:800;font-size:15px}
+#admin .chgb{margin-top:10px}
+#admin .chga.shut .chgb,#admin .chga.shut .gbar{display:none}
+#admin .gbar{margin-top:6px}
+#admin .cmv{display:grid;grid-template-columns:auto auto 1fr;gap:6px;margin-bottom:8px;align-items:center}
+#admin .cmv select{width:100%;background:var(--in);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:8px;font:inherit}
 #admin .chc{border:1px solid var(--bd);border-radius:12px;padding:10px;margin-bottom:12px;background:var(--in)}
 #admin .chh2{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:8px;align-items:center}
 #admin .chh2 input.cc{width:46px;height:38px;padding:2px;cursor:pointer}
@@ -400,7 +408,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
       <h2>📺 قائمة القنوات</h2>
       <p class="note" style="margin-top:0">أضف القنوات التي تظهر للزائر عند الضغط على أيقونة التلفزيون. لكل قناة يمكنك إضافة أكثر من رابط بث، وكل رابط يظهر للزائر كسيرفر مستقل (سيرفر 1، سيرفر 2...). وتقدر تضيف شعار القناة الأصلي برابط أو برفع صورة من جهازك، فيظهر جنب اسمها في القائمة. والمربع الملوّن بجانب اسم القناة تختار منه لون خلفيتها في القائمة (القناة الجديدة تأخذ لوناً تلقائياً وتقدر تغيّره). الروابط تقبل أي نوع: m3u8 أو mpd أو mp4 أو ts أو rtmp أو webrtc أو embed أو iframe أو يوتيوب، ويمكنك لصق كود iframe كامل.</p>
       <div id="chRows" style="margin-top:12px"></div>
-      <div class="bar"><button id="chAdd">+ إضافة قناة</button><button class="p" id="chSave">حفظ القنوات</button></div>
+      <div class="bar"><button id="chGAdd">+ إضافة مجموعة</button><button class="p" id="chSave">حفظ القنوات</button></div>
     </div>
     <datalist id="chNames"></datalist>
     <div class="box">
@@ -1558,8 +1566,8 @@ function buildCh(){
   const box = $("#tvList"), l = chList();
   box.innerHTML = "";
   $("#tvEmpty").classList.toggle("hide", l.length > 0); $("#tvWrap").classList.toggle("hide", l.length === 0);
-  const order = CHANNELS.map(g => g[0]), groups = {};
-  l.forEach((c, i) => { const g = chGroup(c.name); (groups[g] = groups[g] || []).push([c, i]); });
+  const order = (Array.isArray(SETTINGS.chGroups) ? SETTINGS.chGroups : []).concat(CHANNELS.map(g => g[0])), groups = {};
+  l.forEach((c, i) => { const g = String(c.group || "").trim() || chGroup(c.name); (groups[g] = groups[g] || []).push([c, i]); });
   Object.keys(groups).sort((a, b) => {
     const x = order.indexOf(a), y = order.indexOf(b);
     return (x < 0 ? 99 : x) - (y < 0 ? 99 : y);
@@ -1658,13 +1666,13 @@ function addSrcRow(card, x){
   r.querySelector(".d").onclick = () => r.remove();
   card.querySelector(".csrc").appendChild(r);
 }
-function addChRow(c){
+function addChRow(c, body){
   c = c || {};
   const card = document.createElement("div");
   card.className = "chc";
   card.innerHTML = '<div class="chh2"><input class="cn" list="chNames" placeholder="اسم القناة"><input type="color" class="cc" title="لون خلفية القناة" aria-label="لون خلفية القناة"><button type="button" class="d crm">حذف القناة</button></div><div class="chlg"><span class="lgp"><img class="lgi hide" alt=""><span class="lgn">شعار</span></span><input class="cl l" placeholder="شعار القناة الأصلي (رابط أو مسار صورة)"><label class="lgu">رفع صورة<input type="file" accept="image/*" hidden></label></div><div class="csrc"></div><div class="bar" style="margin-top:4px"><button type="button" class="cadd">+ إضافة رابط بث</button></div>';
   card.querySelector(".cn").value = c.name || "";
-  card.querySelector(".cc").value = chColors(c, $("#chRows").children.length)[0].toLowerCase();
+  card.querySelector(".cc").value = chColors(c, document.querySelectorAll("#chRows .chc").length)[0].toLowerCase();
   const li = card.querySelector(".cl"), pi = card.querySelector(".lgi"), pn = card.querySelector(".lgn");
   const prev = () => {
     const u = logoUrl(li.value);
@@ -1695,25 +1703,92 @@ function addChRow(c){
   card.querySelector(".cadd").onclick = () => addSrcRow(card);
   const src = chSrcs(c);
   (src.length ? src : [{}]).forEach(x => addSrcRow(card, x));
-  $("#chRows").appendChild(card);
+  const mv = document.createElement("div");
+  mv.className = "cmv";
+  mv.innerHTML = '<button type="button" class="cup" title="لفوق">▲</button><button type="button" class="cdn" title="لتحت">▼</button><select class="cg" title="نقل القناة لمجموعة أخرى"></select>';
+  card.insertBefore(mv, card.firstChild);
+  mv.querySelector(".cup").onclick = () => { const pv = card.previousElementSibling; if (pv) pv.before(card); card.scrollIntoView({block:"nearest"}); };
+  mv.querySelector(".cdn").onclick = () => { const nx = card.nextElementSibling; if (nx) nx.after(card); card.scrollIntoView({block:"nearest"}); };
+  mv.querySelector(".cg").onchange = ev => {
+    const gs = [...document.querySelectorAll("#chRows .chga")], g = gs[+ev.target.value];
+    if (g){ g.classList.remove("shut"); g.querySelector(".chgb").appendChild(card); }
+    refreshSels(); card.scrollIntoView({block:"nearest"});
+  };
+  (body || firstBody()).appendChild(card);
+}
+function chgNames(){ return [...document.querySelectorAll("#chRows .chga")].map(g => g.querySelector(".gnm").value.trim() || "بدون اسم"); }
+function refreshSels(){
+  const names = chgNames();
+  document.querySelectorAll("#chRows .chc").forEach(card => {
+    const sel = card.querySelector(".cg"), cur = [...document.querySelectorAll("#chRows .chga")].indexOf(card.closest(".chga"));
+    sel.innerHTML = "";
+    names.forEach((n, k) => { const o = document.createElement("option"); o.value = k; o.textContent = "المجموعة: " + n; sel.appendChild(o); });
+    sel.value = cur;
+  });
+}
+function firstBody(){
+  const g = document.querySelector("#chRows .chgb");
+  return g || addGroup("قنوات أخرى");
+}
+function addGroup(name){
+  const g = document.createElement("div");
+  g.className = "chga";
+  g.innerHTML = '<div class="chgh"><input class="gnm" placeholder="اسم المجموعة"><button type="button" class="gup" title="رفع المجموعة">▲</button><button type="button" class="gdn" title="تنزيل المجموعة">▼</button><button type="button" class="gtg" title="طي / فتح">⌃</button><button type="button" class="d grm">حذف</button></div><div class="chgb"></div><div class="bar gbar"><button type="button" class="gaddc">+ إضافة قناة لهذه المجموعة</button></div>';
+  const inp = g.querySelector(".gnm"); inp.value = name || "";
+  inp.addEventListener("change", refreshSels);
+  g.querySelector(".gup").onclick = () => { const pv = g.previousElementSibling; if (pv) pv.before(g); refreshSels(); g.scrollIntoView({block:"nearest"}); };
+  g.querySelector(".gdn").onclick = () => { const nx = g.nextElementSibling; if (nx) nx.after(g); refreshSels(); g.scrollIntoView({block:"nearest"}); };
+  g.querySelector(".gtg").onclick = () => g.classList.toggle("shut");
+  const rm = g.querySelector(".grm"); let armed = false;
+  rm.onclick = () => {
+    const all = [...document.querySelectorAll("#chRows .chga")];
+    if (all.length < 2){ toast("لازم تفضل مجموعة واحدة على الأقل"); return; }
+    const n = g.querySelectorAll(".chc").length;
+    if (n && !armed){ armed = true; rm.textContent = "تأكيد؟ القنوات تنتقل لمجموعة تانية"; setTimeout(() => { armed = false; rm.textContent = "حذف"; }, 3500); return; }
+    const to = all.find(x => x !== g).querySelector(".chgb");
+    g.querySelectorAll(".chc").forEach(cd => to.appendChild(cd));
+    g.remove(); refreshSels();
+  };
+  g.querySelector(".gaddc").onclick = () => { addChRow(null, g.querySelector(".chgb")); refreshSels(); const l = g.querySelector(".chgb").lastElementChild; if (l) l.scrollIntoView({block:"center"}); };
+  $("#chRows").appendChild(g);
+  return g.querySelector(".chgb");
 }
 function fillCh(){
   $("#chRows").innerHTML = "";
-  allCh().forEach(c => addChRow(c));
+  const chs = allCh().filter(Boolean), names = [];
+  const add = n => { if (n && !names.includes(n)) names.push(n); };
+  const gOf = c => String(c.group || "").trim() || chGroup(c.name);
+  (Array.isArray(SETTINGS.chGroups) ? SETTINGS.chGroups : []).forEach(add);
+  if (!names.length) CHANNELS.forEach(g => { if (chs.some(c => gOf(c) === g[0])) add(g[0]); });
+  chs.forEach(c => add(gOf(c)));
+  if (!names.length) add("قنوات أخرى");
+  const bodies = {};
+  names.forEach(n => { bodies[n] = addGroup(n); });
+  chs.forEach(c => addChRow(c, bodies[gOf(c)]));
+  refreshSels();
 }
 $("#chNames").innerHTML = CHANNELS.flatMap(g => g[1]).map(n => '<option value="' + n.replace(/"/g, "&quot;") + '">').join("");
-$("#chAdd").onclick = () => addChRow();
+$("#chGAdd").onclick = () => { const b = addGroup(""); refreshSels(); const inp = b.parentNode.querySelector(".gnm"); inp.scrollIntoView({block:"center"}); inp.focus(); };
 $("#chSave").onclick = () => {
-  SETTINGS.channels = [...document.querySelectorAll("#chRows .chc")]
-    .map(card => ({
-      name: card.querySelector(".cn").value.trim(),
-      color: card.querySelector(".cc").value,
-      logo: logoUrl(card.querySelector(".cl").value),
-      sources: [...card.querySelectorAll(".csrc .row")]
-        .map(r => ({name: r.querySelector(".sn").value.trim(), url: normUrl(r.querySelector(".su").value)}))
-        .filter(x => x.url)
-    }))
-    .filter(x => x.name);
+  const names = [], chans = [];
+  document.querySelectorAll("#chRows .chga").forEach(g => {
+    const gn = g.querySelector(".gnm").value.trim() || "قنوات أخرى";
+    if (!names.includes(gn)) names.push(gn);
+    g.querySelectorAll(".chc").forEach(card => {
+      const x = {
+        name: card.querySelector(".cn").value.trim(),
+        group: gn,
+        color: card.querySelector(".cc").value,
+        logo: logoUrl(card.querySelector(".cl").value),
+        sources: [...card.querySelectorAll(".csrc .row")]
+          .map(r => ({name: r.querySelector(".sn").value.trim(), url: normUrl(r.querySelector(".su").value)}))
+          .filter(y => y.url)
+      };
+      if (x.name) chans.push(x);
+    });
+  });
+  SETTINGS.chGroups = names;
+  SETTINGS.channels = chans;
   persistSettings();
   buildCh();
 };
