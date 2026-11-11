@@ -182,6 +182,16 @@ main{max-width:960px;margin:0 auto;padding:16px}
 .tvbody{display:flex;align-items:stretch}
 #tvList{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding:8px;max-height:calc(100vh - 130px);overflow-y:scroll;direction:ltr;scrollbar-width:auto;scrollbar-color:var(--team) var(--bd2)}
 #tvList button{direction:rtl}
+.tvgh{display:flex;align-items:center;gap:8px;width:100%;direction:rtl;background:var(--card2);border:1px solid var(--bd);border-right:4px solid var(--c,var(--team));color:var(--text);border-radius:12px;padding:12px 10px;font-size:14px;font-weight:800;cursor:pointer;user-select:none;flex:none}
+.tvgh:hover{filter:brightness(1.12)}
+.tvgh .gn{flex:1;text-align:right}
+.tvgh .gc{font-size:11px;color:var(--muted);font-weight:700}
+.tvgh .ar{font-size:11px;transition:transform .2s}
+.tvg.open>.tvgh .ar{transform:rotate(180deg)}
+.tvg{display:flex;flex-direction:column;gap:8px;flex:none}
+.tvgb{display:none;flex-direction:column;gap:8px;padding-top:2px}
+.tvg.open>.tvgb{display:flex}
+@media(max-width:600px){.tvgh{padding:10px 6px;font-size:12.5px}.tvgh .gc{display:none}}
 #tvList::-webkit-scrollbar{width:12px}
 #tvList::-webkit-scrollbar-track{background:var(--bd2);border-radius:8px}
 #tvList::-webkit-scrollbar-thumb{background:var(--team);border-radius:8px;border:2px solid var(--bd2)}
@@ -195,8 +205,9 @@ main{max-width:960px;margin:0 auto;padding:16px}
 #tvList button.on::after{content:"●";margin-right:auto;font-size:10px;animation:bl 1.2s ease-in-out infinite}
 @media(max-width:600px){.tvside{width:146px}.tvarr{width:26px}.tvarr button{width:22px}.tvsh{font-size:12.5px;padding:10px 4px}#tvList{padding:6px;gap:6px}#tvList button{padding:11px 6px;font-size:12.5px;gap:6px}#tvList button svg{display:none}}
 .tabhide{display:none!important}
-#admin .atabs{display:flex;gap:8px}
-#admin .atabs button{flex:1;padding:11px 8px;font-weight:700}
+#admin .atabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+#admin .atabs button{flex:1 0 auto;min-width:76px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 12px;font-weight:700;font-size:12.5px;white-space:nowrap}
+#admin .atabs button .ic{font-size:22px;line-height:1}
 #admin .atabs button.on{background:#7e22ce;border-color:#7e22ce;color:#fff}
 #admin .chc{border:1px solid var(--bd);border-radius:12px;padding:10px;margin-bottom:12px;background:var(--in)}
 #admin .chh2{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:8px;align-items:center}
@@ -330,7 +341,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
       <div class="bar"><button class="p" id="alogBtn">دخول</button></div>
     </div>
     <div id="apanel" style="display:grid;gap:14px">
-    <div class="atabs" id="atabs"><button type="button" class="on" data-at="main">⚙️ المباريات والإعدادات</button><button type="button" data-at="ch">📺 قائمة القنوات</button></div>
+    <div class="atabs" id="atabs"><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
     <div class="box">
       <h2 id="aft">إضافة مباراة</h2>
       <div class="g2">
@@ -1291,7 +1302,7 @@ function aList(){
       (m.sources && m.sources.length ? m.sources : [{}]).forEach(x => aRow(x.name, x.url));
       $("#aft").textContent = "تعديل مباراة";
       $("#acancel").style.display = "";
-      window.scrollTo(0, 0);
+      adminTab("addm");
     };
     const rm = d.querySelector(".rm");
     let armed = false;
@@ -1535,26 +1546,54 @@ function chSrcs(c){
   return c && (c.url || "").trim() ? [{url: c.url}] : [];
 }
 function chList(){ return allCh().filter(c => c && (c.name || "").trim()); }
+const openG = new Set();
+function chGroup(name){
+  const n = String(name || "").trim().toLowerCase();
+  for (const g of CHANNELS) if (g[1].some(x => x.toLowerCase() === n)) return g[0];
+  const w = n.split(/\s+/)[0];
+  if (w.length > 2) for (const g of CHANNELS) if (g[1].some(x => x.toLowerCase().split(/\s+/)[0] === w)) return g[0];
+  return "قنوات أخرى";
+}
 function buildCh(){
   const box = $("#tvList"), l = chList();
   box.innerHTML = "";
   $("#tvEmpty").classList.toggle("hide", l.length > 0); $("#tvWrap").classList.toggle("hide", l.length === 0);
-  l.forEach((c, i) => {
-    const b = document.createElement("button");
-    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M9 3l3 3 3-3"/></svg><span></span>';
-    b.querySelector("span").textContent = c.name; b.title = c.name;
-    const cc = chColors(c, i); b.style.setProperty("--c", cc[0]); b.style.setProperty("--c2", cc[1]);
-    const lg = logoUrl(chLogo(c));
-    if (lg){
-      const im = new Image(), sv = b.querySelector("svg");
-      im.className = "chl hide"; im.alt = "";
-      im.onload = () => { im.classList.remove("hide"); sv.classList.add("hide"); };
-      b.insertBefore(im, b.firstChild);
-      loadLogo(im, lg);
-    }
-    if (i === curCh) b.classList.add("on");
-    b.onclick = () => playCh(i);
-    box.appendChild(b);
+  const order = CHANNELS.map(g => g[0]), groups = {};
+  l.forEach((c, i) => { const g = chGroup(c.name); (groups[g] = groups[g] || []).push([c, i]); });
+  Object.keys(groups).sort((a, b) => {
+    const x = order.indexOf(a), y = order.indexOf(b);
+    return (x < 0 ? 99 : x) - (y < 0 ? 99 : y);
+  }).forEach(gn => {
+    const items = groups[gn];
+    const wrap = document.createElement("div"); wrap.className = "tvg";
+    if (openG.has(gn) || items.some(it => it[1] === curCh)) wrap.classList.add("open");
+    const h = document.createElement("div"); h.className = "tvgh"; h.setAttribute("role", "button"); h.tabIndex = 0;
+    h.style.setProperty("--c", chColors(items[0][0], items[0][1])[0]);
+    h.innerHTML = '<span class="gn"></span><span class="gc"></span><span class="ar">▼</span>';
+    h.querySelector(".gn").textContent = gn; h.querySelector(".gc").textContent = items.length;
+    const toggle = () => { wrap.classList.toggle("open"); wrap.classList.contains("open") ? openG.add(gn) : openG.delete(gn); tvArrows(); };
+    h.onclick = toggle;
+    h.onkeydown = e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); } };
+    const body = document.createElement("div"); body.className = "tvgb";
+    items.forEach(([c, i]) => {
+      const b = document.createElement("button");
+      b.dataset.i = i;
+      b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M9 3l3 3 3-3"/></svg><span></span>';
+      b.querySelector("span").textContent = c.name; b.title = c.name;
+      const cc = chColors(c, i); b.style.setProperty("--c", cc[0]); b.style.setProperty("--c2", cc[1]);
+      const lg = logoUrl(chLogo(c));
+      if (lg){
+        const im = new Image(), sv = b.querySelector("svg");
+        im.className = "chl hide"; im.alt = "";
+        im.onload = () => { im.classList.remove("hide"); sv.classList.add("hide"); };
+        b.insertBefore(im, b.firstChild);
+        loadLogo(im, lg);
+      }
+      if (i === curCh) b.classList.add("on");
+      b.onclick = () => playCh(i);
+      body.appendChild(b);
+    });
+    wrap.appendChild(h); wrap.appendChild(body); box.appendChild(wrap);
   });
   tvArrows();
 }
@@ -1587,7 +1626,7 @@ function playCh(i){
     im.onload = () => { if (curCh === i){ tn.textContent = ""; tn.appendChild(im); } };
     loadLogo(im, lg);
   }
-  $("#tvList").querySelectorAll("button").forEach((b, k) => b.classList.toggle("on", k === i));
+  $("#tvList").querySelectorAll("button[data-i]").forEach(b => b.classList.toggle("on", +b.dataset.i === i));
   const sv = $("#tvSrv"), tp = $("#tvp"), src = chSrcs(c);
   sv.innerHTML = "";
   if (!src.length){ tp.textContent = "البث غير متاح حالياً على هذه القناة"; return; }
@@ -1679,18 +1718,33 @@ $("#chSave").onclick = () => {
   buildCh();
 };
 
-/* تبويبات الأدمن: قسم القنوات لوحده */
+/* تبويبات الأدمن: كل قسم بأيقونة لوحده */
+let adminTab = function(){};
 (function(){
   const panel = $("#apanel"), tabs = $("#atabs");
   const kids = [...panel.children].filter(k => k !== tabs && k.tagName !== "DATALIST");
-  kids.forEach(k => { k.dataset.tab = k.querySelector("#chRows") ? "ch" : (k.querySelector("#atp") ? "both" : "main"); });
-  function setTab(t){
+  const has = (k, sel) => !!k.querySelector(sel);
+  kids.forEach(k => {
+    let t = "set";
+    if (has(k, "#aft")) t = "addm";
+    else if (has(k, "#atp")) t = "addm ch nba multi";
+    else if (has(k, "#chRows")) t = "ch";
+    else if (has(k, "#nrows")) t = "nba";
+    else if (has(k, "#mrows")) t = "multi";
+    else if (has(k, "#snews")) t = "news";
+    else if (has(k, "#alist")) t = "list";
+    else if (has(k, "#ajson")) t = "pub";
+    k.dataset.tab = t;
+  });
+  function setTab(t, keepScroll){
     tabs.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.at === t));
-    kids.forEach(k => k.classList.toggle("tabhide", !(k.dataset.tab === t || k.dataset.tab === "both")));
-    window.scrollTo(0, 0);
+    kids.forEach(k => k.classList.toggle("tabhide", !k.dataset.tab.split(" ").includes(t)));
+    const on = tabs.querySelector("button.on"); if (on && on.scrollIntoView) on.scrollIntoView({block:"nearest", inline:"center"});
+    if (!keepScroll) window.scrollTo(0, 0);
   }
+  adminTab = setTab;
   tabs.querySelectorAll("button").forEach(b => b.onclick = () => setTab(b.dataset.at));
-  setTab("main");
+  setTab("addm");
 })();
 
 
