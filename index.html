@@ -332,25 +332,25 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 .tvarr button{border-radius:10px;background:var(--card);border-color:var(--bd)}
 /* عنوان المجموعة */
 .tvgh{background:transparent;border:0;border-bottom:1px solid var(--bd);border-radius:0;padding:8px 4px 8px 6px;font-size:12px;font-weight:800;letter-spacing:.6px;color:var(--muted);gap:8px;position:relative}
-.tvgh::before{content:"";width:4px;height:14px;border-radius:3px;background:var(--c,var(--team));flex:none;order:3}
-.tvgh .gn{order:2;color:var(--text);font-size:13px}
-.tvgh .gc{order:1;min-width:22px;height:20px;padding:0 7px;border-radius:999px;background:var(--card2);border:1px solid var(--bd);display:inline-flex;align-items:center;justify-content:center;color:var(--text);font-size:11px;font-weight:800}
-.tvgh .ar{order:0;font-size:10px;color:var(--muted);margin-inline-start:auto}
+.tvgh::before{content:"";width:4px;height:16px;border-radius:3px;background:var(--c,var(--team));flex:none;order:0}
+.tvgh .gn{order:1;flex:1;min-width:0;text-align:right;color:var(--text);font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+.tvgh .gc{order:2;flex:none;min-width:22px;height:20px;padding:0 7px;border-radius:999px;background:var(--card2);border:1px solid var(--bd);display:inline-flex;align-items:center;justify-content:center;color:var(--text);font-size:11px;font-weight:800}
+.tvgh .ar{order:3;flex:none;width:14px;text-align:center;font-size:10px;color:var(--muted)}
 .tvgh:hover{filter:none;color:var(--text)}
 .tvgh:hover .gc{border-color:var(--c,var(--team))}
 .tvg{gap:7px}
 .tvgb{gap:7px;padding-top:4px}
 /* بطاقة القناة */
-#tvList button{--c:#16a34a;position:relative;background:var(--card2);background-image:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,0));border:1px solid var(--bd);border-right:4px solid var(--c);color:var(--text);text-shadow:none;border-radius:12px;padding:10px 12px 10px 10px;font-size:13.5px;font-weight:700;gap:11px;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform .18s,box-shadow .18s,border-color .18s,background .18s;overflow:hidden}
-#tvList button:hover{filter:none;transform:translateX(-3px);border-color:var(--c);box-shadow:0 6px 16px rgba(0,0,0,.32)}
-#tvList button>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tvList button{--c:#16a34a;flex:none;min-height:54px;align-items:center;position:relative;background:var(--card2);background-image:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,0));border:1px solid var(--bd);border-right:4px solid var(--c);color:var(--text);text-shadow:none;border-radius:12px;padding:10px 12px 10px 10px;font-size:13.5px;font-weight:700;gap:11px;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:box-shadow .18s,border-color .18s,background .18s;overflow:hidden}
+#tvList button:hover{filter:none;transform:none;border-color:var(--c);box-shadow:0 6px 16px rgba(0,0,0,.32)}
+#tvList button>span{flex:1;min-width:0;display:block;text-align:right;unicode-bidi:plaintext;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;word-break:normal;line-height:1.4}
 #tvList button svg{width:34px;height:34px;padding:7px;border-radius:10px;background:var(--c);color:#fff;flex:none;box-shadow:0 3px 8px rgba(0,0,0,.3)}
 #tvList .chl{width:34px;height:34px;border-radius:10px;padding:3px;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.28)}
 #tvList button.on{transform:none;border-color:var(--c);border-right-width:4px;background:var(--card2);background-image:linear-gradient(135deg,var(--c),transparent 160%);font-weight:900;color:#fff;box-shadow:0 0 0 1px var(--c),0 8px 22px rgba(0,0,0,.4)}
 :root[data-theme=light] #tvList button.on{color:var(--text);background-image:linear-gradient(135deg,var(--c),transparent 110%);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
 #tvList button.on::after{content:"LIVE";margin:0;margin-inline-start:auto;flex:none;font-size:9px;font-weight:900;letter-spacing:1px;padding:3px 7px;border-radius:999px;background:var(--live);color:#fff;text-shadow:none;animation:bl 1.2s ease-in-out infinite}
-#tvList button:active{transform:scale(.98)}
-#tvList button.lgo{height:66px;border:1px solid var(--c);border-right-width:4px;background-color:var(--card2)}
+#tvList button:active{transform:none;filter:brightness(.95)}
+#tvList button.lgo{height:auto;min-height:66px;border:1px solid var(--c);border-right-width:4px;background-color:var(--card2)}
 /* منطقة المشاهدة */
 #tvName{display:flex;align-items:center;justify-content:center;gap:10px;font-size:18px;font-weight:900;padding:10px 14px;margin:0 0 12px;background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--bd);border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 #tvName.hide{display:none}
@@ -361,12 +361,12 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 #tvp{background:radial-gradient(circle at 50% 0%,#1d2230,#07090d 72%);border:1px solid var(--bd);border-radius:16px;box-shadow:0 14px 34px rgba(0,0,0,.45);color:#9ca3af;font-size:15px;font-weight:700;padding:16px}
 #tv .st{font-size:22px}
 @media(max-width:600px){
-  .tvside{width:158px;border-radius:14px}
+  .tvside{width:170px;border-radius:14px}
   .tvsh{padding:12px 6px;font-size:13px}
   #tvList{padding:8px 6px;gap:8px}
   .tvgh{padding:7px 2px}
   .tvgh .gc{display:inline-flex}
-  #tvList button{padding:9px 8px;font-size:12.5px;gap:7px}
+  #tvList button{padding:8px 8px;min-height:48px;font-size:12.5px;gap:7px}
   #tvList button svg{display:block;width:26px;height:26px;padding:5px;border-radius:8px}
   #tvList .chl{width:26px;height:26px}
   #tvList button.on::after{display:none}
@@ -374,6 +374,47 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
   #tvName{font-size:15px}
 }
 @media(prefers-reduced-motion:reduce){#tvList button,.tvsh .tvt::before,#tvList button.on::after{animation:none;transition:none}}
+
+/* قائمة القنوات ثابتة: كل شيء ظاهر، بدون أسهم أو طي أو تمرير داخلي */
+.tvside{position:static}
+.tvsh{cursor:default}
+.tvarr{display:none!important}
+#tvList{max-height:none;overflow:visible}
+.tvgh{cursor:pointer;user-select:none}
+.tvgh:hover{color:var(--text)}
+.tvgh:hover .gc{border-color:var(--c,var(--team))}
+.tvg>.tvgb{display:none}
+.tvg.open>.tvgb{display:flex}
+.tvg.open>.tvgh .ar{transform:rotate(180deg)}
+
+/* اسم القناة كامل وواضح داخل المجموعة */
+.tvside{width:260px}
+#tvList{padding:12px 10px}
+#tvList button{height:auto;overflow:visible;align-items:center;padding:10px 10px 10px 8px;gap:10px;font-size:13.5px}
+#tvList button>span{flex:1 1 auto;width:auto;min-width:0;max-width:100%;overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:break-word;word-break:normal;hyphens:none;line-height:1.45;font-size:13.5px;font-weight:800}
+#tvList button.long>span{font-size:12px;line-height:1.4}
+#tvList button.on::after{content:"";position:absolute;top:8px;left:8px;width:8px;height:8px;padding:0;border-radius:50%;background:var(--live);box-shadow:0 0 8px var(--live);animation:bl 1.2s ease-in-out infinite;margin:0;font-size:0;letter-spacing:0}
+#tvList button.on::before{display:none}
+@media(max-width:600px){
+  .tvside{width:180px}
+  #tvList{padding:8px 6px}
+  #tvList button{padding:9px 8px 9px 6px;gap:7px}
+  #tvList button svg{display:none}
+  #tvList button>span{font-size:13px}
+  #tvList button.long>span{font-size:11.5px}
+  #tvList .chl{width:28px;height:28px}
+  #tvList button.on::after{display:block}
+}
+
+/* اسم القناة في سطر واحد: يصغر الخط تلقائيًا ليظهر كامل */
+#tvList button>span{white-space:nowrap!important;overflow:hidden;text-overflow:clip;line-height:1.5;font-size:13.5px}
+#tvList button.long>span{font-size:13.5px}
+.tvside{width:270px}
+@media(max-width:600px){
+  .tvside{width:190px}
+  #tvList button>span{font-size:12.5px}
+  #tvList button.long>span{font-size:12.5px}
+}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -426,7 +467,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
     <h2 class="st">📺 القنوات</h2>
     <div id="tvEmpty" class="hide">لا توجد قنوات حالياً</div>
     <div class="tvwrap" id="tvWrap">
-      <div class="tvside"><button type="button" class="tvsh" id="tvToggle"><span class="tvt">قائمة القنوات</span><span class="ar">▼</span></button><div class="tvbody"><div class="tvarr hide" id="tvArr"><button type="button" id="tvUp" aria-label="لفوق">▲</button><button type="button" id="tvDn" aria-label="لتحت">▼</button></div><div id="tvList"></div></div></div>
+      <div class="tvside"><div class="tvsh" id="tvToggle"><span class="tvt">قائمة القنوات</span></div><div class="tvbody"><div class="tvarr hide" id="tvArr"><button type="button" id="tvUp" aria-label="لفوق">▲</button><button type="button" id="tvDn" aria-label="لتحت">▼</button></div><div id="tvList"></div></div></div>
       <div class="tvmain">
         <h3 id="tvName" class="st hide"></h3>
         <div id="tvSrv"></div>
@@ -1716,7 +1757,7 @@ function buildCh(){
     h.style.setProperty("--c", chColors(items[0][0], items[0][1])[0]);
     h.innerHTML = '<span class="gn"></span><span class="gc"></span><span class="ar">▼</span>';
     h.querySelector(".gn").textContent = gn; h.querySelector(".gc").textContent = items.length;
-    const toggle = () => { wrap.classList.toggle("open"); wrap.classList.contains("open") ? openG.add(gn) : openG.delete(gn); tvArrows(); };
+    const toggle = () => { wrap.classList.toggle("open"); wrap.classList.contains("open") ? openG.add(gn) : openG.delete(gn); fitNames(); };
     h.onclick = toggle;
     h.onkeydown = e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); } };
     const body = document.createElement("div"); body.className = "tvgb";
@@ -1724,7 +1765,7 @@ function buildCh(){
       const b = document.createElement("button");
       b.dataset.i = i;
       b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M9 3l3 3 3-3"/></svg><span></span>';
-      b.querySelector("span").textContent = c.name; b.title = c.name;
+      b.querySelector("span").textContent = c.name; b.title = c.name; if (String(c.name).length > 18) b.classList.add("long");
       const cc = chColors(c, i); b.style.setProperty("--c", cc[0]); b.style.setProperty("--c2", cc[1]);
       const lg = logoUrl(chLogo(c));
       if (lg){
@@ -1741,14 +1782,20 @@ function buildCh(){
     wrap.appendChild(h); wrap.appendChild(body); box.appendChild(wrap);
   });
   tvArrows();
+  fitNames();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitNames);
 }
-function tvArrows(){
-  const l = $("#tvList");
-  $("#tvArr").classList.toggle("hide", l.scrollHeight <= l.clientHeight + 2);
+function tvArrows(){ $("#tvArr").classList.add("hide"); }
+function fitNames(){
+  document.querySelectorAll("#tvList .tvg.open button>span").forEach(sp => {
+    sp.style.fontSize = "";
+    let fs = parseFloat(getComputedStyle(sp).fontSize) || 13;
+    while (sp.scrollWidth > sp.clientWidth + 1 && fs > 8){ fs -= 0.5; sp.style.fontSize = fs + "px"; }
+  });
 }
 $("#tvUp").onclick = () => $("#tvList").scrollBy({top: -140, behavior: "smooth"});
 $("#tvDn").onclick = () => $("#tvList").scrollBy({top: 140, behavior: "smooth"});
-window.addEventListener("resize", tvArrows);
+window.addEventListener("resize", () => { tvArrows(); fitNames(); });
 function openTv(){
   stop(); stopMulti(); stopRadio(); $("#player").innerHTML = "";
   ["#home", "#watch", "#admin", "#multi", "#nba"].forEach(x => $(x).classList.add("hide"));
@@ -1789,7 +1836,6 @@ function playCh(i){
   go(0);
 }
 $("#tvBtn").onclick = openTv;
-$("#tvToggle").onclick = () => $(".tvside").classList.toggle("closed");
 $("#tvback").onclick = showHome;
 
 function addSrcRow(card, x){
