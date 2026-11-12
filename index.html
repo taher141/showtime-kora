@@ -415,6 +415,25 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
   #tvList button>span{font-size:12.5px}
   #tvList button.long>span{font-size:12.5px}
 }
+
+/* على الكمبيوتر: قائمة القنوات في أقصى اليمين، والمجموعات تفتح وتقفل بحركة */
+.tvgh .ar{transition:transform .26s ease}
+.tvg.closing>.tvgh .ar{transform:none}
+@media(min-width:901px){
+  main:has(#tv:not(.hide)){max-width:none;padding-right:0}
+  #tv:not(.hide)>.back,#tv:not(.hide)>.st,#tv:not(.hide)>#tvEmpty{margin-inline-start:16px}
+  #tvWrap{gap:22px}
+  #tvWrap .tvside{flex:none;width:290px;border-right:0;border-radius:18px 0 0 18px}
+  #tvWrap .tvmain{padding-left:6px}
+}
+
+/* على الفون: المشغل بعرض الشاشة كلها فوق، وقائمة القنوات تحته (بدل ما كانت جنبه وتضغطه) */
+@media(max-width:700px){
+  #tvWrap{flex-direction:column;align-items:stretch;gap:14px}
+  #tvWrap .tvmain{order:-1;width:100%;flex:none}
+  #tvWrap .tvside{order:0;width:100%;flex:none}
+  #tvp{padding:0;border-radius:12px}
+}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -1757,7 +1776,12 @@ function buildCh(){
     h.style.setProperty("--c", chColors(items[0][0], items[0][1])[0]);
     h.innerHTML = '<span class="gn"></span><span class="gc"></span><span class="ar">▼</span>';
     h.querySelector(".gn").textContent = gn; h.querySelector(".gc").textContent = items.length;
-    const toggle = () => { wrap.classList.toggle("open"); wrap.classList.contains("open") ? openG.add(gn) : openG.delete(gn); fitNames(); };
+    const toggle = () => {
+      const opening = !wrap.classList.contains("open") || wrap.classList.contains("closing");
+      if (opening){ wrap.classList.remove("closing"); wrap.classList.add("open"); openG.add(gn); slideG(body, true); }
+      else { wrap.classList.add("closing"); openG.delete(gn); slideG(body, false, () => wrap.classList.remove("open", "closing")); }
+      fitNames();
+    };
     h.onclick = toggle;
     h.onkeydown = e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); } };
     const body = document.createElement("div"); body.className = "tvgb";
@@ -1784,6 +1808,16 @@ function buildCh(){
   tvArrows();
   fitNames();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitNames);
+}
+function slideG(body, open, done){
+  if (body._a){ body._a.cancel(); body._a = null; }
+  body.style.overflow = "";
+  if (!body.animate || (window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches)){ done && done(); return; }
+  const h = body.scrollHeight + "px";
+  body.style.overflow = "hidden";
+  const a = body.animate(open ? [{height:"0px", opacity:0}, {height:h, opacity:1}] : [{height:h, opacity:1}, {height:"0px", opacity:0}], {duration:260, easing:"ease-in-out"});
+  body._a = a;
+  a.onfinish = () => { body._a = null; body.style.overflow = ""; done && done(); };
 }
 function tvArrows(){ $("#tvArr").classList.add("hide"); }
 function fitNames(){
