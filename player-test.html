@@ -1,34 +1,23 @@
+// ==UserScript==
+// @name         Block Popup Ads
+// @match        *://*/*
+// @run-at       document-start
+// @grant        none
+// ==/UserScript==
 
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ShowTime Kora Player</title>
-<style>
-body{margin:0;background:#090610;color:white;font-family:Arial}
-.header{text-align:center;padding:14px;color:#bb91ff;font-weight:bold}
-.video{width:100%;aspect-ratio:16/9;background:#000}
-iframe{width:100%;height:100%;border:0}
-</style>
-</head>
-<body>
-<div class="header">SHOWTIME KORA</div>
-<div class="video">
-<iframe id="player"
-src="https://912acsss8af382.sirtv.top/playerv5.php?match=4883940&key=9f39972b67d6ce22189507d008acwc26"
-allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-allowfullscreen>
-</iframe>
-</div>
-<script>
-(function(){
-  const originalOpen = window.open;
-  window.open = function(url,name,features){
-    if(!url || url === "about:blank") return null;
+(function () {
+  // منع فتح أي نافذة/تبويب جديد من الجافاسكربت
+  window.open = function (url) {
+    console.log('Blocked popup:', url);
     return null;
   };
+
+  // منع الروابط الخارجية اللي بتفتح في تبويب جديد
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('a');
+    if (a && a.target === '_blank' && a.hostname !== location.hostname) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  }, true);
 })();
-</script>
-</body>
-</html>
