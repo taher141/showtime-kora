@@ -14,16 +14,8 @@
             padding: 15px;
             min-height: 100vh;
         }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 22px;
-            color: #fff;
-        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 20px; font-size: 22px; }
         .video-wrapper {
             position: relative;
             width: 100%;
@@ -32,12 +24,7 @@
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-        video {
-            width: 100%;
-            height: auto;
-            display: block;
-            background: #000;
-        }
+        video { width: 100%; height: auto; display: block; background: #000; }
         .status {
             text-align: center;
             margin-top: 15px;
@@ -48,10 +35,7 @@
         .status.loading { background: #1a3a5c; color: #7cb9ff; }
         .status.success { background: #1a4a2a; color: #7cff9c; }
         .status.error { background: #5c1a1a; color: #ff7c7c; }
-        .controls {
-            text-align: center;
-            margin-top: 15px;
-        }
+        .controls { text-align: center; margin-top: 15px; }
         button {
             background: #2563eb;
             color: #fff;
@@ -76,30 +60,39 @@
         <div id="status" class="status loading">⏳ جاري تحميل البث...</div>
         
         <div class="controls">
-            <button onclick="reloadStream()">🔄 إعادة تشغيل</button>
+            <button onclick="tryNextProxy()">🔄 تجربة بروكسي آخر</button>
             <button onclick="toggleFullscreen()">⛶ شاشة كاملة</button>
         </div>
     </div>
 
     <script>
-        // رابط البث عبر وسيط CORS لحل مشكلة HTTP/HTTPS
-        const streamUrl = 'https://api.codetabs.com/v1/proxy/?quest=http://m0h.link:2082/live/2c:99:75:ff:03:53/R7RR659466/139103.ts';
+        const originalUrl = 'http://m0h.link:2082/live/2c:99:75:ff:03:53/R7RR659466/139103.ts';
+        
+        // قائمة proxies مختلفة
+        const proxies = [
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy/?quest=',
+            'https://thingproxy.freeboard.io/fetch/',
+            'https://cors-anywhere.herokuapp.com/',
+            'https://proxy.cors.sh/'
+        ];
+        
+        let currentProxyIndex = 0;
+        let player = null;
         const videoElement = document.getElementById('videoElement');
         const statusElement = document.getElementById('status');
-        let player = null;
 
         function setStatus(message, type) {
             statusElement.innerText = message;
             statusElement.className = 'status ' + type;
         }
 
-        function initPlayer() {
+        function initPlayer(url) {
             if (!mpegts.getFeatureList().mseLivePlayback) {
-                setStatus('❌ متصفحك لا يدعم تشغيل هذا النوع من البث', 'error');
+                setStatus('❌ متصفحك لا يدعم هذا النوع من البث', 'error');
                 return;
             }
 
-            // حذف المشغل القديم إن وجد
             if (player) {
                 player.pause();
                 player.unload();
@@ -108,11 +101,11 @@
                 player = null;
             }
 
-            setStatus('⏳ جاري تحميل البث...', 'loading');
+            setStatus('⏳ جاري التحميل عبر البروكسي ' + (currentProxyIndex + 1) + '...', 'loading');
 
             player = mpegts.createPlayer({
                 type: 'mpegts',
-                url: streamUrl,
+                url: url,
                 isLive: true,
                 cors: true,
                 enableStashBuffer: true,
@@ -123,37 +116,34 @@
             player.load();
 
             player.on(mpegts.Events.ERROR, (errorType, detail) => {
-                setStatus('❌ خطأ في البث: ' + errorType, 'error');
-                console.error('MPEGTS Error:', errorType, detail);
-            });
-
-            player.on(mpegts.Events.LOADING_COMPLETE, () => {
-                setStatus('⚠️ انتهى البث', 'loading');
+                setStatus('❌ فشل البروكسي ' + (currentProxyIndex + 1) + '، اضغط "تجربة بروكسي آخر"', 'error');
+                console.error('Error:', errorType, detail);
             });
 
             videoElement.play().then(() => {
-                setStatus('✅ البث يعمل الآن', 'success');
+                setStatus('✅ البث يعمل الآن!', 'success');
             }).catch(err => {
                 setStatus('⚠️ اضغط على زر التشغيل في المشغل', 'loading');
-                console.log('Autoplay blocked:', err);
             });
         }
 
-        function reloadStream() {
-            setStatus('⏳ جاري إعادة التحميل...', 'loading');
-            initPlayer();
+        function tryNextProxy() {
+            currentProxyIndex = (currentProxyIndex + 1) % proxies.length;
+            const newUrl = proxies[currentProxyIndex] + encodeURIComponent(originalUrl);
+            initPlayer(newUrl);
         }
 
         function toggleFullscreen() {
             if (videoElement.requestFullscreen) {
                 videoElement.requestFullscreen();
             } else if (videoElement.webkitEnterFullscreen) {
-                videoElement.webkitEnterFullscreen(); // للموبايل
+                videoElement.webkitEnterFullscreen();
             }
         }
 
-        // تشغيل المشغل عند فتح الصفحة
-        initPlayer();
+        // بدء التشغيل بأول بروكسي
+        const firstUrl = proxies[0] + encodeURIComponent(originalUrl);
+        initPlayer(firstUrl);
     </script>
 </body>
 </html>
