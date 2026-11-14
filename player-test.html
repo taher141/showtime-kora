@@ -3,37 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل بث IPTV</title>
-    <!-- استدعاء مكتبة mpegts.js -->
+    <title>مشغل البث المباشر</title>
     <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest/dist/mpegts.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f4; padding: 20px; }
-        video { width: 100%; max-width: 800px; background: #000; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #0f0f0f; 
+            color: #fff; 
+            padding: 15px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 22px;
+            color: #fff;
+        }
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #000;
+        }
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .status.loading { background: #1a3a5c; color: #7cb9ff; }
+        .status.success { background: #1a4a2a; color: #7cff9c; }
+        .status.error { background: #5c1a1a; color: #ff7c7c; }
+        .controls {
+            text-align: center;
+            margin-top: 15px;
+        }
+        button {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:active { background: #1d4ed8; }
     </style>
 </head>
 <body>
-
-    <h2>مشغل البث المباشر</h2>
-    <video id="videoElement" controls autoplay muted></video>
+    <div class="container">
+        <h1>📺 بث مباشر</h1>
+        
+        <div class="video-wrapper">
+            <video id="videoElement" controls autoplay muted playsinline></video>
+        </div>
+        
+        <div id="status" class="status loading">⏳ جاري تحميل البث...</div>
+        
+        <div class="controls">
+            <button onclick="reloadStream()">🔄 إعادة تشغيل</button>
+            <button onclick="toggleFullscreen()">⛶ شاشة كاملة</button>
+        </div>
+    </div>
 
     <script>
-        if (mpegts.getFeatureList().mseLivePlayback) {
-            var player = mpegts.createPlayer({
-                type: 'mpegts', // نوع البث
-                url: 'http://m0h.link:2082/live/2c:99:75:ff:03:53/R7RR659466/139103.ts',
-                isLive: true,   // تفعيل وضع البث المباشر
-            });
-            
-            player.attachMediaElement(document.getElementById('videoElement'));
-            player.load();
-            
-            // محاولة التشغيل التلقائي (قد يتطلب كتم الصوت أولاً بسبب سياسات المتصفح)
-            player.play().catch(function(error) {
-                console.log("التشغيل التلقائي منع، يرجى الضغط على زر التشغيل يدوياً.", error);
-            });
-        } else {
-            document.body.innerHTML += '<p style="color:red;">متصفحك لا يدعم تشغيل هذا النوع من البث.</p>';
+        // رابط البث عبر وسيط CORS لحل مشكلة HTTP/HTTPS
+        const streamUrl = 'https://corsproxy.io/?http://m0h.link:2082/live/2c:99:75:ff:03:53/R7RR659466/139103.ts';
+        const videoElement = document.getElementById('videoElement');
+        const statusElement = document.getElementById('status');
+        let player = null;
+
+        function setStatus(message, type) {
+            statusElement.innerText = message;
+            statusElement.className = 'status ' + type;
         }
+
+        function initPlayer() {
+            if (!mpegts.getFeatureList().mseLivePlayback) {
+                setStatus('❌ متصفحك لا يدعم تشغيل هذا النوع من البث', 'error');
+                return;
+            }
+
+            // حذف المشغل القديم إن وجد
+            if (player) {
+                player.pause();
+                player.unload();
+                player.detachMediaElement();
+                player.destroy();
+                player = null;
+            }
+
+            setStatus('⏳ جاري تحميل البث...', 'loading');
+
+            player = mpegts.createPlayer({
+                type: 'mpegts',
+                url: streamUrl,
+                isLive: true,
+                cors: true,
+                enableStashBuffer: true,
+                stashInitialSize: 128
+            });
+
+            player.attachMediaElement(videoElement);
+            player.load();
+
+            player.on(mpegts.Events.ERROR, (errorType, detail) => {
+                setStatus('❌ خطأ في البث: ' + errorType, 'error');
+                console.error('MPEGTS Error:', errorType, detail);
+            });
+
+            player.on(mpegts.Events.LOADING_COMPLETE, () => {
+                setStatus('⚠️ انتهى البث', 'loading');
+            });
+
+            videoElement.play().then(() => {
+                setStatus('✅ البث يعمل الآن', 'success');
+            }).catch(err => {
+                setStatus('⚠️ اضغط على زر التشغيل في المشغل', 'loading');
+                console.log('Autoplay blocked:', err);
+            });
+        }
+
+        function reloadStream() {
+            setStatus('⏳ جاري إعادة التحميل...', 'loading');
+            initPlayer();
+        }
+
+        function toggleFullscreen() {
+            if (videoElement.requestFullscreen) {
+                videoElement.requestFullscreen();
+            } else if (videoElement.webkitEnterFullscreen) {
+                videoElement.webkitEnterFullscreen(); // للموبايل
+            }
+        }
+
+        // تشغيل المشغل عند فتح الصفحة
+        initPlayer();
     </script>
 </body>
 </html>
