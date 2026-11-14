@@ -253,7 +253,7 @@ main{max-width:960px;margin:0 auto;padding:16px}
 #tvList button.on::after{content:"●";margin-right:auto;font-size:10px;animation:bl 1.2s ease-in-out infinite}
 @media(max-width:600px){.tvside{width:146px}.tvarr{width:26px}.tvarr button{width:22px}.tvsh{font-size:12.5px;padding:10px 4px}#tvList{padding:6px;gap:6px}#tvList button{padding:11px 6px;font-size:12.5px;gap:6px}#tvList button svg{display:none}}
 .tabhide{display:none!important}
-#admin .atabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+#admin .atabs{display:flex;gap:8px;overflow-x:auto;max-width:100%;overscroll-behavior-x:contain;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
 #admin .atabs button{flex:1 0 auto;min-width:76px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 12px;font-weight:700;font-size:12.5px;white-space:nowrap}
 #admin .atabs button .ic{font-size:22px;line-height:1}
 #admin .atabs button.on{background:#7e22ce;border-color:#7e22ce;color:#fff}
@@ -518,8 +518,10 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 #dtl .sbar i{display:block;background:var(--team)}
 #dtl .pl:last-child,#dtl .ev:last-child,#dtl .stt:last-child{border-bottom:0}
 @media(max-width:420px){#dtl .dp.lu{gap:8px}#dtl .pl{font-size:13px}}
-#admin .dayrow{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;margin-top:4px;-webkit-overflow-scrolling:touch}
-#admin .dayh{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:92px;padding:10px 12px;font-weight:700;text-align:center;white-space:nowrap}
+#admin,#admin #apanel{min-width:0;max-width:100%;grid-template-columns:minmax(0,1fr)}
+#admin #apanel>*,#admin .box,#admin #alist{min-width:0;max-width:100%}
+#admin .dayrow{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;overflow-y:hidden;width:100%;max-width:100%;padding:4px 0 8px;margin-top:4px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scroll-snap-type:x proximity;scrollbar-width:thin}
+#admin .dayh{flex:0 0 auto;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:92px;padding:10px 12px;font-weight:700;text-align:center;white-space:nowrap}
 #admin .dayh.on{background:#7e22ce;border-color:#7e22ce;color:#fff}
 #admin .dayh small{font-weight:400;opacity:.85}
 #admin .dayb{padding:0 4px 4px}
@@ -1744,6 +1746,7 @@ function dayKey(t){ const d = new Date(t), z = n => String(n).padStart(2, "0"); 
 function aList(){
   $("#acnt").textContent = MATCHES.length;
   const box = $("#alist");
+  const oldRow = box.querySelector(".dayrow"), keepScroll = oldRow ? oldRow.scrollLeft : null;
   box.innerHTML = "";
   if (!MATCHES.length){ box.innerHTML = '<p class="note">لا توجد مباريات بعد</p>'; return; }
   const sorted = MATCHES.map((m, i) => ({m, i})).sort((a, b) => new Date(a.m.time) - new Date(b.m.time));
@@ -1763,6 +1766,8 @@ function aList(){
     const bd = document.createElement("div"); bd.className = "dayb" + (k === aOpenDay ? "" : " hide");
     bodies[k] = bd; row.appendChild(h); box.appendChild(bd);
   });
+  if (keepScroll !== null) row.scrollLeft = keepScroll;
+  else { const on = row.querySelector(".dayh.on"); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; }
   sorted.forEach(({m, i}) => {
     const d = document.createElement("div");
     d.className = "it";
