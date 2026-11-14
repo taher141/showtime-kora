@@ -3,58 +3,109 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ShowTime Kora - Player Test</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShowTime Kora - Test Player</title>
 <style>
-body {
-  margin: 0;
-  background: #080810;
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080810;color:white;
+ font-family:Arial,sans-serif;text-align:center
 }
-h2 { color: #a855f7; padding: 15px; }
-.player {
-  width: 95%;
-  max-width: 950px;
-  margin: 20px auto;
-  background: #000;
+header{
+ padding:20px;color:#c084fc;font-size:23px;
+ font-weight:bold
 }
-video {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: #000;
+.player{
+ width:95%;max-width:900px;margin:15px auto;
+ background:#000;border:1px solid #7137a8;
+ border-radius:12px;overflow:hidden
 }
-#status {
-  color: #c084fc;
-  padding: 12px;
+video{width:100%;aspect-ratio:16/9;background:#000}
+.controls{max-width:900px;margin:15px auto;padding:12px}
+input{
+ width:100%;padding:14px;border-radius:8px;
+ border:1px solid #7137a8;background:#171322;
+ color:white;direction:ltr
 }
+button{
+ padding:12px 25px;margin:10px 5px;
+ border:0;border-radius:7px;
+ background:#8427c9;color:white;font-weight:bold
+}
+#status{color:#c084fc;padding:12px}
 </style>
 </head>
-
 <body>
 
-<h2>SHOWTIME KORA</h2>
+<header>SHOWTIME KORA</header>
 
 <div class="player">
-  <video id="video" controls autoplay playsinline></video>
+ <video id="video" controls playsinline></video>
 </div>
 
-<div id="status">جاهز للتشغيل</div>
+<div class="controls">
+ <input id="stream" type="url"
+ placeholder="ضع رابط MPEG-TS المصرح به هنا">
+ <button onclick="playStream()">تشغيل</button>
+ <button onclick="stopStream()">إيقاف</button>
+ <div id="status">جاهز للتشغيل</div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest/dist/mpegts.min.js"></script>
 
 <script>
-const video = document.getElementById('video');
-const status = document.getElementById('status');
+const video=document.getElementById('video');
+const status=document.getElementById('status');
+let player=null;
 
-if (mpegts.isSupported()) {
-  status.textContent = 'المتصفح يدعم MPEG-TS';
-} else {
-  status.textContent = 'المتصفح لا يدعم MPEG-TS';
+function stopStream(){
+ if(player){
+  player.pause();
+  player.unload();
+  player.detachMediaElement();
+  player.destroy();
+  player=null;
+ }
+ video.removeAttribute('src');
+ video.load();
+ status.textContent='تم إيقاف التشغيل';
+}
+
+function playStream(){
+ const url=document.getElementById('stream').value.trim();
+ if(!url){
+  status.textContent='أدخل رابط البث أولاً';
+  return;
+ }
+ if(!/^https?:\/\//i.test(url)){
+  status.textContent='الرابط غير صحيح';
+  return;
+ }
+ if(!mpegts.isSupported()){
+  status.textContent='المتصفح لا يدعم MPEG-TS';
+  return;
+ }
+
+ stopStream();
+ status.textContent='جارٍ الاتصال بمصدر البث...';
+
+ player=mpegts.createPlayer({
+  type:'mpegts',
+  isLive:true,
+  url:url
+ });
+
+ player.attachMediaElement(video);
+ player.on(mpegts.Events.ERROR,(type,detail)=>{
+  status.textContent='خطأ في التشغيل: '+type+' - '+detail;
+ });
+ player.load();
+ player.play().then(()=>{
+  status.textContent='تم بدء التشغيل';
+ }).catch(()=>{
+  status.textContent='اضغط تشغيل داخل الفيديو للسماح بالتشغيل';
+ });
 }
 </script>
-
 </body>
 </html>
