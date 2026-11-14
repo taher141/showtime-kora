@@ -7,143 +7,103 @@
     <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest/dist/mpegts.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: Arial, sans-serif; 
-            background: #0f0f0f; 
-            color: #fff; 
-            padding: 15px;
-            min-height: 100vh;
-        }
+        body { font-family: Arial, sans-serif; background: #0f0f0f; color: #fff; padding: 15px; min-height: 100vh; }
         .container { max-width: 900px; margin: 0 auto; }
         h1 { text-align: center; margin-bottom: 20px; font-size: 22px; }
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            background: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-        video { width: 100%; height: auto; display: block; background: #000; }
-        .status {
-            text-align: center;
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .status.loading { background: #1a3a5c; color: #7cb9ff; }
-        .status.success { background: #1a4a2a; color: #7cff9c; }
-        .status.error { background: #5c1a1a; color: #ff7c7c; }
-        .controls { text-align: center; margin-top: 15px; }
-        button {
-            background: #2563eb;
-            color: #fff;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 6px;
-            font-size: 15px;
-            cursor: pointer;
-            margin: 5px;
-        }
-        button:active { background: #1d4ed8; }
+        video { width: 100%; height: auto; display: block; background: #000; border-radius: 10px; }
+        .status { text-align: center; margin-top: 15px; padding: 10px; border-radius: 6px; font-size: 14px; }
+        .loading { background: #1a3a5c; color: #7cb9ff; }
+        .success { background: #1a4a2a; color: #7cff9c; }
+        .error { background: #5c1a1a; color: #ff7c7c; }
+        button { background: #2563eb; color: #fff; border: none; padding: 10px 25px; border-radius: 6px; font-size: 15px; cursor: pointer; margin: 5px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📺 بث مباشر</h1>
-        
-        <div class="video-wrapper">
-            <video id="videoElement" controls autoplay muted playsinline></video>
-        </div>
-        
-        <div id="status" class="status loading">⏳ جاري تحميل البث...</div>
-        
-        <div class="controls">
-            <button onclick="tryNextProxy()">🔄 تجربة بروكسي آخر</button>
-            <button onclick="toggleFullscreen()">⛶ شاشة كاملة</button>
+        <video id="videoElement" controls autoplay muted playsinline></video>
+        <div id="status" class="status loading">⏳ جاري التحميل...</div>
+        <div style="text-align:center; margin-top:15px;">
+            <button onclick="tryNextProxy()">🔄 بروكسي آخر</button>
         </div>
     </div>
 
-    <script>
-        const originalUrl = 'http://m0h.link:2082/live/2c:99:75:ff:03:53/R7RR659466/139103.ts';
+<script>
+    const originalUrl = 'http://m0h.link:2082/live/2c:99:75:ff:03:53/R7RR659466/139103.ts';
+    
+    // أقوى البروكسيات الداعمة للبث المباشر (streaming)
+    const proxies = [
+        (u) => 'https://corsproxy.io/?' + encodeURIComponent(u),
+        (u) => 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u),
+        (u) => 'https://thingproxy.freeboard.io/fetch/' + u,
+        (u) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u)
+    ];
+    
+    let idx = 0;
+    let player = null;
+    const video = document.getElementById('videoElement');
+    const status = document.getElementById('status');
+
+    function setStatus(msg, type) {
+        status.innerText = msg;
+        status.className = 'status ' + type;
+    }
+
+    function init() {
+        if (!mpegts.getFeatureList().mseLivePlayback) {
+            setStatus('❌ متصفحك لا يدعم البث', 'error');
+            return;
+        }
+
+        if (player) {
+            player.pause(); player.unload(); player.detachMediaElement(); player.destroy();
+        }
+
+        const url = proxies[idx](originalUrl);
+        setStatus('⏳ جاري التحميل (بروكسي ' + (idx+1) + ' من ' + proxies.length + ')...', 'loading');
+
+        player = mpegts.createPlayer({
+            type: 'mpegts',
+            url: url,
+            isLive: true
+        }, {
+            enableWorker: true,
+            lowLatencyMode: true,
+            liveBufferLatencyChasing: true,
+            liveBufferLatencyMaxLatency: 5,
+            liveBufferLatencyMinRemain: 1,
+            autoCleanupSourceBuffer: true,
+            stashInitialSize: 128,
+            lazyLoad: false
+        });
+
+        player.attachMediaElement(video);
+        player.load();
+
+        let loaded = false;
+        player.on(mpegts.Events.MEDIA_INFO, () => { loaded = true; });
         
-        // قائمة proxies مختلفة
-        const proxies = [
-            'https://corsproxy.io/?',
-            'https://api.codetabs.com/v1/proxy/?quest=',
-            'https://thingproxy.freeboard.io/fetch/',
-            'https://cors-anywhere.herokuapp.com/',
-            'https://proxy.cors.sh/'
-        ];
-        
-        let currentProxyIndex = 0;
-        let player = null;
-        const videoElement = document.getElementById('videoElement');
-        const statusElement = document.getElementById('status');
-
-        function setStatus(message, type) {
-            statusElement.innerText = message;
-            statusElement.className = 'status ' + type;
-        }
-
-        function initPlayer(url) {
-            if (!mpegts.getFeatureList().mseLivePlayback) {
-                setStatus('❌ متصفحك لا يدعم هذا النوع من البث', 'error');
-                return;
+        player.on(mpegts.Events.ERROR, (type, detail) => {
+            if (!loaded) {
+                setStatus('❌ البروكسي ' + (idx+1) + ' فشل - اضغط "بروكسي آخر"', 'error');
+            } else {
+                setStatus('⚠️ انقطع البث - اضغط "بروكسي آخر" لإعادة التشغيل', 'error');
             }
+        });
 
-            if (player) {
-                player.pause();
-                player.unload();
-                player.detachMediaElement();
-                player.destroy();
-                player = null;
-            }
+        video.play().then(() => {
+            setStatus('✅ البث يعمل!', 'success');
+        }).catch(() => {
+            setStatus('▶️ اضغط زر التشغيل في المشغل', 'loading');
+        });
+    }
 
-            setStatus('⏳ جاري التحميل عبر البروكسي ' + (currentProxyIndex + 1) + '...', 'loading');
+    function tryNextProxy() {
+        idx = (idx + 1) % proxies.length;
+        init();
+    }
 
-            player = mpegts.createPlayer({
-                type: 'mpegts',
-                url: url,
-                isLive: true,
-                cors: true,
-                enableStashBuffer: true,
-                stashInitialSize: 128
-            });
-
-            player.attachMediaElement(videoElement);
-            player.load();
-
-            player.on(mpegts.Events.ERROR, (errorType, detail) => {
-                setStatus('❌ فشل البروكسي ' + (currentProxyIndex + 1) + '، اضغط "تجربة بروكسي آخر"', 'error');
-                console.error('Error:', errorType, detail);
-            });
-
-            videoElement.play().then(() => {
-                setStatus('✅ البث يعمل الآن!', 'success');
-            }).catch(err => {
-                setStatus('⚠️ اضغط على زر التشغيل في المشغل', 'loading');
-            });
-        }
-
-        function tryNextProxy() {
-            currentProxyIndex = (currentProxyIndex + 1) % proxies.length;
-            const newUrl = proxies[currentProxyIndex] + encodeURIComponent(originalUrl);
-            initPlayer(newUrl);
-        }
-
-        function toggleFullscreen() {
-            if (videoElement.requestFullscreen) {
-                videoElement.requestFullscreen();
-            } else if (videoElement.webkitEnterFullscreen) {
-                videoElement.webkitEnterFullscreen();
-            }
-        }
-
-        // بدء التشغيل بأول بروكسي
-        const firstUrl = proxies[0] + encodeURIComponent(originalUrl);
-        initPlayer(firstUrl);
-    </script>
+    init();
+</script>
 </body>
 </html>
