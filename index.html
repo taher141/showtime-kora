@@ -604,6 +604,12 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 #admin #fxList .fxc .fxa{padding:5px 8px;gap:6px}
 #admin #fxList .fxc .fxa small{font-size:11px}
 #admin #fxList .fxc .fxa button{padding:4px 12px;font-size:12px}
+/* ===== صفحة الأدمن: بدون الهيدر والصورة، والشريط مثبّت أعلى الصفحة ===== */
+body.adm>header,body.adm>.ad,body.adm>#tk{display:none!important}
+body.adm main{padding-top:10px}
+body.adm{scroll-padding-top:var(--atabsH,0px)}
+#admin .atabs{position:sticky;top:0;z-index:20;background:var(--bg);padding-top:6px;box-shadow:0 1px 0 var(--bd2)}
+#admin #fxList .fxd{top:var(--atabsH,0px)}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -1890,7 +1896,7 @@ function aList(){
   requestAnimationFrame(() => {
     box.style.minHeight = "";
     const rt = row.getBoundingClientRect().top;
-    if (rt < 0 || rt > window.innerHeight * 0.6) window.scrollBy(0, rt - 70);
+    if (rt < 0 || rt > window.innerHeight * 0.6) window.scrollBy(0, rt - 70 - (parseInt(getComputedStyle(document.documentElement).getPropertyValue("--atabsH")) || 0));
   });
   const onBtn = row.querySelector(".dayh.on");
   if (keepScroll !== null) row.scrollLeft = keepScroll;
@@ -3194,6 +3200,17 @@ if (fbOn){
 } else if (!Array.isArray(draft)){
   loadJsonFallback();
 }
+</script>
+<script>
+(function(){
+  const a = document.getElementById("admin"), t = document.getElementById("atabs"), r = document.documentElement;
+  if (!a || !t) return;
+  const setH = () => r.style.setProperty("--atabsH", (document.body.classList.contains("adm") ? t.offsetHeight : 0) + "px");
+  const sync = () => { document.body.classList.toggle("adm", !a.classList.contains("hide")); setH(); };
+  new MutationObserver(sync).observe(a, {attributes:true, attributeFilter:["class"]});
+  if (window.ResizeObserver) new ResizeObserver(setH).observe(t);
+  sync();
+})();
 </script>
 </body>
 </html>
