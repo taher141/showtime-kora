@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>شوتايم كورة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--wt:#fff;--bg:#000;--card:#2b2b2b;--card2:#3a3a3a;--team:#86efac;--onteam:#000;--text:#e5e5e5;--muted:#a3a3a3;--bd:#444;--bd2:#222;--in:#1c1c1c;--live:#ef4444}
 :root[data-theme=light]{--wt:#111827;--bg:#eef0f3;--card:#fff;--card2:#e5e7eb;--team:#15803d;--onteam:#fff;--text:#111827;--muted:#6b7280;--bd:#d1d5db;--bd2:#e5e7eb;--in:#f9fafb}
@@ -92,6 +93,37 @@ main{max-width:960px;margin:0 auto;padding:16px}
 .tabs button.on{background:var(--team);border-color:var(--team);color:var(--onteam);font-weight:700}
 .ttl{text-align:center;color:var(--team);font-weight:700;margin:0 0 12px}
 .list{display:grid;gap:12px}
+
+/* ===== كارت المباراة الجديد ===== */
+.list{gap:11px}
+@media(max-width:640px){main{padding-left:12px;padding-right:12px}}
+.mcard{font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;background:#fff;border:1px solid #16a34a;border-radius:16px;padding:16px 9px 0;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.18);color:#111;text-align:center;display:flex;flex-direction:column;transition:transform .12s}
+.mcard.soon{border-color:#f59e0b}
+.mcard.end{border-color:#9ca3af}
+.mcard.click{cursor:pointer}
+.mcard.click:active{transform:scale(.99)}
+.mc-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;flex:1}
+.mc-tm{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:0}
+.mc-lg{width:90px;height:90px;border-radius:14px;background:#f4f6fa;border:1px solid #e4e8f0;display:flex;align-items:center;justify-content:center;position:relative;flex:none}
+.mc-lg img{position:absolute;inset:0;margin:auto;width:72px;height:72px;object-fit:contain;border-radius:50%}
+.mc-lg .ph{font-weight:800;font-size:28px;color:#3b3548}
+.mc-n{font-weight:700;font-size:15px;line-height:1.35;color:#111;overflow-wrap:anywhere;padding:0 4px 9px}
+.mc-mid{align-self:start;height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;min-width:0}
+.mc-big{font-weight:700;font-size:27px;line-height:1;color:#111;direction:ltr;white-space:nowrap}
+.mc-big.tm{font-size:21px}
+.mc-pill{display:inline-block;padding:3px 14px;border-radius:999px;font-weight:600;font-size:13px;line-height:1.55;color:#fff;background:#64748b;max-width:100%;text-align:center}
+.mc-pill.live{background:#6fc690}
+.mc-pill.end{background:#1f2937}
+.mc-pill.cdn{background:#f59e0b;color:#fff;font-size:15px;transform:none;direction:ltr;font-variant-numeric:tabular-nums}
+.mc-info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:#f6f7f9;border-top:1px solid #e5e7eb}
+.mc-info>div{padding:6px 4px;min-height:32px;font-size:13px;font-weight:500;color:#333;display:flex;align-items:center;justify-content:center;gap:3px;min-width:0}
+.mc-info>div>span:first-child{font-size:12px;flex:none}
+.mc-info>div+div{border-inline-start:1px solid #e5e7eb}
+.mc-info .t{min-width:0;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;unicode-bidi:plaintext;text-align:center}
+.mc-info .t.bein{display:inline-flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap;overflow:visible;unicode-bidi:normal}
+.mc-info .bein img{height:14px;width:auto}
+.mc-info .bein b{font-size:12px;-webkit-text-stroke-width:2px}
+@media(min-width:641px){.mc-lg{width:104px;height:104px;border-radius:16px}.mc-lg img{width:82px;height:82px}.mc-n{font-size:18px}.mc-mid{height:104px}.mc-big{font-size:32px}.mc-big.tm{font-size:25px}.mc-pill{font-size:15px;padding:3px 18px}.mc-info>div{font-size:15px;padding:9px 6px;min-height:40px}}
 /* البطاقة كلها أوف وايت بدون فواصل */
 .m{background:#f4f1ea;border:1px solid #d8d3c7;border-radius:12px;padding:16px 14px;text-align:center;box-shadow:0 5px 14px rgba(0,0,0,.35)}
 .m.click{cursor:pointer}
@@ -953,6 +985,86 @@ function midNode(m, st, note){
   return xNode();
 }
 
+
+/* ===== كارت المباراة الجديد ===== */
+function mcTime(m){
+  const d = new Date(m.time), mi = d.getMinutes();
+  const o = {hour:"numeric"}; if (mi) o.minute = "2-digit";
+  return new Intl.DateTimeFormat("en-US", o).format(d).replace(/\s/g, " ");
+}
+function mcTeam(name, logo){
+  const d = document.createElement("div"); d.className = "mc-tm";
+  const w = document.createElement("div"); w.className = "mc-lg";
+  const ph = document.createElement("span"); ph.className = "ph";
+  ph.textContent = (String(name || "").trim()[0] || "").toUpperCase();
+  w.appendChild(ph);
+  if (logo){
+    const l = document.createElement("img"); l.alt = "";
+    l.onload = () => ph.remove();
+    loadLogo(l, logoUrl(logo), () => l.remove());
+    w.appendChild(l);
+  }
+  const n = document.createElement("span"); n.className = "mc-n"; n.textContent = name || "";
+  d.append(w, n);
+  return d;
+}
+function mcMid(m, st, note){
+  const w = document.createElement("div"); w.className = "mc-mid";
+  const ok = v => v !== null && v !== undefined && v !== "";
+  const score = (ok(m.scoreHome) && ok(m.scoreAway)) ? (m.scoreHome + " - " + m.scoreAway) : "";
+  const big = document.createElement("div"); big.className = "mc-big";
+  const pill = document.createElement("span"); pill.className = "mc-pill";
+  if (st === "ended"){
+    big.textContent = score || "0 - 0";
+    pill.classList.add("end"); pill.textContent = "انتهت المباراة";
+  } else if (isLive(m)){
+    big.textContent = score || "0 - 0";
+    pill.classList.add("live"); pill.textContent = "جارية الآن";
+  } else if (isCountdown(m)){
+    big.textContent = mcTime(m); big.classList.add("tm");
+    const t = new Date(m.time).getTime();
+    pill.classList.add("cdn"); pill.dataset.t = t; pill.textContent = cdText(t - Date.now());
+  } else {
+    big.textContent = mcTime(m); big.classList.add("tm");
+    pill.textContent = note || "لم تبدأ بعد";
+  }
+  if (big.textContent) w.appendChild(big);
+  w.appendChild(pill);
+  return w;
+}
+function mcCard(m, i){
+  const st = stateOf(m), note = noteOf(m);
+  const el = document.createElement("div");
+  el.className = "mcard" + (st === "ended" ? " end" : (isLive(m) ? "" : " soon"));
+  const top = document.createElement("div"); top.className = "mc-top";
+  top.append(mcTeam(m.home, m.homeLogo), mcMid(m, st, note), mcTeam(m.away, m.awayLogo));
+  const info = document.createElement("div"); info.className = "mc-info";
+  [["📺", m.channel], ["🎙️", m.commentator], ["🏆", m.league]].forEach(([e, v]) => {
+    const c = document.createElement("div");
+    const ic = document.createElement("span"); ic.textContent = e;
+    const t = document.createElement("span"); t.className = "t";
+    const txt = (v && String(v).trim()) || "";
+    if (e === "📺" && /^\s*bein\b/i.test(txt)){
+      t.className = "t sb bein";
+      const im = document.createElement("img"); im.src = BEIN_LOGO; im.alt = "beIN SPORTS";
+      t.appendChild(im);
+      const rest = txt.replace(/^bein\s*(sports?)?\s*/i, "");
+      if (rest){ const b = document.createElement("b"); b.textContent = rest; t.appendChild(b); }
+      c.append(t);
+    } else {
+      t.textContent = txt || "غير معروف";
+      c.append(ic, t);
+    }
+    info.appendChild(c);
+  });
+  el.append(top, info);
+  if (st !== "ended" && ((st === "open" && !note) || (isCountdown(m) && hasSrc(m)))){
+    el.classList.add("click");
+    el.onclick = () => openMatch(i);
+  }
+  return el;
+}
+
 function render(){
   lastSig = sigNow();
   const box = $("#list");
@@ -967,22 +1079,7 @@ function render(){
     box.innerHTML = '<div class="empty">' + (live ? "لا توجد مباريات مباشرة الآن" : "لا توجد مباريات في هذا اليوم") + "</div>";
     return;
   }
-  rows.forEach(({m, i}) => {
-    const el = document.createElement("div");
-    el.className = "m";
-    const st = stateOf(m);
-    const note = noteOf(m);
-    el.innerHTML = '<div class="teams"></div><div class="act"></div>';
-    teamsRow(el.querySelector(".teams"), m, midNode(m, st, note));
-    const act = el.querySelector(".act");
-    if (st === "ended"){
-      act.innerHTML = '<div class="endl">انتهت المباراة</div>';
-    } else if ((st === "open" && !note) || (isCountdown(m) && hasSrc(m))){
-      el.classList.add("click");
-      el.onclick = () => openMatch(i);
-    }
-    box.appendChild(el);
-  });
+  rows.forEach(({m, i}) => box.appendChild(mcCard(m, i)));
 }
 
 function openMatch(i){
