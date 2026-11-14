@@ -1160,10 +1160,12 @@ function mcCard(m, i){
   el.append(top, info);
   if (st !== "ended" && ((st === "open" && !note) || (isCountdown(m) && hasSrc(m)))){
     el.classList.add("click");
+    if (armedCard === i) el.classList.add("go");
     el.onclick = () => {
-      if (el.classList.contains("go")) return;
+      if (el.classList.contains("go")) { armedCard = null; openMatch(i); return; }
+      armedCard = i;
+      document.querySelectorAll(".mcard.go").forEach(c => c.classList.remove("go"));
       el.classList.add("go");
-      setTimeout(() => openMatch(i), 450);
     };
     const pl = document.createElement("span");
     pl.className = "mc-play";
@@ -1175,6 +1177,14 @@ function mcCard(m, i){
   }
   return el;
 }
+
+/* الضغطة الأولى تعتّم الكارت وتظهر زر التشغيل، والثانية تفتح البث */
+let armedCard = null;
+document.addEventListener("click", e => {
+  if (armedCard === null || e.target.closest(".mcard.click")) return;
+  armedCard = null;
+  document.querySelectorAll(".mcard.go").forEach(c => c.classList.remove("go"));
+});
 
 function render(){
   lastSig = sigNow();
