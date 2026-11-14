@@ -518,6 +518,11 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 #dtl .sbar i{display:block;background:var(--team)}
 #dtl .pl:last-child,#dtl .ev:last-child,#dtl .stt:last-child{border-bottom:0}
 @media(max-width:420px){#dtl .dp.lu{gap:8px}#dtl .pl{font-size:13px}}
+#admin .dayrow{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;margin-top:4px;-webkit-overflow-scrolling:touch}
+#admin .dayh{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:92px;padding:10px 12px;font-weight:700;text-align:center;white-space:nowrap}
+#admin .dayh.on{background:#7e22ce;border-color:#7e22ce;color:#fff}
+#admin .dayh small{font-weight:400;opacity:.85}
+#admin .dayb{padding:0 4px 4px}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -738,6 +743,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
     <div class="box">
       <h2>المباريات (<span id="acnt">0</span>)</h2>
       <div id="alist"></div>
+      <p class="note">اضغط على اليوم لعرض مباريات ذلك اليوم فقط. المباراة تُحذف تلقائياً من الموقع بعد يومين من موعدها.</p>
     </div>
     <div class="box">
       <h2>النشر للزوار</h2>
@@ -1165,7 +1171,7 @@ function render(){
   $("#sched").classList.toggle("hide", live);
   $("#liveTtl").classList.toggle("hide", !live);
   const rows = MATCHES.map((m, i) => ({m, i}))
-    .filter(r => live ? isLive(r.m) : dayOffset(r.m) === filter)
+    .filter(r => !expired(r.m) && (live ? isLive(r.m) : dayOffset(r.m) === filter))
     .sort((a, b) => new Date(a.m.time) - new Date(b.m.time));
   if (!rows.length){
     box.innerHTML = '<div class="empty">' + (live ? "لا توجد مباريات مباشرة الآن" : "لا توجد مباريات في هذا اليوم") + "</div>";
@@ -1520,6 +1526,7 @@ function editingBusy(){ return editing >= 0; }
 
 /* حذف المباريات اللي عدّى عليها يومين تلقائياً (يتم فقط والأدمن مسجّل دخول) */
 const KEEP_DAYS = 2;
+function expired(m){ const x = new Date(m.time).getTime(); return !isNaN(x) && x < Date.now() - KEEP_DAYS * 86400000; }
 function pruneOld(){
   if (fbOn && !fbUser) return false;
   const lim = Date.now() - KEEP_DAYS * 86400000, n = MATCHES.length;
@@ -1731,12 +1738,32 @@ $("#asave").onclick = () => {
   Promise.all([checkLogo(m.homeLogo), checkLogo(m.awayLogo)]).then(r => { if (!r[0] || !r[1]) toast("تم الحفظ، لكن رابط الشعار لا يفتح كصورة. استخدم رابط صورة مباشر ينتهي بـ png أو jpg أو svg", 6000); });
 };
 
+let aOpenDay = null;
+const wdFmt = new Intl.DateTimeFormat("ar", {weekday:"long"}), dateFmt = new Intl.DateTimeFormat("ar", {day:"numeric", month:"numeric"});
+function dayKey(t){ const d = new Date(t), z = n => String(n).padStart(2, "0"); return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()); }
 function aList(){
   $("#acnt").textContent = MATCHES.length;
   const box = $("#alist");
   box.innerHTML = "";
   if (!MATCHES.length){ box.innerHTML = '<p class="note">لا توجد مباريات بعد</p>'; return; }
-  MATCHES.map((m, i) => ({m, i})).sort((a, b) => new Date(a.m.time) - new Date(b.m.time)).forEach(({m, i}) => {
+  const sorted = MATCHES.map((m, i) => ({m, i})).sort((a, b) => new Date(a.m.time) - new Date(b.m.time));
+  const keys = [...new Set(sorted.map(r => dayKey(r.m.time)))];
+  const tk = dayKey(Date.now()), tmk = dayKey(Date.now() + 864e5);
+  if (aOpenDay === null || (aOpenDay !== "" && !keys.includes(aOpenDay))) aOpenDay = keys.includes(tk) ? tk : (keys.find(k => k > tk) || keys[0]);
+  const row = document.createElement("div"); row.className = "dayrow"; box.appendChild(row);
+  const bodies = {};
+  keys.forEach(k => {
+    const rows = sorted.filter(r => dayKey(r.m.time) === k);
+    const h = document.createElement("button"); h.type = "button"; h.className = "dayh" + (k === aOpenDay ? " on" : "");
+    h.innerHTML = "<span></span><span></span><small></small>";
+    const dd = new Date(rows[0].m.time), sp = h.children;
+    sp[0].textContent = wdFmt.format(dd); sp[1].textContent = dateFmt.format(dd);
+    sp[2].textContent = (k === tk ? "اليوم · " : k === tmk ? "غدًا · " : "") + rows.length;
+    h.onclick = () => { aOpenDay = (aOpenDay === k) ? "" : k; aList(); };
+    const bd = document.createElement("div"); bd.className = "dayb" + (k === aOpenDay ? "" : " hide");
+    bodies[k] = bd; row.appendChild(h); box.appendChild(bd);
+  });
+  sorted.forEach(({m, i}) => {
     const d = document.createElement("div");
     d.className = "it";
     d.innerHTML = '<div><b class="tt"></b><small></small></div><div><button class="ed">تعديل</button> <button class="d rm">حذف</button></div>';
@@ -1760,7 +1787,7 @@ function aList(){
       if (!armed){ armed = true; rm.textContent = "تأكيد الحذف؟"; setTimeout(() => { armed = false; rm.textContent = "حذف"; }, 3000); return; }
       MATCHES.splice(i, 1); aSave(); aReset();
     };
-    box.appendChild(d);
+    bodies[dayKey(m.time)].appendChild(d);
   });
 }
 
