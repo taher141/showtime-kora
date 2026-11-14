@@ -3,107 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل البث المباشر</title>
+    <title>مشغل البث</title>
     <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest/dist/mpegts.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #0f0f0f; color: #fff; padding: 15px; min-height: 100vh; }
-        .container { max-width: 900px; margin: 0 auto; }
-        h1 { text-align: center; margin-bottom: 20px; font-size: 22px; }
-        video { width: 100%; height: auto; display: block; background: #000; border-radius: 10px; }
-        .status { text-align: center; margin-top: 15px; padding: 10px; border-radius: 6px; font-size: 14px; }
-        .loading { background: #1a3a5c; color: #7cb9ff; }
-        .success { background: #1a4a2a; color: #7cff9c; }
-        .error { background: #5c1a1a; color: #ff7c7c; }
-        button { background: #2563eb; color: #fff; border: none; padding: 10px 25px; border-radius: 6px; font-size: 15px; cursor: pointer; margin: 5px; }
+        body { background: #000; color: #fff; text-align: center; padding: 20px; font-family: Arial; }
+        video { width: 100%; max-width: 800px; background: #111; border-radius: 8px; }
+        .msg { margin-top: 15px; padding: 10px; background: #222; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📺 بث مباشر</h1>
-        <video id="videoElement" controls autoplay muted playsinline></video>
-        <div id="status" class="status loading">⏳ جاري التحميل...</div>
-        <div style="text-align:center; margin-top:15px;">
-            <button onclick="tryNextProxy()">🔄 بروكسي آخر</button>
-        </div>
-    </div>
+    <h2>📺 بث مباشر</h2>
+    <video id="v" controls autoplay muted playsinline></video>
+    <div id="msg" class="msg">جاري المحاولة...</div>
+    <button onclick="location.reload()" style="margin-top:15px; padding:10px 20px; background:#007bff; color:#fff; border:none; border-radius:5px;">🔄 إعادة المحاولة</button>
 
-<script>
-    const originalUrl = 'http://m0h.link:2082/live/2c:99:75:ff:03:53/R7RR659466/139103.ts';
-    
-    // أقوى البروكسيات الداعمة للبث المباشر (streaming)
-    const proxies = [
-        (u) => 'https://corsproxy.io/?' + encodeURIComponent(u),
-        (u) => 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u),
-        (u) => 'https://thingproxy.freeboard.io/fetch/' + u,
-        (u) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u)
-    ];
-    
-    let idx = 0;
-    let player = null;
-    const video = document.getElementById('videoElement');
-    const status = document.getElementById('status');
-
-    function setStatus(msg, type) {
-        status.innerText = msg;
-        status.className = 'status ' + type;
-    }
-
-    function init() {
-        if (!mpegts.getFeatureList().mseLivePlayback) {
-            setStatus('❌ متصفحك لا يدعم البث', 'error');
-            return;
-        }
-
-        if (player) {
-            player.pause(); player.unload(); player.detachMediaElement(); player.destroy();
-        }
-
-        const url = proxies[idx](originalUrl);
-        setStatus('⏳ جاري التحميل (بروكسي ' + (idx+1) + ' من ' + proxies.length + ')...', 'loading');
-
-        player = mpegts.createPlayer({
-            type: 'mpegts',
-            url: url,
-            isLive: true
-        }, {
-            enableWorker: true,
-            lowLatencyMode: true,
-            liveBufferLatencyChasing: true,
-            liveBufferLatencyMaxLatency: 5,
-            liveBufferLatencyMinRemain: 1,
-            autoCleanupSourceBuffer: true,
-            stashInitialSize: 128,
-            lazyLoad: false
-        });
-
-        player.attachMediaElement(video);
-        player.load();
-
-        let loaded = false;
-        player.on(mpegts.Events.MEDIA_INFO, () => { loaded = true; });
+    <script>
+        const url = 'http://m0h.link:2082/live/2c:99:75:ff:03:53/R7RR659466/139103.ts';
+        // محاولة مباشرة بدون ترميز قد تنجح مع بعض البروكسيات
+        const proxyUrl = 'https://api.allorigins.win/raw?url=' + url; 
         
-        player.on(mpegts.Events.ERROR, (type, detail) => {
-            if (!loaded) {
-                setStatus('❌ البروكسي ' + (idx+1) + ' فشل - اضغط "بروكسي آخر"', 'error');
-            } else {
-                setStatus('⚠️ انقطع البث - اضغط "بروكسي آخر" لإعادة التشغيل', 'error');
-            }
-        });
+        const video = document.getElementById('v');
+        const msg = document.getElementById('msg');
 
-        video.play().then(() => {
-            setStatus('✅ البث يعمل!', 'success');
-        }).catch(() => {
-            setStatus('▶️ اضغط زر التشغيل في المشغل', 'loading');
-        });
-    }
+        if (mpegts.getFeatureList().mseLivePlayback) {
+            const player = mpegts.createPlayer({ type: 'mpegts', url: proxyUrl, isLive: true });
+            player.attachMediaElement(video);
+            player.load();
+            
+            player.on(mpegts.Events.ERROR, () => {
+                msg.innerText = '❌ الخادم يرفض البروكسي. الحل الوحيد: اطلب رابط https أو m3u8 من المزود.';
+                msg.style.color = '#ff6b6b';
+            });
 
-    function tryNextProxy() {
-        idx = (idx + 1) % proxies.length;
-        init();
-    }
-
-    init();
-</script>
+            video.play().then(() => {
+                msg.innerText = '✅ يعمل! (اضغط على الشاشة لتفعيل الصوت)';
+                msg.style.color = '#51cf66';
+            }).catch(() => {
+                msg.innerText = '⚠️ اضغط على زر التشغيل (▶) في المشغل';
+            });
+        } else {
+            msg.innerText = '❌ متصفحك لا يدعم هذا النوع من البث';
+        }
+    </script>
 </body>
 </html>
