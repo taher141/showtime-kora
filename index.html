@@ -134,6 +134,7 @@ main{max-width:960px;margin:0 auto;padding:16px}
 .ns{display:flex;flex-direction:column;align-items:center;gap:9px}
 .tt2{color:#1f1b2e;font-weight:800;font-size:20px;line-height:1.2}
 .nt{color:#16a34a;font-weight:800;font-size:16px;line-height:1.3;max-width:110px;padding:0 4px}
+.cdn{color:#dc2626;font-weight:800;font-size:20px;line-height:1.2;transform:translateX(6px);direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
 .soonb,.endl{display:block;width:100%;text-align:center;font-weight:700;padding:10px;border-radius:10px;font-size:15px}
 .soonb{color:#fff;background:#16a34a}
 .endl{color:#fff;background:#000}
@@ -693,6 +694,18 @@ function noteOf(m){
 function isLive(m){
   return stateOf(m) === "open" && !noteOf(m) && Date.now() >= new Date(m.time).getTime();
 }
+/* العد التنازلي: يبدأ قبل المباراة بـ 10 دقائق ويحل محل كلمة "البث بعد قليل" */
+const COUNTDOWN_MIN = 10;
+function isCountdown(m){
+  if (m.ended) return false;
+  const left = new Date(m.time).getTime() - Date.now();
+  return left > 0 && left <= COUNTDOWN_MIN*60000;
+}
+const nfmt2 = new Intl.NumberFormat("ar", {minimumIntegerDigits:2, useGrouping:false});
+function cdText(ms){
+  const s = Math.max(0, Math.ceil(ms/1000));
+  return nfmt2.format(Math.floor(s/60)) + ":" + nfmt2.format(s % 60);
+}
 function dayOffset(m){
   const a = new Date(m.time), b = new Date();
   a.setHours(0,0,0,0); b.setHours(0,0,0,0);
@@ -903,6 +916,17 @@ function noteNode(t, m){
   w.append(e, tm);
   return w;
 }
+function cdNode(m){
+  const w = document.createElement("div");
+  w.className = "ns";
+  const t = new Date(m.time).getTime();
+  const e = document.createElement("span");
+  e.className = "cdn"; e.dataset.t = t; e.textContent = cdText(t - Date.now());
+  const tm = document.createElement("span");
+  tm.className = "tt2"; tm.textContent = tfmt.format(new Date(m.time));
+  w.append(e, tm);
+  return w;
+}
 function midNode(m, st, note){
   if (st === "ended"){
     const ok = v => v !== null && v !== undefined;
@@ -914,6 +938,8 @@ function midNode(m, st, note){
       mid.append(a1, d, a2);
       return mid;
     }
+  } else if (isCountdown(m)){
+    return cdNode(m);
   } else if (note){
     return noteNode(note, m);
   } else if (st === "soon"){
@@ -951,7 +977,7 @@ function render(){
     const act = el.querySelector(".act");
     if (st === "ended"){
       act.innerHTML = '<div class="endl">انتهت المباراة</div>';
-    } else if (st === "open" && !note){
+    } else if ((st === "open" && !note) || (isCountdown(m) && hasSrc(m))){
       el.classList.add("click");
       el.onclick = () => openMatch(i);
     }
@@ -991,7 +1017,7 @@ $("#back").onclick = showHome;
 /* تحديث تلقائي: يبدأ البث المباشر وحده عند حلول موعد المباراة (بدون تحديث الصفحة) */
 let lastSig = "";
 function sigNow(){
-  return mode + "|" + filter + "|" + MATCHES.map(m => [stateOf(m), isLive(m) ? 1 : 0, noteOf(m), dayOffset(m)].join(",")).join(";");
+  return mode + "|" + filter + "|" + MATCHES.map(m => [stateOf(m), isLive(m) ? 1 : 0, isCountdown(m) ? 1 : 0, noteOf(m), dayOffset(m)].join(",")).join(";");
 }
 function autoTick(){
   if (document.hidden) return;
@@ -999,6 +1025,12 @@ function autoTick(){
   if (sigNow() !== lastSig) render();
 }
 setInterval(autoTick, 15000);
+/* تحديث العد التنازلي كل ثانية، وعند انتهائه يتحول الكارت إلى "مباشر" تلقائياً */
+setInterval(() => {
+  if (document.hidden || $("#home").classList.contains("hide")) return;
+  if (sigNow() !== lastSig) { render(); return; }
+  document.querySelectorAll(".cdn").forEach(e => { e.textContent = cdText(+e.dataset.t - Date.now()); });
+}, 1000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) autoTick(); });
 
 function menu(open){
