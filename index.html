@@ -529,6 +529,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 #admin .dayb .it small span{display:block}
 #admin .dayb .it>div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
 #admin .dayb .it>div:last-child button{width:100%}
+#admin #alist{min-height:100vh;min-height:100dvh}
 #admin .dayb .it{gap:5px;padding:7px 0}
 #admin .dayb .it .tt{font-size:14px;line-height:1.3}
 #admin .dayb .it small{font-size:12px;line-height:1.35;margin-top:1px}
@@ -1757,8 +1758,10 @@ function aList(){
   $("#acnt").textContent = MATCHES.length;
   const box = $("#alist");
   const oldRow = box.querySelector(".dayrow"), keepScroll = oldRow ? oldRow.scrollLeft : null;
+  const keepY = window.scrollY, keepH = box.offsetHeight;
+  box.style.minHeight = Math.max(keepH, window.innerHeight) + "px";
   box.innerHTML = "";
-  if (!MATCHES.length){ box.innerHTML = '<p class="note">لا توجد مباريات بعد</p>'; return; }
+  if (!MATCHES.length){ box.innerHTML = '<p class="note">لا توجد مباريات بعد</p>'; box.style.minHeight = ""; return; }
   const sorted = MATCHES.map((m, i) => ({m, i})).sort((a, b) => new Date(a.m.time) - new Date(b.m.time));
   const keys = [...new Set(sorted.map(r => dayKey(r.m.time)))];
   const tk = dayKey(Date.now()), tmk = dayKey(Date.now() + 864e5);
@@ -1775,6 +1778,12 @@ function aList(){
     h.onclick = () => { aOpenDay = (aOpenDay === k) ? "" : k; aList(); };
     const bd = document.createElement("div"); bd.className = "dayb" + (k === aOpenDay ? "" : " hide");
     bodies[k] = bd; row.appendChild(h); box.appendChild(bd);
+  });
+  window.scrollTo(0, keepY);
+  requestAnimationFrame(() => {
+    box.style.minHeight = "";
+    const rt = row.getBoundingClientRect().top;
+    if (rt < 0 || rt > window.innerHeight * 0.6) window.scrollBy(0, rt - 70);
   });
   const onBtn = row.querySelector(".dayh.on");
   if (keepScroll !== null) row.scrollLeft = keepScroll;
