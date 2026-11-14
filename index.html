@@ -521,9 +521,19 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 #admin,#admin #apanel{min-width:0;max-width:100%;grid-template-columns:minmax(0,1fr)}
 #admin #apanel>*,#admin .box,#admin #alist{min-width:0;max-width:100%}
 #admin .dayrow{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;overflow-y:hidden;width:100%;max-width:100%;padding:4px 0 8px;margin-top:4px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scroll-snap-type:x proximity;scrollbar-width:thin}
-#admin .dayh{flex:0 0 auto;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:92px;padding:10px 12px;font-weight:700;text-align:center;white-space:nowrap}
+#admin .dayh{flex:1 0 auto;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:76px;padding:10px 12px;font-weight:700;font-size:12.5px;line-height:1.3;text-align:center;white-space:nowrap}
 #admin .dayh.on{background:#7e22ce;border-color:#7e22ce;color:#fff}
-#admin .dayh small{font-weight:400;opacity:.85}
+#admin .dayh small{font-weight:400;opacity:.85;font-size:11px}
+#admin .dayb .it{flex-direction:column;align-items:stretch;gap:8px}
+#admin .dayb .it>div:first-child{width:100%}
+#admin .dayb .it small span{display:block}
+#admin .dayb .it>div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+#admin .dayb .it>div:last-child button{width:100%}
+#admin .dayb .it{gap:5px;padding:7px 0}
+#admin .dayb .it .tt{font-size:14px;line-height:1.3}
+#admin .dayb .it small{font-size:12px;line-height:1.35;margin-top:1px}
+#admin .dayb .it>div:last-child{gap:6px}
+#admin .dayb .it>div:last-child button{padding:4px 10px;font-size:12.5px;line-height:1.3}
 #admin .dayb{padding:0 4px 4px}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
@@ -1766,14 +1776,21 @@ function aList(){
     const bd = document.createElement("div"); bd.className = "dayb" + (k === aOpenDay ? "" : " hide");
     bodies[k] = bd; row.appendChild(h); box.appendChild(bd);
   });
+  const onBtn = row.querySelector(".dayh.on");
   if (keepScroll !== null) row.scrollLeft = keepScroll;
-  else { const on = row.querySelector(".dayh.on"); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; }
+  if (onBtn && onBtn.scrollIntoView) {
+    /* أول فتح: يوضع اليوم في النص مباشرة، وعند الضغط على يوم يتحرك الشريط بنعومة ليتوسّطه */
+    const smooth = keepScroll !== null;
+    requestAnimationFrame(() => onBtn.scrollIntoView({block:"nearest", inline:"center", behavior: smooth ? "smooth" : "auto"}));
+  }
   sorted.forEach(({m, i}) => {
     const d = document.createElement("div");
     d.className = "it";
     d.innerHTML = '<div><b class="tt"></b><small></small></div><div><button class="ed">تعديل</button> <button class="d rm">حذف</button></div>';
     d.querySelector(".tt").textContent = m.home + " × " + m.away;
-    d.querySelector("small").textContent = (m.league || "") + " · " + fmt.format(new Date(m.time)) + " · " + (m.sources || []).length + " سيرفر" + (m.note ? " · نص: " + m.note : "") + (m.ended ? " · انتهت" + ((m.scoreHome ?? "") !== "" ? " " + m.scoreHome + "-" + m.scoreAway : "") : "");
+    { const sm = d.querySelector("small"); sm.textContent = "";
+      [m.league || "", fmt.format(new Date(m.time)), (m.sources || []).length + " سيرفر", m.note ? "نص: " + m.note : "", m.ended ? "انتهت" + ((m.scoreHome ?? "") !== "" ? " " + m.scoreHome + "-" + m.scoreAway : "") : ""]
+        .filter(Boolean).forEach(t => { const r = document.createElement("span"); r.textContent = t; sm.appendChild(r); }); }
     d.querySelector(".ed").onclick = () => {
       editing = i;
       $("#ahome").value = m.home; $("#aaway").value = m.away;
