@@ -493,6 +493,31 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 .tabs button.on{background:#16a34a;border-color:#16a34a;color:#fff;box-shadow:0 6px 14px rgba(22,163,74,.35)}
 #mvTop{display:none}
 @media(min-width:641px){#mvTop{display:flex;width:40px;height:40px;border-color:var(--team)}#mvTop svg{width:22px;height:22px;color:var(--team)}#sched #mvBtn{display:none}}
+
+#dtl{margin-top:16px}
+#dtl .dh{text-align:center;color:var(--muted);font-size:13px;margin-bottom:10px}
+#dtl .dtabs{display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+#dtl .dtabs button{border:1px solid var(--bd);background:var(--card);color:var(--text);padding:8px 18px;border-radius:8px;font:inherit;cursor:pointer}
+#dtl .dtabs button.on{background:var(--team);border-color:var(--team);color:var(--onteam);font-weight:700}
+#dtl .dp{background:var(--card);border-radius:12px;padding:12px}
+#dtl .dp.lu{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#dtl .dp.lu.hide{display:none!important}
+#dtl .lu h4{margin:0 0 2px;font-size:15px;color:var(--team)}
+#dtl .lu small{color:var(--muted);display:block;margin-bottom:8px}
+#dtl .pl{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd2);font-size:14px}
+#dtl .pl b{min-width:24px;color:var(--muted);font-weight:700}
+#dtl .sb{margin:10px 0 4px;color:var(--muted);font-size:13px}
+#dtl .ev{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd2);font-size:14px}
+#dtl .ev .mn{min-width:38px;color:var(--muted);font-weight:700}
+#dtl .ev .ic{width:22px;text-align:center}
+#dtl .ev small{color:var(--muted);margin-inline-start:auto}
+#dtl .stt{margin-bottom:14px}
+#dtl .sv{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px}
+#dtl .sv span{color:var(--muted)}
+#dtl .sbar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--card2)}
+#dtl .sbar i{display:block;background:var(--team)}
+#dtl .pl:last-child,#dtl .ev:last-child,#dtl .stt:last-child{border-bottom:0}
+@media(max-width:420px){#dtl .dp.lu{gap:8px}#dtl .pl{font-size:13px}}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -539,6 +564,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
     <div id="wt" class="m"></div>
     <div id="srv"></div>
     <div id="player"></div>
+    <div id="dtl"></div>
   </section>
 
   <section id="tv" class="hide">
@@ -593,7 +619,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
       <div class="bar"><button class="p" id="alogBtn">دخول</button></div>
     </div>
     <div id="apanel" style="display:grid;gap:14px">
-    <div class="atabs" id="atabs"><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="radio"><span class="ic">📻</span><span>الراديو</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
+    <div class="atabs" id="atabs"><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="imp"><span class="ic">⬇️</span><span>استيراد</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="radio"><span class="ic">📻</span><span>الراديو</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
     <div class="box">
       <h2 id="aft">إضافة مباراة</h2>
       <div class="g2">
@@ -610,6 +636,24 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
         <div style="grid-column:1/-1"><label style="display:flex;align-items:center;gap:8px;color:var(--text);font-size:14px"><input id="aended" type="checkbox" style="width:auto"> انتهت المباراة (تظهر بالنتيجة في الخارج وتختفي كلمة مباشر)</label></div>
         <div style="grid-column:1/-1"><label>نص يظهر مكان زر "مباشر" (اختياري)</label><input id="anote" placeholder="مثال: البث بعد قليل"><p class="note">لو كتبت هنا نصاً يظهر بدل الزر مهما كان الوقت، وسيبه فاضياً ليشتغل تلقائياً (قبل الموعد بـ 9 ساعات يظهر زر مباشر). ولو أضفت رابط بث، يتحول الكارت تلقائياً إلى "مباشر" وتفتح البث عند حلول موعد المباراة حتى لو النص موجود.</p></div>
       </div>
+      <details id="adet" style="margin-top:12px"><summary style="cursor:pointer;font-weight:700;color:var(--team)">تفاصيل المباراة: التشكيلات والأحداث والإحصائيات (اختياري)</summary>
+      <div class="g2">
+        <div><label>الملعب</label><input id="ainfv"></div>
+        <div><label>الحكم</label><input id="ainfr"></div>
+        <div><label>خطة الفريق الأول</label><input id="ahfm" class="l" placeholder="4-3-3"></div>
+        <div><label>خطة الفريق الثاني</label><input id="aafm" class="l" placeholder="4-2-3-1"></div>
+        <div><label>مدرب الأول</label><input id="ahco"></div>
+        <div><label>مدرب الثاني</label><input id="aaco"></div>
+        <div><label>تشكيلة الأول</label><textarea id="ahlu" style="direction:rtl;font-family:inherit;font-size:14px;min-height:140px" placeholder="1 اسم الحارس&#10;2 اسم اللاعب&#10;البدلاء&#10;12 اسم البديل"></textarea></div>
+        <div><label>تشكيلة الثاني</label><textarea id="aalu" style="direction:rtl;font-family:inherit;font-size:14px;min-height:140px"></textarea></div>
+      </div>
+      <p class="note">كل لاعب في سطر: الرقم ثم الاسم. اكتب سطر "البدلاء" وتحته أسماء البدلاء.</p>
+      <label>الأحداث (سطر لكل حدث: الدقيقة | النوع | الفريق 1 أو 2 | اللاعب)</label>
+      <textarea id="aevt" style="direction:rtl;font-family:inherit;font-size:14px;min-height:110px" placeholder="23 | هدف | 1 | اسم اللاعب&#10;41 | إنذار | 2 | اسم اللاعب&#10;60 | تبديل | 1 | خروج ⇄ دخول"></textarea>
+      <p class="note">النوع: هدف، إنذار، طرد، تبديل.</p>
+      <label>الإحصائيات (سطر لكل بند: الاسم | الأول | الثاني)</label>
+      <textarea id="astt" style="direction:rtl;font-family:inherit;font-size:14px;min-height:110px" placeholder="الاستحواذ | 55% | 45%&#10;التسديدات | 9 | 6"></textarea>
+    </details>
       <label>السيرفرات (أي رابط بث)</label>
       <p class="note" style="margin-top:0">الروابط المدعومة: m3u8 (HLS) · mpd (DASH) · mp4 / webm · ts / flv · embed أو iframe (الصق الكود كامل) · يوتيوب · WebRTC بصيغة WHEP. روابط RTMP لا تعمل داخل المتصفح، حوّلها إلى HLS من سيرفر البث. لو الرابط بلا امتداد واضح اكتب نوعه قبله مثل hls: أو dash: أو ts: أو iframe:</p>
       <div id="arows"></div>
@@ -670,6 +714,26 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
       <input id="nicon" class="l" placeholder="nba.png أو https://...">
       <div id="nrows" style="margin-top:14px"></div>
       <div class="bar"><button id="nadd">+ إضافة مباراة</button><button class="p" id="nsave">حفظ مباريات NBA</button></div>
+    </div>
+    <div class="box">
+      <h2>استيراد مباريات</h2>
+      <p class="note" style="margin-top:0">الصق هنا نص JSON للمباريات (مثل اللي أجهزه لك يومياً) واضغط استيراد. المباراة الموجودة تتحدّث بدون ما تضيع روابط البث أو الشعارات اللي ضفتها، والمباراة الجديدة تُضاف. للنص نفس صيغة matches.json، ويقبل حقل info للتشكيلات والأحداث والإحصائيات.</p>
+      <textarea id="impTa" spellcheck="false" placeholder='[{"home":"...","away":"...","league":"...","time":"2026-11-15T21:00:00+02:00"}]'></textarea>
+      <div class="bar"><button class="p" id="impGo">استيراد</button><button id="impEx">وضع مثال</button></div>
+      <p class="note" id="impMsg"></p>
+    </div>
+    <div class="box">
+      <h2>سحب من API-Football (اختياري)</h2>
+      <p class="note" style="margin-top:0">مفتاحك يُحفظ على جهازك فقط ولا يظهر للزوار. أسماء الفرق تأتي بالإنجليزي وتُترجم من القاموس بالأسفل، وغير الموجود يبقى كما هو. المواسم الحالية قد تحتاج خطة مدفوعة، راجع خطتك في api-sports.io.</p>
+      <div class="g2">
+        <div><label>مفتاح API</label><input id="fxKey" class="l" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+        <div><label>التاريخ</label><input id="fxDate" type="date" class="l"></div>
+        <div style="grid-column:1/-1"><label>أرقام الدوريات (اختياري، مفصولة بفاصلة)</label><input id="fxLg" class="l" placeholder="39,140,135,78,61,307,233"></div>
+      </div>
+      <label>قاموس الأسماء (سطر لكل اسم: English=عربي)</label>
+      <textarea id="fxDict" spellcheck="false" style="min-height:130px"></textarea>
+      <div class="bar"><button class="p" id="fxGo">سحب مباريات اليوم</button><button id="fxDet">جلب التشكيلات والأحداث</button><button id="fxSv">حفظ المفتاح والقاموس</button></div>
+      <p class="note" id="fxMsg"></p>
     </div>
     <div class="box">
       <h2>المباريات (<span id="acnt">0</span>)</h2>
@@ -1086,6 +1150,9 @@ function mcCard(m, i){
     pl.className = "mc-play";
     pl.innerHTML = '<i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 6 3.5z"/></svg></i>';
     el.appendChild(pl);
+  } else if (hasInfo(m)){
+    el.style.cursor = "pointer";
+    el.onclick = () => openMatch(i);
   }
   return el;
 }
@@ -1112,6 +1179,7 @@ function openMatch(i){
   $("#home").classList.add("hide");
   $("#watch").classList.remove("hide");
   teamsRow($("#wt"), m, xNode());
+  renderInfo(m);
   const srv = $("#srv");
   srv.innerHTML = "";
   (m.sources || []).forEach((s, k) => {
@@ -1122,6 +1190,8 @@ function openMatch(i){
   });
   const first = srv.querySelector("button");
   if (first) first.click(); else playUrl("");
+  const noStream = !hasSrc(m) && hasInfo(m);
+  $("#player").classList.toggle("hide", noStream); $("#srv").classList.toggle("hide", noStream);
   window.scrollTo(0, 0);
 }
 
@@ -1608,6 +1678,7 @@ function aReset(){
   ["ahome","aaway","ahl","aal","aleague","achan","acomm","atime","asch","asca","anote"].forEach(id => $("#" + id).value = "");
   $("#aended").checked = false;
   $("#arows").innerHTML = ""; aRow();
+  infoToForm(null);
   editing = -1;
   $("#aft").textContent = "إضافة مباراة";
   $("#acancel").style.display = "none";
@@ -1654,7 +1725,8 @@ $("#asave").onclick = () => {
     const url = normUrl(r.querySelector(".u").value);
     if (url) m.sources.push({name: r.querySelector(".n").value.trim() || "سيرفر " + (i + 1), url});
   });
-  if (editing >= 0) MATCHES[editing] = m; else MATCHES.push(m);
+  const inf = infoFromForm(); if (inf) m.info = inf;
+  if (editing >= 0){ const o = MATCHES[editing] || {}; ["fid","hid","aid"].forEach(k => { if (o[k] != null) m[k] = o[k]; }); MATCHES[editing] = m; } else MATCHES.push(m);
   aSave(); aReset();
   Promise.all([checkLogo(m.homeLogo), checkLogo(m.awayLogo)]).then(r => { if (!r[0] || !r[1]) toast("تم الحفظ، لكن رابط الشعار لا يفتح كصورة. استخدم رابط صورة مباشر ينتهي بـ png أو jpg أو svg", 6000); });
 };
@@ -1675,7 +1747,7 @@ function aList(){
       $("#ahome").value = m.home; $("#aaway").value = m.away;
       $("#ahl").value = m.homeLogo || ""; $("#aal").value = m.awayLogo || "";
       $("#aleague").value = m.league || ""; $("#achan").value = m.channel || ""; $("#acomm").value = m.commentator || ""; $("#atime").value = toLocalInput(m.time);
-      $("#asch").value = (m.scoreHome ?? ""); $("#asca").value = (m.scoreAway ?? ""); $("#aended").checked = !!m.ended; $("#anote").value = m.note || "";
+      $("#asch").value = (m.scoreHome ?? ""); $("#asca").value = (m.scoreAway ?? ""); $("#aended").checked = !!m.ended; $("#anote").value = m.note || ""; infoToForm(m.info);
       $("#arows").innerHTML = "";
       (m.sources && m.sources.length ? m.sources : [{}]).forEach(x => aRow(x.name, x.url));
       $("#aft").textContent = "تعديل مباراة";
@@ -1715,6 +1787,290 @@ $("#aload").onclick = async () => {
     if (!Array.isArray(d)) throw 0;
     MATCHES = d; aSave(); aReset();
   } catch (e) { toast("لم أجد matches.json على الموقع"); }
+};
+
+
+/* ===== تفاصيل المباراة: تشكيلات + أحداث + إحصائيات ===== */
+const EVT = {goal:"هدف", yellow:"إنذار", red:"طرد", sub:"تبديل"};
+const EVI = {goal:"⚽", yellow:"🟨", red:"🟥", sub:"🔄"};
+function evType(s){
+  s = String(s || "").trim().toLowerCase();
+  if (/هدف|goal|⚽/.test(s)) return "goal";
+  if (/طرد|أحمر|احمر|red|🟥/.test(s)) return "red";
+  if (/إنذار|انذار|أصفر|اصفر|yellow|🟨/.test(s)) return "yellow";
+  if (/تبديل|sub|🔄/.test(s)) return "sub";
+  return "";
+}
+function luToText(lu){
+  if (!lu) return "";
+  const f = p => ((p.n !== undefined && p.n !== null && p.n !== "") ? p.n + " " : "") + p.name;
+  let t = (lu.st || []).map(f).join("\n");
+  if ((lu.sb || []).length) t += "\nالبدلاء\n" + lu.sb.map(f).join("\n");
+  return t;
+}
+function luFromForm(t, fm, co){
+  const st = [], sb = []; let cur = st;
+  String(t || "").split("\n").forEach(l => {
+    l = l.trim(); if (!l) return;
+    if (/^(البدلاء|بدلاء|-{3,})$/.test(l)){ cur = sb; return; }
+    const x = l.match(/^(\d{1,3})\s*[-.:|]?\s*(.+)$/);
+    cur.push(x ? {n: x[1], name: x[2].trim()} : {n: "", name: l});
+  });
+  fm = (fm || "").trim(); co = (co || "").trim();
+  if (!st.length && !sb.length && !fm && !co) return null;
+  return {fm, coach: co, st, sb};
+}
+function infoFromForm(){
+  const v = id => $("#" + id).value.trim();
+  const info = {venue: v("ainfv"), referee: v("ainfr")};
+  const h = luFromForm($("#ahlu").value, v("ahfm"), v("ahco")), a = luFromForm($("#aalu").value, v("aafm"), v("aaco"));
+  if (h) info.home = h; if (a) info.away = a;
+  const ev = [];
+  $("#aevt").value.split("\n").forEach(l => {
+    const p = l.split("|").map(x => x.trim()), t = evType(p[1]);
+    if (!p[0] || !t) return;
+    ev.push({min: p[0], t, side: p[2] === "2" ? 2 : 1, p: p[3] || "", n: p[4] || ""});
+  });
+  if (ev.length) info.events = ev;
+  const stt = [];
+  $("#astt").value.split("\n").forEach(l => {
+    const p = l.split("|").map(x => x.trim());
+    if (p[0] && p.length >= 3) stt.push({l: p[0], h: p[1], a: p[2]});
+  });
+  if (stt.length) info.stats = stt;
+  return (info.venue || info.referee || info.home || info.away || info.events || info.stats) ? info : null;
+}
+function infoToForm(f){
+  f = f || {};
+  const set = (id, x) => { $("#" + id).value = x == null ? "" : x; };
+  const h = f.home || {}, a = f.away || {};
+  set("ainfv", f.venue); set("ainfr", f.referee);
+  set("ahfm", h.fm); set("aafm", a.fm); set("ahco", h.coach); set("aaco", a.coach);
+  set("ahlu", luToText(f.home)); set("aalu", luToText(f.away));
+  set("aevt", (f.events || []).map(e => {
+    const r = [e.min, EVT[e.t] || e.t, e.side === 2 ? 2 : 1, e.p || "", e.n || ""];
+    while (r.length > 3 && r[r.length - 1] === "") r.pop();
+    return r.join(" | ");
+  }).join("\n"));
+  set("astt", (f.stats || []).map(s => [s.l, s.h, s.a].join(" | ")).join("\n"));
+  if (f.venue || f.referee || f.home || f.away || (f.events || []).length || (f.stats || []).length) $("#adet").open = true;
+}
+function hasInfo(m){
+  const f = m && m.info;
+  return !!(f && ((f.home && (f.home.st || []).length) || (f.away && (f.away.st || []).length) || (f.events || []).length || (f.stats || []).length));
+}
+function dEl(tag, cls, txt){
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (txt !== undefined && txt !== null) e.textContent = txt;
+  return e;
+}
+function luCol(name, lu){
+  const c = dEl("div"); c.appendChild(dEl("h4", "", name));
+  const sub = [lu && lu.fm, lu && lu.coach && ("المدرب: " + lu.coach)].filter(Boolean).join(" · ");
+  if (sub) c.appendChild(dEl("small", "", sub));
+  const add = a => a.forEach(p => {
+    const r = dEl("div", "pl");
+    r.append(dEl("b", "", p.n === undefined || p.n === null ? "" : String(p.n)), dEl("span", "", p.name));
+    c.appendChild(r);
+  });
+  add((lu && lu.st) || []);
+  if (lu && (lu.sb || []).length){ c.appendChild(dEl("div", "sb", "البدلاء")); add(lu.sb); }
+  return c;
+}
+function renderInfo(m){
+  const box = $("#dtl"); box.innerHTML = "";
+  const f = m.info; if (!f) return;
+  const panels = [];
+  const head = [f.venue && ("الملعب: " + f.venue), f.referee && ("الحكم: " + f.referee)].filter(Boolean).join(" · ");
+  if (head) box.appendChild(dEl("div", "dh", head));
+  if ((f.home && (f.home.st || []).length) || (f.away && (f.away.st || []).length)){
+    const p = dEl("div", "dp lu"); p.append(luCol(m.home, f.home), luCol(m.away, f.away)); panels.push(["التشكيلة", p]);
+  }
+  if ((f.events || []).length){
+    const p = dEl("div", "dp");
+    f.events.forEach(e => {
+      const r = dEl("div", "ev");
+      r.append(dEl("span", "mn", String(e.min) + "'"), dEl("span", "ic", EVI[e.t] || "•"), dEl("span", "", (e.p || "") + (e.n ? " (" + e.n + ")" : "")), dEl("small", "", e.side === 2 ? m.away : m.home));
+      p.appendChild(r);
+    });
+    panels.push(["الأحداث", p]);
+  }
+  if ((f.stats || []).length){
+    const p = dEl("div", "dp");
+    f.stats.forEach(s => {
+      const r = dEl("div", "stt"), v = dEl("div", "sv");
+      v.append(dEl("b", "", String(s.h)), dEl("span", "", s.l), dEl("b", "", String(s.a)));
+      const nh = parseFloat(String(s.h).replace("%", "")) || 0, na = parseFloat(String(s.a).replace("%", "")) || 0;
+      const b = dEl("div", "sbar"), i = dEl("i");
+      i.style.width = ((nh + na) ? Math.round(nh * 100 / (nh + na)) : 50) + "%";
+      b.appendChild(i); r.append(v, b); p.appendChild(r);
+    });
+    panels.push(["الإحصائيات", p]);
+  }
+  if (!panels.length) return;
+  const tabs = dEl("div", "dtabs"); box.appendChild(tabs);
+  panels.forEach(([lab, p]) => {
+    const b = dEl("button", "", lab);
+    b.onclick = () => {
+      tabs.querySelectorAll("button").forEach(x => x.classList.remove("on")); b.classList.add("on");
+      panels.forEach(q => q[1].classList.add("hide")); p.classList.remove("hide");
+    };
+    tabs.appendChild(b); box.appendChild(p); p.classList.add("hide");
+  });
+  tabs.firstChild.click();
+}
+
+/* ===== استيراد المباريات (لصق JSON أو سحب من API) ===== */
+function normN(s){ return String(s || "").replace(/[\s\u064B-\u065F]/g, "").replace(/[أإآ]/g, "ا").toLowerCase(); }
+function mergeInfo(a, b){
+  const o = Object.assign({}, a || {});
+  Object.keys(b || {}).forEach(k => {
+    const v = b[k];
+    if (v === null || v === undefined || v === "" || (Array.isArray(v) && !v.length)) return;
+    o[k] = v;
+  });
+  return o;
+}
+function impMerge(list){
+  let add = 0, upd = 0, bad = 0;
+  list.forEach(x => {
+    if (!x || !String(x.home || "").trim() || !String(x.away || "").trim() || isNaN(new Date(x.time))){ bad++; return; }
+    const iso = new Date(x.time).toISOString();
+    const i = MATCHES.findIndex(m => (x.fid && m.fid === x.fid) ||
+      (normN(m.home) === normN(x.home) && normN(m.away) === normN(x.away) && Math.abs(new Date(m.time) - new Date(iso)) < 864e5));
+    if (i < 0){
+      MATCHES.push(Object.assign({homeLogo: "", awayLogo: "", league: ""}, x, {time: iso, sources: Array.isArray(x.sources) ? x.sources : []}));
+      add++; return;
+    }
+    const m = MATCHES[i];
+    Object.keys(x).forEach(k => {
+      const v = x[k];
+      if (v === null || v === undefined || v === "") return;
+      if (k === "time"){ m.time = iso; return; }
+      if (k === "sources"){ if (Array.isArray(v) && v.length && !(m.sources || []).length) m.sources = v; return; }
+      if ((k === "homeLogo" || k === "awayLogo") && m[k]) return;
+      if (k === "info"){ m.info = mergeInfo(m.info, v); return; }
+      m[k] = v;
+    });
+    upd++;
+  });
+  return {add, upd, bad};
+}
+function impSay(id, t){ $("#" + id).textContent = t; }
+$("#impGo").onclick = () => {
+  const t = $("#impTa").value.replace(/```(json)?/gi, "").trim();
+  if (!t){ impSay("impMsg", "الصق النص أولاً"); return; }
+  let d; try { d = JSON.parse(t); } catch (e) { impSay("impMsg", "النص ليس JSON صحيحاً"); return; }
+  if (!Array.isArray(d)) d = d && (d.matches || d.list);
+  if (!Array.isArray(d)){ impSay("impMsg", "لازم يكون النص قائمة مباريات"); return; }
+  const r = impMerge(d);
+  if (r.add || r.upd){ aSave(); $("#impTa").value = ""; }
+  impSay("impMsg", "أُضيفت " + r.add + " · تحدّثت " + r.upd + (r.bad ? " · تخطيت " + r.bad + " بدون فريقين أو موعد صحيح" : ""));
+};
+$("#impEx").onclick = () => {
+  $("#impTa").value = JSON.stringify([{
+    home: "الفريق الأول", away: "الفريق الثاني", league: "اسم الدوري", time: "2026-11-15T21:00:00+02:00",
+    channel: "beIN Sports 1", commentator: "اسم المعلق", homeLogo: "", awayLogo: "",
+    info: {
+      venue: "اسم الملعب", referee: "اسم الحكم",
+      home: {fm: "4-3-3", coach: "المدرب", st: [{n: 1, name: "الحارس"}, {n: 9, name: "المهاجم"}], sb: [{n: 12, name: "بديل"}]},
+      away: {fm: "4-4-2", coach: "المدرب", st: [{n: 1, name: "الحارس"}, {n: 10, name: "صانع الألعاب"}], sb: []},
+      events: [{min: "23", t: "goal", side: 1, p: "المهاجم"}, {min: "41", t: "yellow", side: 2, p: "صانع الألعاب"}],
+      stats: [{l: "الاستحواذ", h: "55%", a: "45%"}, {l: "التسديدات", h: "9", a: "6"}]
+    }
+  }], null, 2);
+};
+
+const FX_BASE = "https://v3.football.api-sports.io/";
+const FX_DICT = "Al Ahly=الأهلي\nZamalek=الزمالك\nPyramids FC=بيراميدز\nAl Hilal=الهلال\nAl Nassr=النصر\nAl Ittihad=الاتحاد\nAl Ahli=الأهلي السعودي\nBarcelona=برشلونة\nReal Madrid=ريال مدريد\nAtletico Madrid=أتلتيكو مدريد\nLiverpool=ليفربول\nManchester City=مانشستر سيتي\nManchester United=مانشستر يونايتد\nArsenal=آرسنال\nChelsea=تشيلسي\nTottenham=توتنهام\nBayern Munich=بايرن ميونخ\nBorussia Dortmund=بوروسيا دورتموند\nJuventus=يوفنتوس\nAC Milan=ميلان\nInter=إنتر\nNapoli=نابولي\nParis Saint Germain=باريس سان جيرمان\nMarseille=مارسيليا\nPremier League=الدوري الإنجليزي\nLa Liga=الدوري الإسباني\nSerie A=الدوري الإيطالي\nBundesliga=الدوري الألماني\nLigue 1=الدوري الفرنسي\nSaudi Pro League=الدوري السعودي\nPremier League Egypt=الدوري المصري\nUEFA Champions League=دوري أبطال أوروبا";
+const FX_LAB = {"Ball Possession":"الاستحواذ","Total Shots":"التسديدات","Shots on Goal":"على المرمى","Corner Kicks":"الركنيات","Fouls":"الأخطاء","Offsides":"التسلل","Yellow Cards":"الإنذارات","Red Cards":"الطرد","Total passes":"التمريرات","Goalkeeper Saves":"تصديات الحارس"};
+(function(){
+  let k = "", d = "";
+  try { k = localStorage.getItem("sk_fxkey") || ""; d = localStorage.getItem("sk_fxdict") || ""; } catch (e) {}
+  $("#fxKey").value = k; $("#fxDict").value = d || FX_DICT;
+  $("#fxDate").value = toLocalInput(new Date().toISOString()).slice(0, 10);
+})();
+function fxSay(t){ impSay("fxMsg", t); }
+function fxSave(){
+  try { localStorage.setItem("sk_fxkey", $("#fxKey").value.trim()); localStorage.setItem("sk_fxdict", $("#fxDict").value); } catch (e) {}
+}
+$("#fxSv").onclick = () => { fxSave(); fxSay("تم الحفظ على هذا الجهاز"); };
+async function fx(path){
+  const k = $("#fxKey").value.trim();
+  if (!k) throw new Error("اكتب مفتاح API");
+  const r = await fetch(FX_BASE + path, {headers: {"x-apisports-key": k}});
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  const d = await r.json();
+  if (d.errors && (Array.isArray(d.errors) ? d.errors.length : Object.keys(d.errors).length)) throw new Error(JSON.stringify(d.errors));
+  return d.response || [];
+}
+$("#fxGo").onclick = async () => {
+  const d = $("#fxDate").value;
+  if (!d){ fxSay("اختر التاريخ"); return; }
+  fxSave();
+  fxSay("جاري السحب…");
+  try {
+    let L = await fx("fixtures?date=" + d + "&timezone=Africa/Cairo");
+    const ids = $("#fxLg").value.split(",").map(x => x.trim()).filter(Boolean);
+    if (ids.length) L = L.filter(f => ids.includes(String(f.league.id)));
+    const tr = n => { const m = {}; $("#fxDict").value.split("\n").forEach(l => { const i = l.indexOf("="); if (i > 0) m[l.slice(0, i).trim().toLowerCase()] = l.slice(i + 1).trim(); }); return m[String(n || "").trim().toLowerCase()] || n; };
+    const M = L.map(f => ({
+      home: tr(f.teams.home.name), away: tr(f.teams.away.name),
+      homeLogo: f.teams.home.logo, awayLogo: f.teams.away.logo,
+      league: tr(f.league.name), time: f.fixture.date,
+      ended: ["FT", "AET", "PEN"].includes(f.fixture.status.short),
+      scoreHome: f.goals.home, scoreAway: f.goals.away,
+      fid: f.fixture.id, hid: f.teams.home.id, aid: f.teams.away.id,
+      info: {venue: f.fixture.venue && f.fixture.venue.name, referee: f.fixture.referee}
+    }));
+    const r = impMerge(M);
+    if (r.add || r.upd) aSave();
+    fxSay("وصل " + L.length + " مباراة · أُضيفت " + r.add + " · تحدّثت " + r.upd);
+  } catch (e) { fxSay("تعذّر السحب: " + (e && e.message || e)); }
+};
+$("#fxDet").onclick = async () => {
+  const now = Date.now();
+  const L = MATCHES.filter(m => m.fid && now >= new Date(m.time).getTime() - 36e5 && now <= new Date(m.time).getTime() + 2 * 864e5);
+  if (!L.length){ fxSay("ما فيه مباريات مسحوبة من API في آخر يومين"); return; }
+  if (!confirm("سيتم إرسال " + (L.length * 3) + " طلب إلى API (3 لكل مباراة). متابعة؟")) return;
+  fxSave();
+  let ok = 0;
+  const side = (arr, id) => arr.find(x => x.team && x.team.id === id);
+  const mpl = x => x ? {fm: x.formation || "", coach: (x.coach && x.coach.name) || "",
+    st: (x.startXI || []).map(p => ({n: p.player.number, name: p.player.name})),
+    sb: (x.substitutes || []).map(p => ({n: p.player.number, name: p.player.name}))} : null;
+  const val = x => (x === null || x === undefined) ? "0" : String(x);
+  for (const m of L){
+    fxSay("جاري جلب " + m.home + " × " + m.away + "…");
+    try {
+      const [lu, ev, st] = [await fx("fixtures/lineups?fixture=" + m.fid), await fx("fixtures/events?fixture=" + m.fid), await fx("fixtures/statistics?fixture=" + m.fid)];
+      const info = {};
+      const h = mpl(side(lu, m.hid)), a = mpl(side(lu, m.aid));
+      if (h) info.home = h; if (a) info.away = a;
+      info.events = ev.map(e => {
+        let t = e.type === "Goal" ? "goal" : e.type === "subst" ? "sub" : e.type === "Card" ? (/red/i.test(e.detail || "") ? "red" : "yellow") : "";
+        if (!t) return null;
+        const extra = e.time && e.time.extra ? "+" + e.time.extra : "";
+        let p = (e.player && e.player.name) || "", n = "";
+        if (t === "sub") p = p + (e.assist && e.assist.name ? " ⇄ " + e.assist.name : "");
+        if (t === "goal"){
+          if (e.assist && e.assist.name) p += " (" + e.assist.name + ")";
+          if (/own/i.test(e.detail || "")) n = "عكسية"; else if (/missed/i.test(e.detail || "")) n = "ضائعة"; else if (/penalty/i.test(e.detail || "")) n = "ركلة جزاء";
+        }
+        return {min: String((e.time && e.time.elapsed) || 0) + extra, t, side: e.team && e.team.id === m.aid ? 2 : 1, p, n};
+      }).filter(Boolean);
+      const A = side(st, m.hid), B = side(st, m.aid);
+      if (A && B){
+        info.stats = A.statistics.filter(s => FX_LAB[s.type]).map(s => {
+          const o = B.statistics.find(z => z.type === s.type);
+          return {l: FX_LAB[s.type], h: val(s.value), a: val(o && o.value)};
+        });
+      }
+      m.info = mergeInfo(m.info, info); ok++;
+    } catch (e) { fxSay("توقف عند " + m.home + ": " + (e && e.message || e)); break; }
+  }
+  if (ok){ aSave(); fxSay("تم تحديث تفاصيل " + ok + " مباراة"); }
 };
 
 /* ===== شاشة أكثر من مباراة في وقت واحد ===== */
@@ -2522,6 +2878,7 @@ let adminTab = function(){};
     else if (has(k, "#nrows")) t = "nba";
     else if (has(k, "#mrows")) t = "multi";
     else if (has(k, "#snews")) t = "news";
+    else if (has(k, "#impTa") || has(k, "#fxKey")) t = "imp";
     else if (has(k, "#alist")) t = "list";
     else if (has(k, "#ajson")) t = "pub";
     k.dataset.tab = t;
