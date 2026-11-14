@@ -547,6 +547,47 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 #admin .dayb .it>div:last-child{gap:6px}
 #admin .dayb .it>div:last-child button{padding:4px 10px;font-size:12.5px;line-height:1.3}
 #admin .dayb{padding:0 4px 4px}
+/* ===== تصغير كارت المباراة على الموبايل ===== */
+@media(max-width:640px){
+.list{gap:9px}
+.mcard{padding:10px 6px 0;border-radius:13px}
+.mc-tm{gap:6px}
+.mc-lg{width:62px;height:62px;border-radius:11px}
+.mc-lg img{width:48px;height:48px}
+.mc-lg .ph{font-size:22px}
+.mc-n{font-size:12.5px;padding:0 2px 6px}
+.mc-mid{height:62px;gap:7px}
+.mc-big{font-size:21px}
+.mc-big.tm{font-size:17px}
+.mc-pill{font-size:11.5px;padding:2px 10px}
+.mc-pill.cdn{font-size:12.5px}
+.mc-info>div{font-size:11.5px;padding:4px 3px;min-height:26px}
+.mc-info>div>span:first-child{font-size:11px}
+.mc-info .bein img{height:12px}
+.mc-info .bein b{font-size:11px}
+}
+/* ===== كارت المباراة داخل الأدمن: مصغّر على كل الشاشات ===== */
+#admin .mcard.fxc{margin:9px auto 0;padding:9px 6px 0;border-radius:13px;max-width:440px}
+#admin .mcard.fxc .mc-tm{gap:6px}
+#admin .mcard.fxc .mc-lg{width:56px;height:56px;border-radius:10px}
+#admin .mcard.fxc .mc-lg img{width:44px;height:44px}
+#admin .mcard.fxc .mc-lg .ph{font-size:20px}
+#admin .mcard.fxc .mc-n{font-size:12.5px;padding:0 2px 6px}
+#admin .mcard.fxc .mc-mid{height:56px;gap:6px}
+#admin .mcard.fxc .mc-big{font-size:20px}
+#admin .mcard.fxc .mc-big.tm{font-size:16px}
+#admin .mcard.fxc .mc-pill{font-size:11.5px;padding:2px 10px}
+#admin .mcard.fxc .mc-pill.cdn{font-size:12.5px}
+#admin .mcard.fxc .mc-info>div{font-size:11.5px;padding:4px 3px;min-height:26px}
+#admin .mcard.fxc .mc-info>div>span:first-child{font-size:11px}
+#admin .mcard.fxc .mc-info .bein img{height:12px}
+#admin .mcard.fxc .mc-info .bein b{font-size:11px}
+#admin #alist .fxc .fxa{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f6f7f9;border-top:1px solid #e5e7eb;padding:6px 8px;color:#111}
+#admin #alist .fxc .fxa small{grid-column:1/-1;text-align:center;font-size:11.5px;color:#555;font-weight:600;line-height:1.3}
+#admin #alist .fxc .fxa small:empty{display:none}
+#admin #alist .fxc .fxa button{width:100%;padding:5px 10px;font-size:12.5px;font-weight:700;line-height:1.3}
+#admin #alist .fxc .fxa button.ed{background:#7e22ce;border-color:#7e22ce;color:#fff}
+#admin #alist .fxc .fxa button.d{background:#fff;border-color:#ef4444;color:#ef4444}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -1149,6 +1190,28 @@ function mcMid(m, st, note){
   if (big.textContent) w.appendChild(big);
   w.appendChild(pill);
   return w;
+}
+function mcInfoRow(m){
+  const info = document.createElement("div"); info.className = "mc-info";
+  [["📺", m.channel], ["🎙️", m.commentator], ["🏆", m.league]].forEach(([e, v]) => {
+    const c = document.createElement("div");
+    const ic = document.createElement("span"); ic.textContent = e;
+    const t = document.createElement("span"); t.className = "t";
+    const txt = (v && String(v).trim()) || "";
+    if (e === "📺" && /^\s*bein\b/i.test(txt)){
+      t.className = "t sb bein";
+      const im = document.createElement("img"); im.src = BEIN_LOGO; im.alt = "beIN SPORTS";
+      t.appendChild(im);
+      const rest = txt.replace(/^bein\s*(sports?)?\s*/i, "");
+      if (rest){ const b = document.createElement("b"); b.textContent = rest; t.appendChild(b); }
+      c.append(t);
+    } else {
+      t.textContent = txt || "غير معروف";
+      c.append(ic, t);
+    }
+    info.appendChild(c);
+  });
+  return info;
 }
 function mcCard(m, i){
   const st = stateOf(m), note = noteOf(m);
@@ -1821,14 +1884,19 @@ function aList(){
     requestAnimationFrame(() => onBtn.scrollIntoView({block:"nearest", inline:"center", behavior: smooth ? "smooth" : "auto"}));
   }
   sorted.forEach(({m, i}) => {
+    const st = stateOf(m), note = noteOf(m);
     const d = document.createElement("div");
-    d.className = "it";
-    d.innerHTML = '<div><b class="tt"></b><small></small></div><div><button class="ed">تعديل</button> <button class="d rm">حذف</button></div>';
-    d.querySelector(".tt").textContent = m.home + " × " + m.away;
-    { const sm = d.querySelector("small"); sm.textContent = "";
-      [m.league || "", fmt.format(new Date(m.time)), (m.sources || []).length + " سيرفر", m.note ? "نص: " + m.note : "", m.ended ? "انتهت" + ((m.scoreHome ?? "") !== "" ? " " + m.scoreHome + "-" + m.scoreAway : "") : ""]
-        .filter(Boolean).forEach(t => { const r = document.createElement("span"); r.textContent = t; sm.appendChild(r); }); }
-    d.querySelector(".ed").onclick = () => {
+    d.className = "mcard fxc" + (st === "ended" ? " end" : (isLive(m) ? "" : " soon"));
+    const top = document.createElement("div"); top.className = "mc-top";
+    top.append(mcTeam(m.home, m.homeLogo), mcMid(m, st, note), mcTeam(m.away, m.awayLogo));
+    const a = document.createElement("div"); a.className = "fxa";
+    const sm = document.createElement("small");
+    sm.textContent = [(m.sources || []).length + " سيرفر", m.note ? "نص: " + m.note : ""].filter(Boolean).join(" · ");
+    const ed = document.createElement("button"); ed.type = "button"; ed.className = "ed"; ed.textContent = "تعديل";
+    const rm = document.createElement("button"); rm.type = "button"; rm.className = "d rm"; rm.textContent = "حذف";
+    a.append(sm, ed, rm);
+    d.append(top, mcInfoRow(m), a);
+    ed.onclick = () => {
       editing = i;
       $("#ahome").value = m.home; $("#aaway").value = m.away;
       $("#ahl").value = m.homeLogo || ""; $("#aal").value = m.awayLogo || "";
@@ -1840,7 +1908,6 @@ function aList(){
       $("#acancel").style.display = "";
       adminTab("addm");
     };
-    const rm = d.querySelector(".rm");
     let armed = false;
     rm.onclick = () => {
       if (!armed){ armed = true; rm.textContent = "تأكيد الحذف؟"; setTimeout(() => { armed = false; rm.textContent = "حذف"; }, 3000); return; }
