@@ -588,6 +588,22 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 #admin #alist .fxc .fxa button{width:100%;padding:5px 10px;font-size:12.5px;font-weight:700;line-height:1.3}
 #admin #alist .fxc .fxa button.ed{background:#7e22ce;border-color:#7e22ce;color:#fff}
 #admin #alist .fxc .fxa button.d{background:#fff;border-color:#ef4444;color:#ef4444}
+/* ===== قايمة تحديث المباريات: كروت أصغر ===== */
+#admin #fxList .mcard.fxc{max-width:380px;padding:7px 5px 0;margin-top:8px;border-radius:12px}
+#admin #fxList .mcard.fxc .mc-tm{gap:4px}
+#admin #fxList .mcard.fxc .mc-lg{width:46px;height:46px;border-radius:9px}
+#admin #fxList .mcard.fxc .mc-lg img{width:36px;height:36px}
+#admin #fxList .mcard.fxc .mc-lg .ph{font-size:17px}
+#admin #fxList .mcard.fxc .mc-n{font-size:11.5px;padding:0 2px 5px}
+#admin #fxList .mcard.fxc .mc-mid{height:46px;gap:5px}
+#admin #fxList .mcard.fxc .mc-big{font-size:17px}
+#admin #fxList .mcard.fxc .mc-big.tm{font-size:14px}
+#admin #fxList .mcard.fxc .mc-pill{font-size:10.5px;padding:1px 8px}
+#admin #fxList .mcard.fxc .mc-info>div{font-size:10.5px;padding:3px 2px;min-height:22px}
+#admin #fxList .mcard.fxc .mc-info>div>span:first-child{font-size:10px}
+#admin #fxList .fxc .fxa{padding:5px 8px;gap:6px}
+#admin #fxList .fxc .fxa small{font-size:11px}
+#admin #fxList .fxc .fxa button{padding:4px 12px;font-size:12px}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -3060,6 +3076,7 @@ function fxCard(r){
 }
 function fxBuild(){
   const f = $("#fxFilter"), box = $("#fxList"), keepY = window.scrollY;
+  const keepScroll = f.children.length ? f.scrollLeft : null;
   const lgs = [...new Set(FX.map(r => r[3]))];
   f.innerHTML = "";
   [["", "الكل"]].concat(lgs.map(l => [l, l])).forEach(([v, t]) => {
@@ -3079,6 +3096,13 @@ function fxBuild(){
     list.forEach(r => box.appendChild(fxCard(r)));
   });
   window.scrollTo(0, keepY);
+  /* شريط الدوريات: يحافظ على مكانه، والدوري المختار يتوسّط تلقائياً زي شريط الأيام */
+  if (keepScroll !== null) f.scrollLeft = keepScroll;
+  const onB = f.querySelector(".dayh.on");
+  if (onB && onB.scrollIntoView){
+    const smooth = keepScroll !== null;
+    requestAnimationFrame(() => onB.scrollIntoView({block:"nearest", inline:"center", behavior: smooth ? "smooth" : "auto"}));
+  }
 }
 $("#fxAll").onclick = () => fxAdd(FX.filter(r => !fxLg || r[3] === fxLg));
 fxBuild();
