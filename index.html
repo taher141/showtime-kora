@@ -832,6 +832,7 @@ body.adm{scroll-padding-top:var(--atabsH,0px)}
       <p class="note" style="margin-top:0">مباريات الأندية المطلوبة من الجمعة 20 نوفمبر لحد الأحد 20 ديسمبر 2026 بتوقيت القاهرة. اضغط <b>تحديث</b> بجانب أي مباراة وتروح تلقائياً لقسم المباريات في الموقع، وتقدر تضيف عليها القناة والمعلّق والشعارات وروابط البث بعدها.</p>
       <div id="fxFilter" class="dayrow"></div>
       <p class="note" id="tlMsg"></p>
+      <div class="bar"><button id="tlGo" type="button">جلب الشعارات الآن</button></div>
       <div class="bar"><button class="p" id="fxAll">تحديث كل المعروض</button></div>
       <div id="fxList"></div>
     </div>
@@ -3046,21 +3047,30 @@ let fxLg = "";
 const fxDay = new Intl.DateTimeFormat("ar", {weekday:"long", day:"numeric", month:"long"});
 /* ===== شعارات الأندية: تتجلب تلقائياً من TheSportsDB مرة واحدة وتتحفظ على الجهاز ===== */
 const TL_DICT = {"آيك أثينا":["AEK Athens","Greece"],"آيندهوفن":["PSV Eindhoven|PSV","Netherlands"],"أتالانتا":["Atalanta","Italy"],"أتلتيك بلباو":["Athletic Bilbao|Athletic Club","Spain"],"أتلتيكو مدريد":["Atletico Madrid","Spain"],"أرسنال":["Arsenal","England"],"أستون فيلا":["Aston Villa","England"],"ألافيس":["Alaves|Deportivo Alaves","Spain"],"أودينيزي":["Udinese","Italy"],"أوساسونا":["Osasuna","Spain"],"أوغسبورغ":["Augsburg|FC Augsburg","Germany"],"إسكو كارا":["ASKO Kara|Asko de Kara","Togo"],"إلتشي":["Elche","Spain"],"إنتر ميلان":["Inter Milan|Internazionale","Italy"],"إيبسويتش تاون":["Ipswich Town|Ipswich","England"],"إيفرتون":["Everton","England"],"الأهلي":["Al Ahly","Egypt"],"الإفريقي التونسي":["Club Africain","Tunisia"],"الجونة":["El Gouna|Al Gouna","Egypt"],"الرجاء المغربي":["Raja Casablanca|Raja CA","Morocco"],"الزمالك":["Zamalek","Egypt"],"المغرب الفاسي":["Maghreb de Fes|Maghreb Fez|MAS Fes","Morocco"],"بادربورن":["Paderborn|SC Paderborn","Germany"],"بارما":["Parma","Italy"],"باريس إف سي":["Paris FC","France"],"باريس سان جيرمان":["Paris Saint-Germain|Paris SG","France"],"باير ليفركوزن":["Bayer Leverkusen","Germany"],"بايرن ميونخ":["Bayern Munich","Germany"],"برايتون":["Brighton|Brighton and Hove Albion","England"],"برشلونة":["Barcelona","Spain"],"بريميرو دي أغوستو":["Primeiro de Agosto|1º de Agosto","Angola"],"برينتفورد":["Brentford","England"],"بودو غليمت":["Bodo Glimt|Bodo/Glimt","Norway"],"بورتو":["Porto|FC Porto","Portugal"],"بورنموث":["Bournemouth","England"],"بوروسيا دورتموند":["Borussia Dortmund","Germany"],"بوروسيا مونشنغلادباخ":["Borussia Monchengladbach|Monchengladbach","Germany"],"بيراميدز":["Pyramids FC|Pyramids","Egypt"],"تشيلسي":["Chelsea","England"],"توتنهام":["Tottenham|Tottenham Hotspur","England"],"تورينو":["Torino","Italy"],"تولوز":["Toulouse","France"],"جنوى":["Genoa","Italy"],"حوريا":["Horoya|Horoya AC","Guinea"],"خيتافي":["Getafe","Spain"],"ديبورتيفو لا كورونيا":["Deportivo La Coruna|Deportivo","Spain"],"روما":["AS Roma|Roma","Italy"],"ريال بيتيس":["Real Betis","Spain"],"ريال سوسيداد":["Real Sociedad","Spain"],"ريال مدريد":["Real Madrid","Spain"],"ساسولو":["Sassuolo","Italy"],"سبورتينغ لشبونة":["Sporting CP|Sporting Lisbon","Portugal"],"سلافيا براغ":["Slavia Prague","Czech Republic"],"سلوفان براتيسلافا":["Slovan Bratislava","Slovakia"],"سندرلاند":["Sunderland","England"],"سيلتا فيغو":["Celta Vigo","Spain"],"شاختار دونيتسك":["Shakhtar Donetsk","Ukraine"],"شالكه":["Schalke 04|Schalke","Germany"],"شتوتغارت":["VfB Stuttgart|Stuttgart","Germany"],"صباح":["Sabah FK|Sabah","Azerbaijan"],"غلطة سراي":["Galatasaray","Turkey"],"فالنسيا":["Valencia","Spain"],"فايكنغ":["Viking FK|Viking","Norway"],"فروزينوني":["Frosinone","Italy"],"فنربخشة":["Fenerbahce","Turkey"],"فولهام":["Fulham","England"],"فياريال":["Villarreal","Spain"],"فيردر بريمن":["Werder Bremen","Germany"],"فينورد":["Feyenoord","Netherlands"],"فينيسيا":["Venezia","Italy"],"فيورنتينا":["Fiorentina","Italy"],"كالياري":["Cagliari","Italy"],"كريستال بالاس":["Crystal Palace","England"],"كلوب بروج":["Club Brugge","Belgium"],"كوفنتري سيتي":["Coventry City|Coventry","England"],"كولن":["FC Koln|1. FC Koln|Koln","Germany"],"كومو":["Como","Italy"],"لاسك لينز":["LASK Linz|LASK","Austria"],"لانس":["RC Lens|Lens","France"],"لايبزيغ":["RB Leipzig","Germany"],"لوريان":["Lorient","France"],"ليتشي":["Lecce","Italy"],"ليدز يونايتد":["Leeds United","England"],"ليفربول":["Liverpool","England"],"ليل":["Lille","France"],"مانشستر سيتي":["Manchester City","England"],"مانشستر يونايتد":["Manchester United","England"],"ملقة":["Malaga","Spain"],"مولودية الجزائر":["MC Alger|Mouloudia Alger","Algeria"],"مونزا":["Monza","Italy"],"ميلان":["AC Milan","Italy"],"نابولي":["Napoli","Italy"],"نوتنغهام فورست":["Nottingham Forest","England"],"نيس":["OGC Nice|Nice","France"],"نيوكاسل يونايتد":["Newcastle United","England"],"هابويل بئر السبع":["Hapoel Beer Sheva|Hapoel Be'er Sheva","Israel"],"هال سيتي":["Hull City","England"],"هامبورغ":["Hamburger SV|Hamburg","Germany"],"هوفنهايم":["Hoffenheim|TSG Hoffenheim","Germany"],"يانج أفريكانز":["Young Africans|Yanga","Tanzania"],"يوفنتوس":["Juventus","Italy"]};
-let TLOGOS = {}, TLMISS = {};
-try { TLOGOS = JSON.parse(localStorage.getItem("sk_tlogos") || "{}") || {}; TLMISS = JSON.parse(localStorage.getItem("sk_tlmiss") || "{}") || {}; } catch (e) {}
-function tlSave(){ try { localStorage.setItem("sk_tlogos", JSON.stringify(TLOGOS)); localStorage.setItem("sk_tlmiss", JSON.stringify(TLMISS)); } catch (e) {} }
+let TLOGOS = {}, TLMISS = {}, tlLast = "", tlCur = "";
+try { TLOGOS = JSON.parse(localStorage.getItem("sk_tlogos2") || "{}") || {}; TLMISS = JSON.parse(localStorage.getItem("sk_tlmiss2") || "{}") || {}; } catch (e) {}
+function tlSave(){ try { localStorage.setItem("sk_tlogos2", JSON.stringify(TLOGOS)); localStorage.setItem("sk_tlmiss2", JSON.stringify(TLMISS)); } catch (e) {} }
 function tlLogo(name){ return TLOGOS[name] || ""; }
 const tlSleep = ms => new Promise(r => setTimeout(r, ms));
 const tlNrm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
-async function tlFind(name){
+async function tlJson(url){
+  const r = await fetch(url);
+  if (r.status === 429) throw new Error("rate");
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return await r.json();
+}
+/* المصدر الأول: TheSportsDB */
+async function tlSdb(name){
   const d = TL_DICT[name]; if (!d) return "";
   const qs = d[0].split("|"), country = d[1];
   const bad = /\b(women|ladies|u\d\d|youth|reserves?|ii|iii|academy)\b/i;
   for (const q of qs){
-    const r = await fetch("https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=" + encodeURIComponent(q));
-    if (r.status === 429) throw new Error("rate");
-    if (!r.ok) throw new Error("http");
-    const j = await r.json();
+    let j = null, err = null;
+    for (const key of ["123", "3"]){
+      try { j = await tlJson("https://www.thesportsdb.com/api/v1/json/" + key + "/searchteams.php?t=" + encodeURIComponent(q)); err = null; break; }
+      catch (e) { err = e; if (e && e.message === "rate") break; }
+    }
+    if (err) throw err;
     const list = ((j && j.teams) || []).filter(t => t.strSport === "Soccer" && (t.strBadge || t.strTeamBadge) && !(bad.test(t.strTeam || "") && !bad.test(q)));
     let c = list.filter(t => !country || tlNrm(t.strCountry) === tlNrm(country));
     if (!c.length) c = list.filter(t => tlNrm(t.strTeam) === tlNrm(q));
@@ -3069,8 +3079,29 @@ async function tlFind(name){
       c.sort((a, b) => ((tlNrm(b.strTeam) === nq) - (tlNrm(a.strTeam) === nq)) || (String(a.strTeam).length - String(b.strTeam).length));
       return c[0].strBadge || c[0].strTeamBadge;
     }
-    await tlSleep(2200);
+    await tlSleep(1500);
   }
+  return "";
+}
+/* المصدر الاحتياطي: Wikidata (صورة الشعار P154) */
+async function tlWiki(name){
+  const d = TL_DICT[name]; if (!d) return "";
+  const q = d[0].split("|")[0];
+  const s1 = await tlJson("https://www.wikidata.org/w/api.php?action=wbsearchentities&search=" + encodeURIComponent(q) + "&language=en&type=item&limit=8&format=json&origin=*");
+  const hit = ((s1 && s1.search) || []).find(x => /(football|soccer)\s+(club|team)/i.test(x.description || "") && !/women/i.test(x.description || ""));
+  if (!hit) return "";
+  const s2 = await tlJson("https://www.wikidata.org/w/api.php?action=wbgetclaims&entity=" + hit.id + "&property=P154&format=json&origin=*");
+  const cl = s2 && s2.claims && s2.claims.P154;
+  const f = cl && cl[0] && cl[0].mainsnak && cl[0].mainsnak.datavalue && cl[0].mainsnak.datavalue.value;
+  return f ? ("https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(f) + "?width=200") : "";
+}
+async function tlFind(name){
+  let err = null, u = "";
+  try { u = await tlSdb(name); } catch (e) { err = e; }
+  if (u) return u;
+  try { u = await tlWiki(name); } catch (e) { if (!err) err = e; }
+  if (u) return u;
+  if (err) throw err;
   return "";
 }
 function tlPaint(name){
@@ -3092,7 +3123,9 @@ function tlMsg(){
   const el = $("#tlMsg"); if (!el) return;
   const all = [...new Set(FX.flatMap(r => [r[1], r[2]]))].filter(n => TL_DICT[n]);
   const got = all.filter(n => TLOGOS[n]).length, left = tlPending().length;
-  el.textContent = left ? ("جاري جلب شعارات الأندية: " + got + " من " + all.length + " (بتكمل لوحدها، سيب الصفحة مفتوحة)") : (got < all.length ? ("شعارات الأندية: " + got + " من " + all.length + " (الباقي مش متاح، هيتعاد المحاولة بعد يوم)") : ("شعارات الأندية: " + got + " من " + all.length + " ✓"));
+  let t = left ? ("جاري جلب شعارات الأندية: " + got + " من " + all.length) : (got < all.length ? ("شعارات الأندية: " + got + " من " + all.length + " (الباقي مش متاح حالياً)") : ("شعارات الأندية: " + got + " من " + all.length + " ✓"));
+  const extra = tlLast || (tlBusy && tlCur ? ("الآن: " + tlCur) : "");
+  el.textContent = t + (extra ? " — " + extra : "");
 }
 /* يكمّل الشعارات الفاضية في المباريات المضافة فعلاً (لو الأدمن مسجّل دخول) */
 function tlFill(){
@@ -3112,24 +3145,29 @@ async function tlRun(){
   try {
     for (const n of tlPending()){
       if ($("#admin").classList.contains("hide")) break;
+      tlCur = n; tlMsg();
       let u = "";
       try { u = await tlFind(n); fails = 0; }
       catch (e) {
-        if (e && e.message === "rate"){ await tlSleep(65000); continue; }
+        const m = (e && e.message) || String(e);
+        if (m === "rate"){ tlLast = "الخدمة طلبت استنى شوية، بيكمل بعد دقيقة"; tlMsg(); await tlSleep(65000); tlLast = ""; continue; }
+        tlLast = "تعذّر الاتصال بخدمة الشعارات (" + m + ")"; tlMsg();
         if (++fails >= 3){ tlNext = Date.now() + 60000; break; }
         await tlSleep(3000); continue;
       }
-      if (u){ TLOGOS[n] = u; delete TLMISS[n]; tlSave(); tlPaint(n); }
+      if (u){ TLOGOS[n] = u; delete TLMISS[n]; tlLast = ""; tlSave(); tlPaint(n); }
       else { TLMISS[n] = Date.now(); tlSave(); }
       tlMsg();
       await tlSleep(2200);
     }
-  } finally { tlBusy = false; tlMsg(); tlFill(); }
+  } finally { tlBusy = false; tlCur = ""; tlMsg(); tlFill(); }
 }
+function tlNow(){ TLMISS = {}; tlSave(); tlNext = 0; tlLast = ""; tlMsg(); tlRun(); }
 setInterval(() => {
   if (tlBusy || Date.now() < tlNext || $("#admin").classList.contains("hide")) return;
   if (tlPending().length) tlRun(); else { tlMsg(); tlFill(); }
 }, 3000);
+(function(){ const b = document.getElementById("tlGo"); if (b) b.addEventListener("click", tlNow); })();
 function fxM(r){ return {home:r[1], away:r[2], homeLogo:tlLogo(r[1]), awayLogo:tlLogo(r[2]), league:r[3], time:r[0] + ":00+02:00"}; }
 function fxHas(m){
   const t = new Date(m.time).getTime();
