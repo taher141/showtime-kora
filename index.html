@@ -611,6 +611,8 @@ body.adm{scroll-padding-top:calc(var(--atabsH,0px) + var(--fxFH,0px))}
 #admin .atabs{position:sticky;top:0;z-index:20;background:var(--bg);padding-top:6px;box-shadow:0 1px 0 var(--bd2)}
 #admin #fxFilter{position:sticky;top:var(--atabsH,0px);z-index:19;background:var(--card);padding-top:6px;box-shadow:0 1px 0 var(--bd2)}
 #admin #fxList .fxd{top:calc(var(--atabsH,0px) + var(--fxFH,0px))}
+#admin #fxDays{position:sticky;top:calc(var(--atabsH,0px) + var(--fxFH,0px));z-index:18;background:var(--card);margin-top:0;padding-top:2px;box-shadow:0 1px 0 var(--bd2)}
+#admin #fxList .fxd{position:static;margin-top:8px}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -835,10 +837,11 @@ body.adm{scroll-padding-top:calc(var(--atabsH,0px) + var(--fxFH,0px))}
       <textarea id="fxPaste" spellcheck="false" style="min-height:90px" placeholder='{"matches":[["2026-11-20T21:30","بايرن ميونخ","كولن","الدوري الألماني",0]],"teams":{}}'></textarea>
       <div class="bar"><button class="p" id="fxPasteGo" type="button">تطبيق</button><button id="fxPasteReset" type="button">الرجوع للقايمة الأصلية</button></div>
       <p class="note" id="fxPasteMsg"></p>
-      <div id="fxFilter" class="dayrow"></div>
       <p class="note" id="tlMsg"></p>
       <div class="bar"><button id="tlGo" type="button">جلب الشعارات الآن</button></div>
-      <div class="bar"><button class="p" id="fxAll">تحديث كل المعروض</button></div>
+      <div class="bar"><button class="p" id="fxAll">تحديث كل الأيام</button></div>
+      <div id="fxFilter" class="dayrow"></div>
+      <div id="fxDays" class="dayrow"></div>
       <div id="fxList"></div>
     </div>
     <div class="box">
@@ -3212,10 +3215,13 @@ function fxCard(r){
   el.append(top, info, a);
   return el;
 }
-function fxBuild(){
-  const f = $("#fxFilter"), box = $("#fxList"), keepY = window.scrollY;
-  const keepScroll = f.children.length ? f.scrollLeft : null;
-  const lgs = [...new Set(FX.map(r => r[3]))];
+const FX_ORDER = ["الدوري الإنجليزي", "الدوري الإسباني", "الدوري الإيطالي", "دوري أبطال أوروبا", "الدوري المصري"];
+let fxDayK = null;
+function fxBuild(jump){
+  const f = $("#fxFilter"), dy = $("#fxDays"), box = $("#fxList"), keepY = window.scrollY;
+  const keepScroll = f.children.length ? f.scrollLeft : null, keepD = dy.children.length ? dy.scrollLeft : null;
+  const all = [...new Set(FX.map(r => r[3]))];
+  const lgs = FX_ORDER.filter(l => all.includes(l)).concat(all.filter(l => !FX_ORDER.includes(l)));
   f.innerHTML = "";
   [["", "الكل"]].concat(lgs.map(l => [l, l])).forEach(([v, t]) => {
     const b = document.createElement("button"); b.type = "button"; b.className = "dayh" + (fxLg === v ? " on" : "");
@@ -3223,24 +3229,40 @@ function fxBuild(){
   });
   const rows = FX.filter(r => !fxLg || r[3] === fxLg);
   $("#fxCnt").textContent = rows.length;
-  box.innerHTML = "";
   const days = [...new Set(rows.map(r => r[0].slice(0, 10)))];
+  if (!days.includes(fxDayK)) fxDayK = days[0] || null;
+  dy.innerHTML = "";
   days.forEach(d => {
-    const list = rows.filter(r => r[0].slice(0, 10) === d);
-    const h = document.createElement("div"); h.className = "fxd";
-    const s = document.createElement("span"); s.textContent = fxDay.format(new Date(d + "T12:00:00")) + " · " + list.length;
-    const b = document.createElement("button"); b.type = "button"; b.textContent = "تحديث اليوم كله"; b.onclick = () => fxAdd(list);
-    h.append(s, b); box.appendChild(h);
-    list.forEach(r => box.appendChild(fxCard(r)));
+    const n = rows.filter(r => r[0].slice(0, 10) === d).length, dd = new Date(d + "T12:00:00");
+    const b = document.createElement("button"); b.type = "button"; b.className = "dayh" + (d === fxDayK ? " on" : "");
+    b.innerHTML = "<span></span><span></span><small></small>";
+    b.children[0].textContent = wdFmt.format(dd); b.children[1].textContent = dateFmt.format(dd); b.children[2].textContent = n;
+    b.onclick = () => { fxDayK = d; fxBuild(true); };
+    dy.appendChild(b);
   });
+  box.innerHTML = "";
+  if (fxDayK){
+    const list = rows.filter(r => r[0].slice(0, 10) === fxDayK);
+    const h = document.createElement("div"); h.className = "fxd";
+    const sp = document.createElement("span"); sp.textContent = fxDay.format(new Date(fxDayK + "T12:00:00")) + " · " + list.length;
+    const bt = document.createElement("button"); bt.type = "button"; bt.textContent = "تحديث اليوم كله"; bt.onclick = () => fxAdd(list);
+    h.append(sp, bt); box.appendChild(h);
+    list.forEach(r => box.appendChild(fxCard(r)));
+  } else box.innerHTML = '<p class="note">مفيش مباريات في الدوري ده</p>';
   window.scrollTo(0, keepY);
-  /* شريط الدوريات: يحافظ على مكانه، والدوري المختار يتوسّط تلقائياً زي شريط الأيام */
+  /* الشريطين: يحافظوا على مكانهم، والمختار يتوسّط تلقائياً */
   if (keepScroll !== null) f.scrollLeft = keepScroll;
-  const onB = f.querySelector(".dayh.on");
-  if (onB && onB.scrollIntoView){
-    const smooth = keepScroll !== null;
-    requestAnimationFrame(() => onB.scrollIntoView({block:"nearest", inline:"center", behavior: smooth ? "smooth" : "auto"}));
-  }
+  if (keepD !== null) dy.scrollLeft = keepD;
+  requestAnimationFrame(() => {
+    [[f, keepScroll], [dy, keepD]].forEach(([row, kept]) => {
+      const on = row.querySelector(".dayh.on");
+      if (on && on.scrollIntoView) on.scrollIntoView({block: "nearest", inline: "center", behavior: kept !== null ? "smooth" : "auto"});
+    });
+    if (jump){
+      const off = ($("#atabs") ? $("#atabs").offsetHeight : 0) + f.offsetHeight + dy.offsetHeight;
+      window.scrollTo({top: Math.max(0, box.getBoundingClientRect().top + window.scrollY - off - 6), behavior: "smooth"});
+    }
+  });
 }
 $("#fxAll").onclick = () => fxAdd(FX.filter(r => !fxLg || r[3] === fxLg));
 fxBuild();
