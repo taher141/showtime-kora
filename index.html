@@ -2092,6 +2092,7 @@ function SmartPlayer(root, o){
 
 /* يشغّل سيرفر مباراة بالمشغّل الذكي (أو بالقديم لو النوع غير مدعوم) */
 function spPlay(m, k, p){
+  spTok++;
   stop();
   const src = (m.sources || [])[k] || {};
   const url = normUrl(src.url);
@@ -2112,6 +2113,21 @@ function spPlay(m, k, p){
     }
   });
   curKill = () => inst.destroy();
+  /* الأدمن اللي دخل قبل كده: استعادة جلسته تلقائيًا (بدون فتح لوحة الأدمن) ثم إعادة التشغيل بالأدوات */
+  if (fbOn && !fbUser && spHasSession()){
+    const tok = ++spTok, mine = curKill;
+    ensureAuth().then(a => {
+      const off = a.onAuthStateChanged(u => {
+        try { off(); } catch (e) {}
+        if (u && tok === spTok && curKill === mine) spPlay(m, k, p);
+      });
+    }).catch(() => {});
+  }
+}
+let spTok = 0;
+function spHasSession(){
+  try { for (let i = 0; i < localStorage.length; i++){ if ((localStorage.key(i) || "").indexOf("firebase:authUser:") === 0) return true; } } catch (e) {}
+  return false;
 }
 
 /* ===== الأدمن ===== */
