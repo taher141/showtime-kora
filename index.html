@@ -668,10 +668,11 @@ body.sp-lock{overflow:hidden}
 .sptools .spc{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin:6px 0}
 .sptools .spc input{width:auto}
 .sptools .spf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
-.spbar{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin-bottom:10px}
+.spbar{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-items:center;margin-bottom:8px}
 .spbar.hide{display:none}
-.spbar span{font-size:12px;color:var(--muted);margin-inline-end:2px}
-.spbar button{border:1px solid var(--bd);background:var(--card);color:var(--text);padding:6px 12px;border-radius:8px;font:inherit;font-size:12.5px;cursor:pointer}
+.spbar span{font-size:11px;color:var(--muted);margin-inline-end:2px}
+.spbar button{border:1px solid var(--bd);background:var(--card);color:var(--text);padding:3px 10px;border-radius:7px;font:inherit;font-size:11.5px;line-height:1.5;cursor:pointer}
+.spbar .sphint2{flex-basis:100%;text-align:center;font-size:10.5px;color:var(--muted);line-height:1.4;min-height:15px}
 .spbar button.on{background:var(--team);border-color:var(--team);color:var(--onteam);font-weight:700}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
@@ -1741,7 +1742,8 @@ function SmartPlayer(root, o){
       /* الصفحة المقصوصة: الإطار ياخد نسبة أبعاد الفيديو نفسه فيتملّى بدون أشرطة سوداء */
       if (isPage){
         const rw0 = SP_VW * (1 - (L + Rr) / 100), rh0 = S.vh * (1 - (Tp + Bt) / 100);
-        root.style.aspectRatio = (live && !fs) ? (rw0 / rh0).toFixed(4) : "";
+        /* اختيار الزائر (أصلي/تكبير/تمديد) يشتغل جوه صندوق 16:9 ثابت عشان الفرق يبان فورًا */
+        root.style.aspectRatio = (live && !fs && !(V && V !== "auto")) ? (rw0 / rh0).toFixed(4) : "";
       } else root.style.aspectRatio = "";
 
       const W = root.clientWidth, H = root.clientHeight;
@@ -1752,7 +1754,10 @@ function SmartPlayer(root, o){
       const fitS = Math.min(W / rw, H / rh), covS = Math.max(W / rw, H / rh);
       /* ملء الشاشة: تلقائي = يملّى الشاشة لو اللي هيتقص قليل، وإلا يعرضه كامل بدون قص */
       let m = "fit";
-      if (live && isPage){ m = prefMode(fs); if (m === "auto") m = (1 - fitS / covS) <= SP_AUTO ? "fill" : "fit"; }
+      if (isPage){
+        if (live){ m = prefMode(fs); if (m === "auto") m = (1 - fitS / covS) <= SP_AUTO ? "fill" : "fit"; }
+        else if (V && V !== "auto") m = V;
+      }
       let sx = (m === "fill" ? covS : fitS) * z, sy = sx;
       if (m === "stretch"){ sx = W / rw * z; sy = H / rh * z; }
       if (!isPage){
@@ -2015,11 +2020,11 @@ function SmartPlayer(root, o){
       '<button type="button" data-a="fs">⤢ ملء الشاشة</button></div>';
     h += '<div class="spr"><button type="button" class="p" data-a="save">💾 حفظ للزوار</button><button type="button" data-a="reset">↺ إعادة الضبط</button><button type="button" class="d" data-a="del">🗑 حذف المحفوظ</button><button type="button" data-a="tab">↗ فتح في تبويب</button></div>';
     h += '<div class="spn" data-s="st"></div><div class="spn" data-s="msg"></div>';
-    h += '<details open><summary>🖥 شكل ملء الشاشة (تلفزيون / لاب / فون)</summary><div class="spr seg" style="margin:6px 0">' +
-      '<button type="button" data-a="fsm" data-v="auto">تلقائي (مناسب لأي شاشة)</button><button type="button" data-a="fsm" data-v="fit">ملاءمة (بدون قص)</button>' +
-      '<button type="button" data-a="fsm" data-v="fill">ملء (بدون حواف)</button><button type="button" data-a="fsm" data-v="stretch">تمديد</button></div>' +
-      '<div class="spn">«تلقائي» يملّى الشاشة لو اللي هيتقص قليل، ولو الفرق كبير يعرض الصورة كاملة. «ملء» دايمًا يملّاها وممكن يقص من الأطراف.</div></details>';
-    if (!isP) h += '<details><summary>📐 شكل الفيديو</summary><div class="spr seg" style="margin:6px 0"><button type="button" data-a="fit" data-v="fit">ملاءمة (بدون قص)</button><button type="button" data-a="fit" data-v="fill">ملء</button><button type="button" data-a="fit" data-v="stretch">تمديد</button></div></details>';
+    h += '<details open><summary>🖥 عرض الصورة (الافتراضي للزوار)</summary><div class="spr seg" style="margin:6px 0">' +
+      '<button type="button" data-a="fsm" data-v="auto">تلقائي</button><button type="button" data-a="fsm" data-v="fit">أصلي</button>' +
+      '<button type="button" data-a="fsm" data-v="fill">تكبير</button><button type="button" data-a="fsm" data-v="stretch">تمديد</button></div>' +
+      '<div class="spn">ده الإعداد الافتراضي للزوار، وهم يقدروا يغيّروه من الشريط فوق الفيديو. «تلقائي» يملّى الشاشة لو اللي هيتقص قليل ويعرض الصورة كاملة لو الفرق كبير. «أصلي» الصورة كاملة، «تكبير» يملّى بدون حواف، «تمديد» يتمدّد.</div></details>';
+    if (!isP) h += '<details><summary>📐 شكل الفيديو</summary><div class="spr seg" style="margin:6px 0"><button type="button" data-a="fit" data-v="fit">أصلي</button><button type="button" data-a="fit" data-v="fill">تكبير</button><button type="button" data-a="fit" data-v="stretch">تمديد</button></div></details>';
     SP_GROUPS.forEach(g => {
       h += '<details><summary>' + g[1] + '</summary><div data-g="' + g[0] + '"></div>';
       if (g[0] === "view") h += '<div class="spr seg" style="margin-top:6px"><button type="button" data-a="fh">⇆ قلب أفقي</button><button type="button" data-a="fv">⇅ قلب رأسي</button></div>';
@@ -2063,7 +2068,7 @@ function SmartPlayer(root, o){
         case "del": doDelete(); break;
         case "tab": window.open(o.url, "_blank", "noopener"); break;
         case "fit": S.fit = b.dataset.v; sync(); apply(); break;
-        case "fsm": S.fs = b.dataset.v; sync(); apply(); say(inFS() ? "" : "الاختيار ده بيظهر في وضع ملء الشاشة — جرّبه بزر ⤢", ""); break;
+        case "fsm": S.fs = b.dataset.v; sync(); apply(); say(inFS() ? "" : "ده الافتراضي للزوار، وبيظهر عندك في وضع ملء الشاشة — جرّبه بزر ⤢", ""); break;
         case "r169": to169(); break;
         case "sbt":
           S.sb = !S.sb; mountFrame(); sync();
@@ -2099,15 +2104,22 @@ function SmartPlayer(root, o){
   }
 
   /* ---------- شريط الزائر: شكل الشاشة ---------- */
-  const BAR_OPTS = [["auto","تلقائي","يختار الأنسب لشاشتك"],["fit","ملاءمة","الصورة كاملة بدون قص"],["fill","ملء","يملّى الشاشة بدون حواف"],["stretch","تمديد","يمدّ الصورة على الشاشة"]];
+  const BAR_OPTS = [
+    ["auto", "تلقائي", "يختار الأنسب لشاشتك تلقائيًا"],
+    ["fit", "أصلي", "الصورة كاملة، وممكن تظهر حواف سودة"],
+    ["fill", "تكبير", "الصورة تملّى الشاشة، وممكن يتقص جزء بسيط من الأطراف"],
+    ["stretch", "تمديد", "الصورة تتمدّد على الشاشة، وممكن تتشوّه شوية"]
+  ];
   function syncBar(){
     if (!bar) return;
     const cur = prefMode(inFS());
     bar.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === cur));
+    const hint = bar.querySelector(".sphint2"), o2 = BAR_OPTS.find(x => x[0] === cur);
+    if (hint) hint.textContent = o2 ? o2[2] : "";
   }
   function buildBar(){
     bar.classList.remove("hide");
-    bar.innerHTML = "<span>شكل الشاشة:</span>" + BAR_OPTS.map(x => '<button type="button" data-v="' + x[0] + '" title="' + x[2] + '">' + x[1] + "</button>").join("");
+    bar.innerHTML = "<span>عرض الصورة:</span>" + BAR_OPTS.map(x => '<button type="button" data-v="' + x[0] + '" title="' + x[2] + '">' + x[1] + "</button>").join("") + '<div class="sphint2"></div>';
     bar.onclick = e => {
       const b = e.target.closest("button"); if (!b) return;
       V = b.dataset.v;
