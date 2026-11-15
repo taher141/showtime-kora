@@ -617,6 +617,14 @@ body.adm{scroll-padding-top:calc(var(--atabsH,0px) + var(--fxFH,0px))}
 #admin #fxBars{position:sticky;top:var(--atabsH,0px);z-index:19;background:var(--card);box-shadow:0 1px 0 var(--bd2)}
 #admin #fxFilter,#admin #fxDays{position:static;top:auto;box-shadow:none;margin-top:0;padding-top:6px}
 #admin #alist .dayrow{position:sticky;top:var(--atabsH,0px);z-index:18;background:var(--card);margin-top:0;padding-top:6px;box-shadow:0 1px 0 var(--bd2)}
+/* ===== الأدمن: القايمة العلوية ثابتة تماماً + شريط الأيام تحتها ===== */
+body.adm main{padding-top:calc(var(--atabsH,0px) + 10px)}
+#admin .atabs{position:fixed;top:0;left:0;right:0;z-index:30;margin:0;padding:6px 12px;background:var(--bg);box-shadow:0 1px 0 var(--bd2);touch-action:pan-x;overscroll-behavior:contain}
+#admin .atabs #aexit{flex:0 0 auto;background:var(--card);border-color:var(--bd)}
+#admin .dayrow{touch-action:pan-x;overscroll-behavior:contain}
+#admin .dayrow::before,#admin .dayrow::after{content:"";flex:0 0 calc(50% - 40px)}
+#admin #alist .dayrow{z-index:18}
+html:has(body.adm){scroll-padding-top:calc(var(--atabsH,0px) + 60px)}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -709,8 +717,8 @@ body.adm{scroll-padding-top:calc(var(--atabsH,0px) + var(--fxFH,0px))}
   </section>
 
   <section id="admin" class="hide">
-    <button class="back" id="aexit">→ رجوع للموقع</button>
     <div class="box hide" id="alogin">
+      <button class="back" id="alogBack" type="button">→ رجوع للموقع</button>
       <h2>دخول الأدمن</h2>
       <input id="alogEmail" type="email" class="l hide" placeholder="الإيميل" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" style="margin-bottom:8px">
       <input id="alogPw" type="password" class="l" placeholder="كلمة السر" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false">
@@ -718,7 +726,7 @@ body.adm{scroll-padding-top:calc(var(--atabsH,0px) + var(--fxFH,0px))}
       <div class="bar"><button class="p" id="alogBtn">دخول</button></div>
     </div>
     <div id="apanel" style="display:grid;gap:14px">
-    <div class="atabs" id="atabs"><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="imp"><span class="ic">⬇️</span><span>استيراد</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="fxu"><span class="ic">🔄</span><span>تحديث المباريات</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="radio"><span class="ic">📻</span><span>الراديو</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
+    <div class="atabs" id="atabs"><button type="button" id="aexit" aria-label="رجوع للموقع" title="رجوع للموقع"><span class="ic">🏠</span><span>الموقع</span></button><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="imp"><span class="ic">⬇️</span><span>استيراد</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="fxu"><span class="ic">🔄</span><span>تحديث المباريات</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="radio"><span class="ic">📻</span><span>الراديو</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
     <div class="box">
       <h2 id="aft">إضافة مباراة</h2>
       <div class="g2">
@@ -1751,11 +1759,13 @@ $("#alogBtn").onclick = async () => {
   else toast("كلمة السر غير صحيحة");
 };
 $("#alogout").onclick = () => { if (fbAuth) fbAuth.signOut(); };
-$("#aexit").onclick = () => {
+const adminExit = () => {
   mode = "home";
   document.querySelectorAll("#menu button").forEach(x => x.classList.toggle("on", x.dataset.m === "home"));
   showHome();
 };
+$("#aexit").onclick = adminExit;
+$("#alogBack").onclick = adminExit;
 
 /* حفظ إعدادات الموقع */
 function persistSettings(){
@@ -1877,6 +1887,15 @@ $("#asave").onclick = () => {
   Promise.all([checkLogo(m.homeLogo), checkLogo(m.awayLogo)]).then(r => { if (!r[0] || !r[1]) toast("تم الحفظ، لكن رابط الشعار لا يفتح كصورة. استخدم رابط صورة مباشر ينتهي بـ png أو jpg أو svg", 6000); });
 };
 
+/* توسيط زر داخل شريطه أفقياً فقط، من غير ما الصفحة تتحرك لفوق أو لتحت */
+function centerIn(row, el, smooth){
+  if (!row || !el) return;
+  const r = row.getBoundingClientRect(), e = el.getBoundingClientRect();
+  if (!r.width) return;
+  const d = (e.left + e.width / 2) - (r.left + r.width / 2);
+  if (Math.abs(d) < 1) return;
+  row.scrollTo({left: row.scrollLeft + d, behavior: smooth ? "smooth" : "auto"});
+}
 let aOpenDay = null;
 const wdFmt = new Intl.DateTimeFormat("ar", {weekday:"long"}), dateFmt = new Intl.DateTimeFormat("ar", {day:"numeric", month:"numeric"});
 function dayKey(t){ const d = new Date(t), z = n => String(n).padStart(2, "0"); return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()); }
@@ -1913,10 +1932,10 @@ function aList(){
   });
   const onBtn = row.querySelector(".dayh.on");
   if (keepScroll !== null) row.scrollLeft = keepScroll;
-  if (onBtn && onBtn.scrollIntoView) {
+  if (onBtn) {
     /* أول فتح: يوضع اليوم في النص مباشرة، وعند الضغط على يوم يتحرك الشريط بنعومة ليتوسّطه */
     const smooth = keepScroll !== null;
-    requestAnimationFrame(() => onBtn.scrollIntoView({block:"nearest", inline:"center", behavior: smooth ? "smooth" : "auto"}));
+    requestAnimationFrame(() => centerIn(row, onBtn, smooth));
   }
   sorted.forEach(({m, i}) => {
     const st = stateOf(m), note = noteOf(m);
@@ -3259,7 +3278,7 @@ function fxBuild(jump){
   requestAnimationFrame(() => {
     [[f, keepScroll], [dy, keepD]].forEach(([row, kept]) => {
       const on = row.querySelector(".dayh.on");
-      if (on && on.scrollIntoView) on.scrollIntoView({block: "nearest", inline: "center", behavior: kept !== null ? "smooth" : "auto"});
+      if (on) centerIn(row, on, kept !== null);
     });
     if (jump){
       const off = ($("#atabs") ? $("#atabs").offsetHeight : 0) + f.offsetHeight + dy.offsetHeight;
@@ -3383,15 +3402,18 @@ let adminTab = function(){};
     else if (has(k, "#ajson")) t = "pub";
     k.dataset.tab = t;
   });
+  var tabsReady = false;
   function setTab(t, keepScroll){
-    tabs.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.at === t));
+    tabs.querySelectorAll("button[data-at]").forEach(b => b.classList.toggle("on", b.dataset.at === t));
     kids.forEach(k => k.classList.toggle("tabhide", !k.dataset.tab.split(" ").includes(t)));
-    const on = tabs.querySelector("button.on"); if (on && on.scrollIntoView) on.scrollIntoView({block:"nearest", inline:"center"});
+    if (tabsReady) centerIn(tabs, tabs.querySelector("button.on"), true);
+    document.querySelectorAll("#admin .dayrow").forEach(row => centerIn(row, row.querySelector(".dayh.on"), false));
     if (!keepScroll) window.scrollTo(0, 0);
   }
   adminTab = setTab;
-  tabs.querySelectorAll("button").forEach(b => b.onclick = () => setTab(b.dataset.at));
+  tabs.querySelectorAll("button[data-at]").forEach(b => b.onclick = () => setTab(b.dataset.at));
   setTab("addm");
+  tabsReady = true;
 })();
 
 
@@ -3455,7 +3477,7 @@ if (fbOn){
   const a = document.getElementById("admin"), t = document.getElementById("atabs"), r = document.documentElement;
   const f = document.getElementById("fxFilter");
   if (!a || !t) return;
-  const setH = () => r.style.setProperty("--atabsH", (document.body.classList.contains("adm") ? t.offsetHeight : 0) + "px");
+  const setH = () => r.style.setProperty("--atabsH", (document.body.classList.contains("adm") ? Math.ceil(t.getBoundingClientRect().height) : 0) + "px");
   const setF = () => r.style.setProperty("--fxFH", (document.body.classList.contains("adm") && f ? f.offsetHeight : 0) + "px");
   const sync = () => { document.body.classList.toggle("adm", !a.classList.contains("hide")); setH(); setF(); };
   new MutationObserver(sync).observe(a, {attributes:true, attributeFilter:["class"]});
