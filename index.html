@@ -626,48 +626,48 @@ body.adm main{padding-top:calc(var(--atabsH,0px) + 10px)}
 #admin #alist .dayrow{z-index:18}
 html:has(body.adm){scroll-padding-top:calc(var(--atabsH,0px) + 60px)}
 /* ===== المشغّل الذكي (SmartPlayer) ===== */
-#player.sp{display:block;position:relative;padding:0;max-height:85vh;color:#a3a3a3}
-#player.sp .spst{position:absolute;inset:0;overflow:hidden;background:#000}
-#player.sp .spx{position:absolute;inset:0;overflow:hidden}
-#player.sp .spx>video,#player.sp .spx>iframe{position:absolute;top:0;left:0;border:0;background:#000;transform-origin:0 0;max-width:none}
-#player.sp .spx.anim>video,#player.sp .spx.anim>iframe{transition:transform .4s ease}
-#player.sp .spmsg{position:absolute;inset:0;z-index:6;display:none;align-items:center;justify-content:center;text-align:center;padding:16px;background:rgba(0,0,0,.88);color:#d4d4d4;font-size:14px;line-height:1.7}
-#player.sp .spful{position:absolute;bottom:10px;inset-inline-end:10px;z-index:5;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;opacity:.7;cursor:pointer;transition:opacity .15s}
-#player.sp .spful:hover{opacity:1}
-#player.sp .spsel{position:absolute;inset:0;z-index:7;display:none;cursor:crosshair;touch-action:none;background:rgba(0,0,0,.12)}
-#player.sp .spbox{position:absolute;display:none;border:2px solid var(--team);background:rgba(134,239,172,.2);pointer-events:none}
-#player.sp .sphint{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.82);color:#fff;padding:6px 10px;border-radius:8px;font-size:12.5px;white-space:nowrap}
-#player.sp .sphint button{border:0;background:#dc2626;color:#fff;border-radius:6px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer}
-#player.sp:fullscreen,#player.sp:-webkit-full-screen{max-height:none;border-radius:0;aspect-ratio:auto}
-#player.sp.sp-pfs{position:fixed;inset:0;z-index:9999;width:100vw;height:100vh;height:100dvh;max-height:none;border-radius:0;aspect-ratio:auto!important}
+:is(#player,#atp).sp{display:block;position:relative;padding:0;max-height:85vh;color:#a3a3a3}
+:is(#player,#atp).sp .spst{position:absolute;inset:0;overflow:hidden;background:#000}
+:is(#player,#atp).sp .spx{position:absolute;inset:0;overflow:hidden}
+:is(#player,#atp).sp .spx>video,:is(#player,#atp).sp .spx>iframe{position:absolute;top:0;left:0;border:0;background:#000;transform-origin:0 0;max-width:none}
+:is(#player,#atp).sp .spx.anim>video,:is(#player,#atp).sp .spx.anim>iframe{transition:transform .4s ease}
+:is(#player,#atp).sp .spmsg{position:absolute;inset:0;z-index:6;display:none;align-items:center;justify-content:center;text-align:center;padding:16px;background:rgba(0,0,0,.88);color:#d4d4d4;font-size:14px;line-height:1.7}
+:is(#player,#atp).sp .spful{position:absolute;bottom:10px;inset-inline-end:10px;z-index:5;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;opacity:.7;cursor:pointer;transition:opacity .15s}
+:is(#player,#atp).sp .spful:hover{opacity:1}
+:is(#player,#atp).sp .spsel{position:absolute;inset:0;z-index:7;display:none;cursor:crosshair;touch-action:none;background:rgba(0,0,0,.12)}
+:is(#player,#atp).sp .spbox{position:absolute;display:none;border:2px solid var(--team);background:rgba(134,239,172,.2);pointer-events:none}
+:is(#player,#atp).sp .sphint{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.82);color:#fff;padding:6px 10px;border-radius:8px;font-size:12.5px;white-space:nowrap}
+:is(#player,#atp).sp .sphint button{border:0;background:#dc2626;color:#fff;border-radius:6px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer}
+:is(#player,#atp).sp:fullscreen,:is(#player,#atp).sp:-webkit-full-screen{max-height:none;border-radius:0;aspect-ratio:auto}
+:is(#player,#atp).sp.sp-pfs{position:fixed;inset:0;z-index:9999;width:100vw;height:100vh;height:100dvh;max-height:none;border-radius:0;aspect-ratio:auto!important}
 body.sp-lock{overflow:hidden}
 
-#spTools{margin-top:12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;display:grid;gap:10px}
-#spTools.hide{display:none}
-#spTools .sph{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:800;font-size:14px;color:var(--team)}
-#spTools .spbadge{font-size:11px;font-weight:700;background:#7e22ce;color:#fff;border-radius:999px;padding:2px 10px;white-space:nowrap}
-#spTools .spr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-#spTools .spr.row1{grid-template-columns:1fr}
-#spTools .spr.seg{display:flex;flex-wrap:wrap;gap:6px}
-#spTools button{border:1px solid var(--bd);background:var(--card2);color:var(--text);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
-#spTools button:hover{filter:brightness(1.1)}
-#spTools button.p{background:#7e22ce;border-color:#7e22ce;color:#fff;font-weight:700}
-#spTools button.g,#spTools button.on{background:var(--team);border-color:var(--team);color:var(--onteam);font-weight:700}
-#spTools button.d{color:#ef4444}
-#spTools details{border-top:1px solid var(--bd);padding-top:8px}
-#spTools summary{cursor:pointer;font-weight:700;color:var(--team);font-size:13.5px;padding:4px 0}
-#spTools .sl{display:grid;grid-template-columns:78px 30px minmax(0,1fr) 30px 46px;gap:6px;align-items:center;font-size:12.5px;color:var(--muted);margin:7px 0}
-#spTools .sl button.n{padding:2px 0;font-size:16px;line-height:1.4}
-#spTools .sl input[type=range]{width:100%;min-width:0;accent-color:var(--team)}
-#spTools .sl .v{text-align:center;font-size:11.5px}
-#spTools .spn{font-size:12.5px;color:var(--muted);line-height:1.6}
-#spTools .spn:empty{display:none}
-#spTools .spn.err{color:#ef4444}
-#spTools .spn.ok{color:var(--team)}
-#spTools select{background:var(--in);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:8px;font:inherit;font-size:13px}
-#spTools .spc{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin:6px 0}
-#spTools .spc input{width:auto}
-#spTools .spf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
+.sptools{margin-top:12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;display:grid;gap:10px}
+.sptools.hide{display:none}
+.sptools .sph{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:800;font-size:14px;color:var(--team)}
+.sptools .spbadge{font-size:11px;font-weight:700;background:#7e22ce;color:#fff;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.sptools .spr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sptools .spr.row1{grid-template-columns:1fr}
+.sptools .spr.seg{display:flex;flex-wrap:wrap;gap:6px}
+.sptools button{border:1px solid var(--bd);background:var(--card2);color:var(--text);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
+.sptools button:hover{filter:brightness(1.1)}
+.sptools button.p{background:#7e22ce;border-color:#7e22ce;color:#fff;font-weight:700}
+.sptools button.g,.sptools button.on{background:var(--team);border-color:var(--team);color:var(--onteam);font-weight:700}
+.sptools button.d{color:#ef4444}
+.sptools details{border-top:1px solid var(--bd);padding-top:8px}
+.sptools summary{cursor:pointer;font-weight:700;color:var(--team);font-size:13.5px;padding:4px 0}
+.sptools .sl{display:grid;grid-template-columns:78px 30px minmax(0,1fr) 30px 46px;gap:6px;align-items:center;font-size:12.5px;color:var(--muted);margin:7px 0}
+.sptools .sl button.n{padding:2px 0;font-size:16px;line-height:1.4}
+.sptools .sl input[type=range]{width:100%;min-width:0;accent-color:var(--team)}
+.sptools .sl .v{text-align:center;font-size:11.5px}
+.sptools .spn{font-size:12.5px;color:var(--muted);line-height:1.6}
+.sptools .spn:empty{display:none}
+.sptools .spn.err{color:#ef4444}
+.sptools .spn.ok{color:var(--team)}
+.sptools select{background:var(--in);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:8px;font:inherit;font-size:13px}
+.sptools .spc{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin:6px 0}
+.sptools .spc input{width:auto}
+.sptools .spf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -714,7 +714,7 @@ body.sp-lock{overflow:hidden}
     <div id="wt" class="m"></div>
     <div id="srv"></div>
     <div id="player"></div>
-    <div id="spTools" class="hide"></div>
+    <div id="spTools" class="sptools hide"></div>
     <div id="dtl"></div>
   </section>
 
@@ -817,6 +817,7 @@ body.sp-lock{overflow:hidden}
     <div class="box">
       <h2>تجربة الرابط</h2>
       <div id="atp">اضغط "تجربة" بجانب أي سيرفر</div>
+      <div id="spToolsA" class="sptools hide"></div>
       <p class="note">لو الرابط ما اشتغل، فبعض المصادر تمنع تضمينها داخل مواقع أخرى، جرّب سيرفراً آخر.</p>
     </div>
     <div class="box">
@@ -1669,7 +1670,7 @@ function spLast(){ try { return JSON.parse(localStorage.getItem("sp_last") || "n
 function spFindMatch(m){ return MATCHES.includes(m) ? m : MATCHES.find(x => x.home === m.home && x.away === m.away && x.time === m.time); }
 
 function SmartPlayer(root, o){
-  const admin = !!o.admin, tools = admin ? $("#spTools") : null;
+  const admin = !!o.admin, tools = admin ? (o.tools || $("#spTools")) : null;
   let mode = o.kind;                       /* page | hls | video */
   let S = spClean(o.crop), savedJson = o.crop ? spSer(S) : "", preloaded = false;
   let hls = null, dead = false, cropOn = false, selecting = false, selStart = null;
@@ -1909,7 +1910,7 @@ function SmartPlayer(root, o){
     if (!persist(obj)) return say("تعذر الحفظ", "err");
     savedJson = spSer(S);
     try { localStorage.setItem("sp_last", JSON.stringify(obj)); } catch (e) {}
-    sync(); say("✓ تم الحفظ — الزوار هيشوفوا الفيديو بالقص ده", "ok");
+    sync(); say(o.savedMsg || "✓ تم الحفظ — الزوار هيشوفوا الفيديو بالقص ده", "ok");
   }
   function doReset(){
     S = Object.assign({}, SP_BASE); cropOn = false; selecting = false; sel.style.display = "none";
@@ -2088,6 +2089,22 @@ function SmartPlayer(root, o){
     if (tools){ tools.onclick = tools.oninput = tools.onchange = null; tools.innerHTML = ""; tools.classList.add("hide"); }
     root.classList.remove("sp"); root.style.aspectRatio = ""; root.innerHTML = "";
   };
+}
+
+/* معاينة سيرفر داخل لوحة الأدمن (زر "تجربة"): نفس المشغّل بأدواته، والقص يُحفظ مع السيرفر عند "حفظ المباراة" */
+function spPreview(r){
+  const p = $("#atp"), raw = r.querySelector(".u").value;
+  stop();
+  const url = normUrl(raw), s = url ? streamKind(url) : null;
+  if (!s || (s.k !== "hls" && s.k !== "video" && s.k !== "iframe")){ curKill = mountStream(raw, p); return; }
+  const inst = new SmartPlayer(p, {
+    kind: s.k === "iframe" ? "page" : s.k,
+    url: s.k === "iframe" ? toEmbed(s.u) : s.u,
+    crop: r._crop, admin: true, tools: $("#spToolsA"),
+    savedMsg: "✓ اتحفظ على السيرفر ده — اضغط «حفظ المباراة» تحت لتثبيته للزوار",
+    onSave: crop => { if (crop) r._crop = crop; else delete r._crop; return true; }
+  });
+  curKill = () => inst.destroy();
 }
 
 /* يشغّل سيرفر مباراة بالمشغّل الذكي (أو بالقديم لو النوع غير مدعوم) */
@@ -2384,7 +2401,7 @@ function aRow(name, url, crop){
   r.querySelector(".n").value = name || "";
   r.querySelector(".u").value = url || "";
   if (crop && typeof crop === "object") r._crop = crop;
-  r.querySelector(".tst").onclick = () => { playUrl(r.querySelector(".u").value, $("#atp")); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
+  r.querySelector(".tst").onclick = () => { spPreview(r); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
   r.querySelector(".rm").onclick = () => r.remove();
   $("#arows").appendChild(r);
 }
