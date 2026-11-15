@@ -1636,7 +1636,8 @@ let adminSeen = false;
 const isAdmin = () => fbOn ? !!fbUser : adminSeen;
 
 const SP_VW = 1280;
-const SP_BASE = {L:0, T:0, R:0, B:0, x:0, y:0, z:1, br:100, ct:100, sa:100, fh:false, fv:false, fit:"fit", vh:720, sb:false};
+const SP_BASE = {L:0, T:0, R:0, B:0, x:0, y:0, z:1, br:100, ct:100, sa:100, fh:false, fv:false, fit:"fit", fs:"auto", vh:720, sb:false};
+const SP_AUTO = 0.20;   /* تلقائي: يملّى الشاشة لو اللي هيتقص ≤ 20%، وإلا يعرضه كامل */
 const SP_KEYS = Object.keys(SP_BASE);
 const SP_GROUPS = [
   ["view", "🔍 ضبط دقيق للتكبير والمكان", [["z","التكبير",1,4,.02], ["x","إزاحة أفقية",-100,100,.5], ["y","إزاحة رأسية",-100,100,.5]]],
@@ -1657,6 +1658,7 @@ function spClean(c){
     if (typeof d === "number"){ const n = Number(v); if (v !== undefined && v !== null && v !== "" && isFinite(n)) r[k] = n; }
     else if (typeof d === "boolean") r[k] = !!v;
     else if (k === "fit") r[k] = (v === "fill" || v === "stretch") ? v : "fit";
+    else if (k === "fs") r[k] = (v === "fit" || v === "fill" || v === "stretch") ? v : "auto";
   });
   ["L","T","R","B"].forEach(k => { r[k] = Math.min(90, Math.max(0, r[k])); });
   if (r.L + r.R > 95) r.L = r.R = 0;
@@ -1737,11 +1739,26 @@ function SmartPlayer(root, o){
       const Vw = isPage ? SP_VW : W, Vh = isPage ? S.vh : H;
       el.style.width = Vw + "px"; el.style.height = Vh + "px";
       const rw = Vw * (1 - (L + Rr) / 100), rh = Vh * (1 - (Tp + Bt) / 100);
-      const s = Math.min(W / rw, H / rh) * z;       /* نفس النسبة في الاتجاهين: لا تمديد ولا تشويه */
-      if (!isPage) el.style.objectFit = S.fit === "fit" ? "contain" : S.fit === "fill" ? "cover" : "fill";
-      const tx = (W - rw * s) / 2 - Vw * L / 100 * s + ox / 100 * W;
-      const ty = (H - rh * s) / 2 - Vh * Tp / 100 * s + oy / 100 * H;
-      el.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + s + ")";
+      const fitS = Math.min(W / rw, H / rh), covS = Math.max(W / rw, H / rh);
+      /* ملء الشاشة: تلقائي = يملّى الشاشة لو اللي هيتقص قليل، وإلا يعرضه كامل بدون قص */
+      let m = "fit";
+      if (fs && live && isPage){ m = S.fs; if (m === "auto") m = (1 - fitS / covS) <= SP_AUTO ? "fill" : "fit"; }
+      let sx = (m === "fill" ? covS : fitS) * z, sy = sx;
+      if (m === "stretch"){ sx = W / rw * z; sy = H / rh * z; }
+      if (!isPage){
+        let f = S.fit;
+        if (fs){
+          f = S.fs;
+          if (f === "auto"){
+            const ar = el.videoWidth && el.videoHeight ? el.videoWidth / el.videoHeight : 0, sc = W / H;
+            f = ar && (1 - Math.min(ar, sc) / Math.max(ar, sc)) <= SP_AUTO ? "fill" : "fit";
+          }
+        }
+        el.style.objectFit = f === "fit" ? "contain" : f === "fill" ? "cover" : "fill";
+      }
+      const tx = (W - rw * sx) / 2 - Vw * L / 100 * sx + ox / 100 * W;
+      const ty = (H - rh * sy) / 2 - Vh * Tp / 100 * sy + oy / 100 * H;
+      el.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + sx + "," + sy + ")";
 
       if (el.tagName === "VIDEO"){
         const identity = !S.L && !S.R && !S.T && !S.B && S.z === 1 && !S.x && !S.y;
@@ -1764,6 +1781,7 @@ function SmartPlayer(root, o){
     v.controls = true; v.autoplay = true; v.playsInline = true;
     v.setAttribute("playsinline", ""); v.setAttribute("webkit-playsinline", "");
     v.onerror = () => fail();
+    v.addEventListener("loadedmetadata", () => apply());
     fx.appendChild(v);
     return v;
   }
@@ -1887,9 +1905,11 @@ function SmartPlayer(root, o){
       tools.querySelector('[data-v="' + k + '"]').textContent = k === "z" ? "×" + (+S[k]).toFixed(2) : Math.round(S[k] * 10) / 10;
     }));
     tools.querySelectorAll('[data-a="fit"]').forEach(b => b.classList.toggle("on", b.dataset.v === S.fit));
+    tools.querySelectorAll('[data-a="fsm"]').forEach(b => b.classList.toggle("on", b.dataset.v === S.fs));
     const fh = tools.querySelector('[data-a="fh"]'), fv = tools.querySelector('[data-a="fv"]');
     if (fh) fh.classList.toggle("on", S.fh); if (fv) fv.classList.toggle("on", S.fv);
-    const sb = tools.querySelector('[data-a="sb"]'); if (sb) sb.checked = !!S.sb;
+    const sbt = tools.querySelector('[data-a="sbt"]');
+    if (sbt){ sbt.classList.toggle("on", !!S.sb); sbt.textContent = S.sb ? "🛡 منع النوافذ المنبثقة: مفعّل ✓ (اضغط للإلغاء)" : "🛡 منع النوافذ المنبثقة: متوقف (اضغط للتفعيل)"; }
     const vh = tools.querySelector('[data-a="vh"]'); if (vh) vh.value = String(S.vh);
     status();
   }
@@ -1933,6 +1953,21 @@ function SmartPlayer(root, o){
     selecting = false; sel.style.display = "none";
     animate(); cropOn = false; apply();
   }
+  /* يضبط التحديد على 16:9 بتوسيعه حوالين مركزه (من غير ما يقص حاجة من الفيديو) */
+  function to169(){
+    if (mode !== "page") return;
+    if (!hasRegion()) return say("حدّد الفيديو الأول بزر «تحديد الفيديو»", "err");
+    const w = SP_VW * (1 - (S.L + S.R) / 100), h = S.vh * (1 - (S.T + S.B) / 100), tr = 16 / 9;
+    const cx = SP_VW * S.L / 100 + w / 2, cy = S.vh * S.T / 100 + h / 2;
+    let nw = w, nh = h;
+    if (w / h < tr) nw = h * tr; else nh = w / tr;
+    const k = Math.min(1, SP_VW / nw, S.vh / nh); nw *= k; nh *= k;
+    const nx = Math.max(0, Math.min(SP_VW - nw, cx - nw / 2)), ny = Math.max(0, Math.min(S.vh - nh, cy - nh / 2));
+    S.L = +(nx / SP_VW * 100).toFixed(2); S.R = +(100 - (nx + nw) / SP_VW * 100).toFixed(2);
+    S.T = +(ny / S.vh * 100).toFixed(2); S.B = +(100 - (ny + nh) / S.vh * 100).toFixed(2);
+    S.z = 1; S.x = 0; S.y = 0; cropOn = true; animate(); sync(); apply();
+    say("تم ضبط التحديد على 16:9 — راجعه ثم اضغط «حفظ للزوار». لو دخل جزء زيادة حوالين الفيديو قلّله بالشرائح.", "ok");
+  }
   function detectBars(){
     const v = vid();
     if (!v || !v.videoWidth) return say("شغّل الفيديو أولاً ثم جرّب", "err");
@@ -1967,11 +2002,16 @@ function SmartPlayer(root, o){
     const isP = mode === "page";
     tools.classList.remove("hide");
     let h = '<div class="sph"><span>🎬 أدوات المشغّل</span><span class="spbadge">تظهر لك فقط</span></div>';
+    if (isP) h += '<div class="spr row1"><button type="button" data-a="sbt" class="spsb"></button></div>';
     h += '<div class="spr">' +
-      (isP ? '<button type="button" class="g" data-a="vo">🎥 الفيديو فقط</button><button type="button" data-a="sel">🎯 تحديد الفيديو من جديد</button><button type="button" data-a="full">📄 الصفحة كاملة</button>' : '') +
+      (isP ? '<button type="button" class="g" data-a="vo">🎥 الفيديو فقط</button><button type="button" data-a="sel">🎯 تحديد الفيديو من جديد</button><button type="button" data-a="r169">📐 ضبط على 16:9</button><button type="button" data-a="full">📄 الصفحة كاملة</button>' : '') +
       '<button type="button" data-a="fs">⤢ ملء الشاشة</button></div>';
     h += '<div class="spr"><button type="button" class="p" data-a="save">💾 حفظ للزوار</button><button type="button" data-a="reset">↺ إعادة الضبط</button><button type="button" class="d" data-a="del">🗑 حذف المحفوظ</button><button type="button" data-a="tab">↗ فتح في تبويب</button></div>';
     h += '<div class="spn" data-s="st"></div><div class="spn" data-s="msg"></div>';
+    h += '<details open><summary>🖥 شكل ملء الشاشة (تلفزيون / لاب / فون)</summary><div class="spr seg" style="margin:6px 0">' +
+      '<button type="button" data-a="fsm" data-v="auto">تلقائي (مناسب لأي شاشة)</button><button type="button" data-a="fsm" data-v="fit">ملاءمة (بدون قص)</button>' +
+      '<button type="button" data-a="fsm" data-v="fill">ملء (بدون حواف)</button><button type="button" data-a="fsm" data-v="stretch">تمديد</button></div>' +
+      '<div class="spn">«تلقائي» يملّى الشاشة لو اللي هيتقص قليل، ولو الفرق كبير يعرض الصورة كاملة. «ملء» دايمًا يملّاها وممكن يقص من الأطراف.</div></details>';
     if (!isP) h += '<details><summary>📐 شكل الفيديو</summary><div class="spr seg" style="margin:6px 0"><button type="button" data-a="fit" data-v="fit">ملاءمة (بدون قص)</button><button type="button" data-a="fit" data-v="fill">ملء</button><button type="button" data-a="fit" data-v="stretch">تمديد</button></div></details>';
     SP_GROUPS.forEach(g => {
       h += '<details><summary>' + g[1] + '</summary><div data-g="' + g[0] + '"></div>';
@@ -1983,7 +2023,6 @@ function SmartPlayer(root, o){
       '<div class="sl" style="grid-template-columns:78px minmax(0,1fr)"><span>الصوت</span><input type="range" data-a="vol" min="0" max="1" step="0.05" value="1"></div>' +
       '<div class="spf"><span class="spn">السرعة</span><select data-a="spd"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></div></details>';
     if (isP) h += '<details><summary>🛡 خيارات الصفحة</summary>' +
-      '<label class="spc"><input type="checkbox" data-a="sb"> منع النوافذ المنبثقة (sandbox) — لو الموقع ما اشتغلش بيها، شيلها</label>' +
       '<div class="spf"><span class="spn">طول الصفحة المعروضة</span><select data-a="vh"><option value="720">عادي</option><option value="1000">طويل</option><option value="1400">أطول</option><option value="2000">الأطول</option></select></div>' +
       '<div class="spn" style="margin-top:6px">لو الفيديو بعيد في أسفل الصفحة، زوّد الطول عشان يظهر من غير سكرول، وبعدها حدّد الفيديو.</div></details>';
     tools.innerHTML = h;
@@ -2017,6 +2056,13 @@ function SmartPlayer(root, o){
         case "del": doDelete(); break;
         case "tab": window.open(o.url, "_blank", "noopener"); break;
         case "fit": S.fit = b.dataset.v; sync(); apply(); break;
+        case "fsm": S.fs = b.dataset.v; sync(); apply(); say(inFS() ? "" : "الاختيار ده بيظهر في وضع ملء الشاشة — جرّبه بزر ⤢", ""); break;
+        case "r169": to169(); break;
+        case "sbt":
+          S.sb = !S.sb; mountFrame(); sync();
+          say(S.sb ? "🛡 اتفعّل منع النوافذ وأعدت تحميل الصفحة — لو البث شغّال اضغط «حفظ للزوار»، ولو وقف اضغط الزر تاني لإلغائه."
+                   : "اتلغى منع النوافذ وأعدت تحميل الصفحة — اضغط «حفظ للزوار» لو عايز تثبّت ده.", S.sb ? "ok" : "");
+          break;
         case "fh": S.fh = !S.fh; sync(); apply(); break;
         case "fv": S.fv = !S.fv; sync(); apply(); break;
         case "bars": detectBars(); break;
