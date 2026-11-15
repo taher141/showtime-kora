@@ -1,49 +1,133 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل البث</title>
-    <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest/dist/mpegts.min.js"></script>
-    <style>
-        body { background: #000; color: #fff; text-align: center; padding: 20px; font-family: Arial; }
-        video { width: 100%; max-width: 800px; background: #111; border-radius: 8px; }
-        .msg { margin-top: 15px; padding: 10px; background: #222; border-radius: 5px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>مشغل الفيديو</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,sans-serif;background:#0a0a0f;color:#fff;min-height:100vh;padding:12px}
+.wrap{max-width:1100px;margin:0 auto}
+h1{text-align:center;font-size:22px;margin-bottom:16px;background:linear-gradient(90deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.card{background:#15151f;border:1px solid #252535;border-radius:12px;padding:14px;margin-bottom:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input[type=text],input[type=url]{flex:1;min-width:200px;padding:11px 14px;background:#0d0d14;border:1px solid #2a2a3a;border-radius:8px;color:#fff;font-size:15px}
+input:focus{outline:none;border-color:#667eea}
+button{padding:10px 16px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+button.sec{background:#252535}
+label{font-size:13px;color:#888}
+select{padding:8px;background:#0d0d14;border:1px solid #2a2a3a;border-radius:6px;color:#fff;font-size:13px}
+input[type=range]{accent-color:#667eea}
+#stage{position:relative;width:100%;height:500px;background:#000;border-radius:12px;overflow:hidden;touch-action:none;user-select:none}
+#holder{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
+#holder iframe,#holder video{border:0;width:100%;height:100%;display:block;background:#000}
+#badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.7);padding:6px 12px;border-radius:8px;font-size:12px;color:#aaa;z-index:10;pointer-events:none}
+#zoomVal{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.7);padding:6px 12px;border-radius:8px;font-size:13px;color:#667eea;font-weight:700;z-index:10}
+#controls{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;background:rgba(0,0,0,.75);padding:8px;border-radius:10px;z-index:10}
+#controls button{width:38px;height:38px;padding:0;font-size:18px}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.presets button{padding:6px 12px;font-size:12px;background:#252535}
+.status{padding:10px;border-radius:8px;margin-top:10px;font-size:13px;display:none}
+.status.ok{background:#0d2818;color:#4caf50;display:block}
+.status.err{background:#2d0d0d;color:#f44336;display:block}
+.examples{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:12px}
+.ex{padding:10px;background:#0d0d14;border:1px solid #252535;border-radius:8px;cursor:pointer;font-size:12px}
+.ex:hover{border-color:#667eea}
+.ex b{display:block;color:#667eea;margin-bottom:3px;font-size:13px}
+@media(max-width:600px){#stage{height:300px}h1{font-size:18px}}
+</style>
 </head>
 <body>
-    <h2>📺 بث مباشر</h2>
-    <video id="v" controls autoplay muted playsinline></video>
-    <div id="msg" class="msg">جاري المحاولة...</div>
-    <button onclick="location.reload()" style="margin-top:15px; padding:10px 20px; background:#007bff; color:#fff; border:none; border-radius:5px;">🔄 إعادة المحاولة</button>
-
-    <script>
-        const url = 'http://m0h.link:2082/live/2c:99:75:ff:03:53/R7RR659466/139103.ts';
-        // محاولة مباشرة بدون ترميز قد تنجح مع بعض البروكسيات
-        const proxyUrl = 'https://api.allorigins.win/raw?url=' + url; 
-        
-        const video = document.getElementById('v');
-        const msg = document.getElementById('msg');
-
-        if (mpegts.getFeatureList().mseLivePlayback) {
-            const player = mpegts.createPlayer({ type: 'mpegts', url: proxyUrl, isLive: true });
-            player.attachMediaElement(video);
-            player.load();
-            
-            player.on(mpegts.Events.ERROR, () => {
-                msg.innerText = '❌ الخادم يرفض البروكسي. الحل الوحيد: اطلب رابط https أو m3u8 من المزود.';
-                msg.style.color = '#ff6b6b';
-            });
-
-            video.play().then(() => {
-                msg.innerText = '✅ يعمل! (اضغط على الشاشة لتفعيل الصوت)';
-                msg.style.color = '#51cf66';
-            }).catch(() => {
-                msg.innerText = '⚠️ اضغط على زر التشغيل (▶) في المشغل';
-            });
-        } else {
-            msg.innerText = '❌ متصفحك لا يدعم هذا النوع من البث';
-        }
-    </script>
+<div class="wrap">
+  <h1>🎬 مشغل الفيديو المتقدم</h1>
+  <div class="card">
+    <div class="row">
+      <input type="url" id="url" placeholder="الصق أي رابط: YouTube / m3u8 / MP4 / أي صفحة...">
+      <button onclick="loadVideo()">تشغيل ▶</button>
+    </div>
+    <div class="presets">
+      <button class="sec" onclick="setMode('auto')">تلقائي</button>
+      <button class="sec" onclick="setMode('page')">صفحة كاملة</button>
+      <button class="sec" onclick="setMode('hls')">HLS m3u8</button>
+      <button class="sec" onclick="setMode('file')">فيديو مباشر</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+  <div id="stage">
+    <div id="badge">في انتظار رابط...</div>
+    <div id="zoomVal">100%</div>
+    <div id="holder"></div>
+    <div id="controls">
+      <button onclick="zoomBy(.2)">+</button>
+      <button onclick="zoomBy(-.2)">−</button>
+      <button onclick="resetView()">⟲</button>
+      <button onclick="toggleFS()">⛶</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row">
+      <label>الحجم:</label>
+      <select id="sizeSel" onchange="setSize(this.value)">
+        <option value="300">صغير</option>
+        <option value="500" selected>متوسط</option>
+        <option value="700">كبير</option>
+        <option value="90vh">ملء الشاشة</option>
+      </select>
+      <label>العرض:</label>
+      <input type="range" id="widthR" min="30" max="100" value="100" oninput="setWidth(this.value)">
+      <span id="widthV">100%</span>
+      <button class="sec" onclick="savePreset()">💾 حفظ</button>
+      <button class="sec" onclick="loadPreset()">📂 تحميل</button>
+    </div>
+    <div class="examples">
+      <div class="ex" onclick="loadEx('https://www.youtube.com/watch?v=dQw4w9WgXcQ')"><b>YouTube</b>اضغط</div>
+      <div class="ex" onclick="loadEx('https://vimeo.com/148751763')"><b>Vimeo</b>اضغط</div>
+      <div class="ex" onclick="loadEx('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')"><b>MP4</b>اضغط</div>
+      <div class="ex" onclick="loadEx('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')"><b>HLS m3u8</b>اضغط</div>
+    </div>
+  </div>
+</div>
+<script>
+let scale=1,tx=0,ty=0,mode='auto',drag=false,sx,sy,pinchD=0,pinchS=1;
+const stage=document.getElementById('stage'),holder=document.getElementById('holder'),badge=document.getElementById('badge'),zoomVal=document.getElementById('zoomVal');
+function status(m,ok){const s=document.getElementById('status');s.textContent=m;s.className='status '+(ok?'ok':'err');setTimeout(()=>s.className='status',4000)}
+function setMode(m){mode=m;status('الوضع: '+m,true)}
+function detectType(u){const l=u.toLowerCase();if(l.includes('youtube.com')||l.includes('youtu.be'))return'yt';if(l.includes('vimeo.com'))return'vimeo';if(l.includes('dailymotion')||l.includes('dai.ly'))return'dm';if(l.includes('twitch.tv'))return'twitch';if(l.match(/\.m3u8(\?|$)/))return'hls';if(l.match(/\.(mp4|webm|ogg|mov|m4v)(\?|$)/))return'file';return'page'}
+function extractId(u,ps){for(let p of ps){const m=u.match(p);if(m)return m[1]}return null}
+function loadVideo(){
+  const u=document.getElementById('url').value.trim();if(!u)return status('أدخل رابط',false);
+  holder.innerHTML='';const t=mode==='auto'?detectType(u):mode;badge.textContent=t.toUpperCase();
+  try{
+    if(t==='yt'){const id=extractId(u,[(?:v=|youtu\.be\/|\/embed\/|\/shorts\/|\/live\/)([\w-]{6,})/]);if(id){holder.innerHTML=`<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allow="autoplay;fullscreen;encrypted-media" allowfullscreen></iframe>`;status('✅ YouTube',true)}else status('رابط YouTube غير صالح',false)}
+    else if(t==='vimeo'){const m=u.match(/vimeo\.com\/(?:video\/)?(\d+)/);if(m){holder.innerHTML=`<iframe src="https://player.vimeo.com/video/${m[1]}?autoplay=1" allow="autoplay;fullscreen" allowfullscreen></iframe>`;status('✅ Vimeo',true)}else status('رابط Vimeo غير صالح',false)}
+    else if(t==='dm'){const m=u.match(/dai\.ly\/([a-z0-9]+)|video\/([a-z0-9]+)/i);if(m){const id=m[1]||m[2];holder.innerHTML=`<iframe src="https://www.dailymotion.com/embed/video/${id}?autoplay=1" allow="autoplay;fullscreen" allowfullscreen></iframe>`;status('✅ Dailymotion',true)}}
+    else if(t==='twitch'){const ch=u.replace(/.*twitch\.tv\//,'').split(/[/?]/)[0];holder.innerHTML=`<iframe src="https://player.twitch.tv/?channel=${ch}&parent=${location.hostname}&autoplay=true" allowfullscreen></iframe>`;status('✅ Twitch',true)}
+    else if(t==='hls'){const v=document.createElement('video');v.src=u;v.controls=true;v.autoplay=true;v.playsInline=true;v.style.cssText='width:100%;height:100%';v.onloadedmetadata=()=>{badge.textContent=`HLS ${v.videoWidth}×${v.videoHeight}`;status('✅ HLS',true)};v.onerror=()=>status('❌ فشل HLS',false);holder.appendChild(v)}
+    else if(t==='file'){const v=document.createElement('video');v.src=u;v.controls=true;v.autoplay=true;v.playsInline=true;v.style.cssText='width:100%;height:100%';v.onloadedmetadata=()=>{badge.textContent=`${v.videoWidth}×${v.videoHeight}`;status('✅ فيديو',true)};v.onerror=()=>status('❌ فشل الفيديو',false);holder.appendChild(v)}
+    else{holder.innerHTML=`<iframe src="${u}" allow="autoplay;fullscreen;encrypted-media" allowfullscreen referrerpolicy="no-referrer"></iframe>`;status('✅ صفحة - استخدم التكبير',true)}
+  }catch(e){status('خطأ: '+e.message,false)}
+  applyTransform();saveState()
+}
+function loadEx(u){document.getElementById('url').value=u;loadVideo()}
+function applyTransform(){holder.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;zoomVal.textContent=Math.round(scale*100)+'%'}
+function zoomBy(d){scale=Math.max(.3,Math.min(8,scale+d));applyTransform();saveState()}
+function resetView(){scale=1;tx=0;ty=0;applyTransform();saveState()}
+function setSize(v){stage.style.height=v}
+function setWidth(v){stage.style.width=v+'%';stage.style.margin='0 auto';document.getElementById('widthV').textContent=v+'%'}
+function toggleFS(){if(!document.fullscreenElement)stage.requestFullscreen?.();else document.exitFullscreen?.()}
+stage.addEventListener('touchstart',e=>{if(e.touches.length===2){pinchD=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchS=scale}else if(e.touches.length===1){drag=true;sx=e.touches[0].clientX-tx;sy=e.touches[0].clientY-ty}},{passive:true});
+stage.addEventListener('touchmove',e=>{if(e.touches.length===2){e.preventDefault();const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);scale=Math.max(.3,Math.min(8,pinchS*(d/pinchD)));applyTransform()}else if(e.touches.length===1&&drag){tx=e.touches[0].clientX-sx;ty=e.touches[0].clientY-sy;applyTransform()}},{passive:false});
+stage.addEventListener('touchend',()=>{drag=false;saveState()});
+stage.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY>0?-.1:.1)},{passive:false});
+stage.addEventListener('mousedown',e=>{drag=true;sx=e.clientX-tx;sy=e.clientY-ty});
+stage.addEventListener('mousemove',e=>{if(drag){tx=e.clientX-sx;ty=e.clientY-sy;applyTransform()}});
+stage.addEventListener('mouseup',()=>{drag=false;saveState()});
+function saveState(){try{localStorage.setItem('vp_s',JSON.stringify({scale,tx,ty,url:document.getElementById('url').value,mode}))}catch(e){}}
+function loadState(){try{const s=JSON.parse(localStorage.getItem('vp_s'));if(s){scale=s.scale||1;tx=s.tx||0;ty=s.ty||0;applyTransform();if(s.url)document.getElementById('url').value=s.url;if(s.mode)mode=s.mode}}catch(e){}}
+function savePreset(){const n=prompt('اسم الإعداد:');if(!n)return;try{const a=JSON.parse(localStorage.getItem('vp_p')||'[]');a.push({n,s:{scale,tx,ty,url:document.getElementById('url').value,mode}});localStorage.setItem('vp_p',JSON.stringify(a));status('✅ تم الحفظ',true)}catch(e){}}
+function loadPreset(){try{const a=JSON.parse(localStorage.getItem('vp_p')||'[]');if(!a.length)return status('مفيش إعدادات',false);const n=prompt('اختر رقم:\n'+a.map((x,i)=>`${i+1}. ${x.n}`).join('\n'));if(n&&a[n-1]){const s=a[n-1].s;scale=s.scale;tx=s.tx;ty=s.ty;document.getElementById('url').value=s.url;mode=s.mode;applyTransform();loadVideo()}}catch(e){}}
+loadState();
+document.getElementById('url').addEventListener('keypress',e=>{if(e.key==='Enter')loadVideo()});
+</script>
 </body>
 </html>
