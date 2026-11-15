@@ -613,6 +613,10 @@ body.adm{scroll-padding-top:calc(var(--atabsH,0px) + var(--fxFH,0px))}
 #admin #fxList .fxd{top:calc(var(--atabsH,0px) + var(--fxFH,0px))}
 #admin #fxDays{position:sticky;top:calc(var(--atabsH,0px) + var(--fxFH,0px));z-index:18;background:var(--card);margin-top:0;padding-top:2px;box-shadow:0 1px 0 var(--bd2)}
 #admin #fxList .fxd{position:static;margin-top:8px}
+/* ===== تثبيت الأشرطة: صندوق واحد في تحديث المباريات + شريط الأيام في قسم المباريات ===== */
+#admin #fxBars{position:sticky;top:var(--atabsH,0px);z-index:19;background:var(--card);box-shadow:0 1px 0 var(--bd2)}
+#admin #fxFilter,#admin #fxDays{position:static;top:auto;box-shadow:none;margin-top:0;padding-top:6px}
+#admin #alist .dayrow{position:sticky;top:var(--atabsH,0px);z-index:18;background:var(--card);margin-top:0;padding-top:6px;box-shadow:0 1px 0 var(--bd2)}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -840,8 +844,7 @@ body.adm{scroll-padding-top:calc(var(--atabsH,0px) + var(--fxFH,0px))}
       <p class="note" id="tlMsg"></p>
       <div class="bar"><button id="tlGo" type="button">جلب الشعارات الآن</button></div>
       <div class="bar"><button class="p" id="fxAll">تحديث كل الأيام</button></div>
-      <div id="fxFilter" class="dayrow"></div>
-      <div id="fxDays" class="dayrow"></div>
+      <div id="fxBars"><div id="fxFilter" class="dayrow"></div><div id="fxDays" class="dayrow"></div></div>
       <div id="fxList"></div>
     </div>
     <div class="box">
