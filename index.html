@@ -2248,6 +2248,8 @@ function publishFb(){
 
 function showPanel(){
   adminSeen = true;
+  if (Date.now() - panelAt < 1500 && $("#apanel").style.display === "grid") return;
+  panelAt = Date.now();
   $("#alogin").classList.add("hide");
   $("#apanel").style.display = "grid";
   $("#alogout").classList.toggle("hide", !fbOn);
@@ -2255,7 +2257,7 @@ function showPanel(){
   $("#sday").value = SETTINGS.day || ""; $("#swa").value = SETTINGS.wa || ""; $("#sfb").value = SETTINGS.fb || ""; $("#smail").value = SETTINGS.mail || ""; fillMulti(); fillNba(); fillCh(); fillRd(); $("#nicon").value = SETTINGS.nbaIcon || ""; $("#snews").value = SETTINGS.news || "";
   if (pruneOld()) aSave();
   aReset(); aList();
-  $("#ajson").value = JSON.stringify(MATCHES, null, 2);
+  ajDirty = true;
 }
 
 function adminGate(){
@@ -2267,16 +2269,22 @@ function adminGate(){
   } else showPanel();
 }
 
+let adminOpening = false, panelAt = 0;
 function openAdmin(){
+  if (adminOpening) return;
+  adminOpening = true;
   stop();
   $("#player").innerHTML = "";
   $("#home").classList.add("hide");
   $("#watch").classList.add("hide");
   $("#admin").classList.remove("hide");
   $("#multi").classList.add("hide"); $("#nba").classList.add("hide"); stopMulti(); stopTv();
-  adminGate();
-  if (fbOn) ensureAuth().catch(() => toast("تعذر تحميل نظام الدخول، تأكد من الاتصال"));
   window.scrollTo(0, 0);
+  requestAnimationFrame(() => setTimeout(() => {
+    try { adminGate(); } catch (e) {}
+    adminOpening = false;
+    if (fbOn) ensureAuth().catch(() => toast("تعذر تحميل نظام الدخول، تأكد من الاتصال"));
+  }, 0));
 }
 
 function authMsg(e){
@@ -2353,9 +2361,11 @@ function fillMulti(){
   }
 }
 
+let ajDirty = true;
+function ajSync(){ if (!ajDirty) return; ajDirty = false; try { $("#ajson").value = JSON.stringify(MATCHES, null, 2); } catch (e) {} }
 function aSave(){
   if (!DEMO){ try { localStorage.setItem("sk_matches", JSON.stringify(MATCHES)); } catch (e) {} }
-  $("#ajson").value = JSON.stringify(MATCHES, null, 2);
+  ajDirty = true; if ($("#ajson").offsetParent) ajSync();
   aList(); render();
   publishFb();
 }
@@ -2521,11 +2531,13 @@ function aList(){
 }
 
 $("#adl").onclick = () => {
+  ajSync();
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([$("#ajson").value], {type:"application/json"}));
   a.download = "matches.json"; a.click();
 };
 $("#acp").onclick = async () => {
+  ajSync();
   try { await navigator.clipboard.writeText($("#ajson").value); toast("تم النسخ"); }
   catch (e) { $("#ajson").select(); document.execCommand("copy"); toast("تم النسخ"); }
 };
@@ -3953,6 +3965,7 @@ let adminTab = function(){};
   });
   var tabsReady = false;
   function setTab(t, keepScroll){
+    if (t === "pub") setTimeout(ajSync, 0);
     tabs.querySelectorAll("button[data-at]").forEach(b => b.classList.toggle("on", b.dataset.at === t));
     kids.forEach(k => k.classList.toggle("tabhide", !k.dataset.tab.split(" ").includes(t)));
     if (tabsReady) centerIn(tabs, tabs.querySelector("button.on"), true);
@@ -3968,7 +3981,9 @@ let adminTab = function(){};
 
 /* فتح الأدمن بشكل مخفي: اضغط على اسم الموقع 5 مرات متتالية، أو افتح الرابط وفي آخره #admin */
 let tapN = 0, tapT = null;
+document.querySelector("h1").style.touchAction = "manipulation";
 document.querySelector("h1").onclick = () => {
+  if (adminOpening || !$("#admin").classList.contains("hide")){ tapN = 0; return; }
   tapN++; clearTimeout(tapT); tapT = setTimeout(() => { tapN = 0; }, 1500);
   if (tapN >= 5){ tapN = 0; openAdmin(); }
 };
