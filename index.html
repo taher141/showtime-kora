@@ -625,6 +625,49 @@ body.adm main{padding-top:calc(var(--atabsH,0px) + 10px)}
 #admin .dayrow::before,#admin .dayrow::after{content:"";flex:0 0 calc(50% - 40px)}
 #admin #alist .dayrow{z-index:18}
 html:has(body.adm){scroll-padding-top:calc(var(--atabsH,0px) + 60px)}
+/* ===== المشغّل الذكي (SmartPlayer) ===== */
+#player.sp{display:block;position:relative;padding:0;max-height:85vh;color:#a3a3a3}
+#player.sp .spst{position:absolute;inset:0;overflow:hidden;background:#000}
+#player.sp .spx{position:absolute;inset:0;overflow:hidden}
+#player.sp .spx>video,#player.sp .spx>iframe{position:absolute;top:0;left:0;border:0;background:#000;transform-origin:0 0;max-width:none}
+#player.sp .spx.anim>video,#player.sp .spx.anim>iframe{transition:transform .4s ease}
+#player.sp .spmsg{position:absolute;inset:0;z-index:6;display:none;align-items:center;justify-content:center;text-align:center;padding:16px;background:rgba(0,0,0,.88);color:#d4d4d4;font-size:14px;line-height:1.7}
+#player.sp .spful{position:absolute;bottom:10px;inset-inline-end:10px;z-index:5;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;opacity:.7;cursor:pointer;transition:opacity .15s}
+#player.sp .spful:hover{opacity:1}
+#player.sp .spsel{position:absolute;inset:0;z-index:7;display:none;cursor:crosshair;touch-action:none;background:rgba(0,0,0,.12)}
+#player.sp .spbox{position:absolute;display:none;border:2px solid var(--team);background:rgba(134,239,172,.2);pointer-events:none}
+#player.sp .sphint{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.82);color:#fff;padding:6px 10px;border-radius:8px;font-size:12.5px;white-space:nowrap}
+#player.sp .sphint button{border:0;background:#dc2626;color:#fff;border-radius:6px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer}
+#player.sp:fullscreen,#player.sp:-webkit-full-screen{max-height:none;border-radius:0;aspect-ratio:auto}
+#player.sp.sp-pfs{position:fixed;inset:0;z-index:9999;width:100vw;height:100vh;height:100dvh;max-height:none;border-radius:0;aspect-ratio:auto!important}
+body.sp-lock{overflow:hidden}
+
+#spTools{margin-top:12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;display:grid;gap:10px}
+#spTools.hide{display:none}
+#spTools .sph{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:800;font-size:14px;color:var(--team)}
+#spTools .spbadge{font-size:11px;font-weight:700;background:#7e22ce;color:#fff;border-radius:999px;padding:2px 10px;white-space:nowrap}
+#spTools .spr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#spTools .spr.row1{grid-template-columns:1fr}
+#spTools .spr.seg{display:flex;flex-wrap:wrap;gap:6px}
+#spTools button{border:1px solid var(--bd);background:var(--card2);color:var(--text);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
+#spTools button:hover{filter:brightness(1.1)}
+#spTools button.p{background:#7e22ce;border-color:#7e22ce;color:#fff;font-weight:700}
+#spTools button.g,#spTools button.on{background:var(--team);border-color:var(--team);color:var(--onteam);font-weight:700}
+#spTools button.d{color:#ef4444}
+#spTools details{border-top:1px solid var(--bd);padding-top:8px}
+#spTools summary{cursor:pointer;font-weight:700;color:var(--team);font-size:13.5px;padding:4px 0}
+#spTools .sl{display:grid;grid-template-columns:78px 30px minmax(0,1fr) 30px 46px;gap:6px;align-items:center;font-size:12.5px;color:var(--muted);margin:7px 0}
+#spTools .sl button.n{padding:2px 0;font-size:16px;line-height:1.4}
+#spTools .sl input[type=range]{width:100%;min-width:0;accent-color:var(--team)}
+#spTools .sl .v{text-align:center;font-size:11.5px}
+#spTools .spn{font-size:12.5px;color:var(--muted);line-height:1.6}
+#spTools .spn:empty{display:none}
+#spTools .spn.err{color:#ef4444}
+#spTools .spn.ok{color:var(--team)}
+#spTools select{background:var(--in);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:8px;font:inherit;font-size:13px}
+#spTools .spc{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin:6px 0}
+#spTools .spc input{width:auto}
+#spTools .spf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -671,6 +714,7 @@ html:has(body.adm){scroll-padding-top:calc(var(--atabsH,0px) + 60px)}
     <div id="wt" class="m"></div>
     <div id="srv"></div>
     <div id="player"></div>
+    <div id="spTools" class="hide"></div>
     <div id="dtl"></div>
   </section>
 
@@ -1338,7 +1382,7 @@ function openMatch(i){
   (m.sources || []).forEach((s, k) => {
     const b = document.createElement("button");
     b.textContent = s.name || ("سيرفر " + (k + 1));
-    b.onclick = () => { srv.querySelectorAll("button").forEach(x => x.classList.remove("on")); b.classList.add("on"); playUrl(s.url); };
+    b.onclick = () => { srv.querySelectorAll("button").forEach(x => x.classList.remove("on")); b.classList.add("on"); spPlay(m, k, $("#player")); };
     srv.appendChild(b);
   });
   const first = srv.querySelector("button");
@@ -1583,6 +1627,493 @@ document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
   b.classList.add("on"); filter = Number(b.dataset.f); render();
 });
 
+/* ===== المشغّل الذكي (SmartPlayer): المشغّل الأساسي لسيرفرات مباريات كرة القدم =====
+   - الزائر: شاشة الفيديو فقط، مقصوصة حسب الضبط المحفوظ للسيرفر.
+   - الأدمن: أدوات القص والضبط تحت الفيديو، والحفظ داخل بيانات المباراة (sources[k].crop) فيظهر لكل الزوار.
+   - الأنواع التي لا يدعمها (DASH / TS / FLV / WebRTC) تشتغل بالمشغّل القديم كاحتياطي. */
+let adminSeen = false;
+const isAdmin = () => fbOn ? !!fbUser : adminSeen;
+
+const SP_VW = 1280;
+const SP_BASE = {L:0, T:0, R:0, B:0, x:0, y:0, z:1, br:100, ct:100, sa:100, fh:false, fv:false, fit:"fit", vh:720, sb:false};
+const SP_KEYS = Object.keys(SP_BASE);
+const SP_GROUPS = [
+  ["view", "🔍 ضبط دقيق للتكبير والمكان", [["z","التكبير",1,4,.02], ["x","إزاحة أفقية",-100,100,.5], ["y","إزاحة رأسية",-100,100,.5]]],
+  ["crop", "✂️ قص الحواف بالشرائح", [["T","من أعلى",0,90,.5], ["B","من أسفل",0,90,.5], ["L","من اليسار",0,90,.5], ["R","من اليمين",0,90,.5]]],
+  ["color", "🎨 الألوان", [["br","السطوع",40,160,1], ["ct","التباين",40,160,1], ["sa","التشبع",0,200,1]]]
+];
+const SP_DEF = {};
+SP_GROUPS.forEach(g => g[2].forEach(d => { SP_DEF[d[0]] = {min: d[2], max: d[3], step: d[4]}; }));
+const SP_VIEW_KEYS = ["z","x","y","L","T","R","B"];
+const SP_FS_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>';
+
+/* تنظيف أي ضبط قادم من البيانات قبل استخدامه */
+function spClean(c){
+  const r = Object.assign({}, SP_BASE);
+  if (!c || typeof c !== "object") return r;
+  SP_KEYS.forEach(k => {
+    const d = SP_BASE[k], v = c[k];
+    if (typeof d === "number"){ const n = Number(v); if (v !== undefined && v !== null && v !== "" && isFinite(n)) r[k] = n; }
+    else if (typeof d === "boolean") r[k] = !!v;
+    else if (k === "fit") r[k] = (v === "fill" || v === "stretch") ? v : "fit";
+  });
+  ["L","T","R","B"].forEach(k => { r[k] = Math.min(90, Math.max(0, r[k])); });
+  if (r.L + r.R > 95) r.L = r.R = 0;
+  if (r.T + r.B > 95) r.T = r.B = 0;
+  r.z = Math.min(4, Math.max(1, r.z));
+  r.vh = Math.min(4000, Math.max(300, r.vh));
+  return r;
+}
+const spSer = s => JSON.stringify(SP_KEYS.map(k => s[k]));
+function spLast(){ try { return JSON.parse(localStorage.getItem("sp_last") || "null"); } catch (e) { return null; } }
+function spFindMatch(m){ return MATCHES.includes(m) ? m : MATCHES.find(x => x.home === m.home && x.away === m.away && x.time === m.time); }
+
+function SmartPlayer(root, o){
+  const admin = !!o.admin, tools = admin ? $("#spTools") : null;
+  let mode = o.kind;                       /* page | hls | video */
+  let S = spClean(o.crop), savedJson = o.crop ? spSer(S) : "", preloaded = false;
+  let hls = null, dead = false, cropOn = false, selecting = false, selStart = null;
+  const T = {frame: null, anim: null};
+  const inFS = () => !!(document.fullscreenElement === root || document.webkitFullscreenElement === root || root.classList.contains("sp-pfs"));
+  const hasRegion = () => !!(S.L || S.T || S.R || S.B);
+
+  if (!o.crop && admin && mode === "page"){
+    const last = spLast();
+    if (last){ S = spClean(last); preloaded = true; }
+  }
+
+  /* ---------- الهيكل ---------- */
+  root.innerHTML = "";
+  root.classList.add("sp");
+  root.innerHTML =
+    '<div class="spst"><div class="spx"></div></div>' +
+    '<div class="spsel"><div class="spbox"></div><div class="sphint"><span>اسحب مربعًا حوالين الفيديو فقط</span><button type="button">إلغاء</button></div></div>' +
+    '<button type="button" class="spful" title="ملء الشاشة" aria-label="ملء الشاشة">' + SP_FS_ICON + '</button>' +
+    '<div class="spmsg"></div>';
+  const fx = root.querySelector(".spx"), sel = root.querySelector(".spsel"), box = root.querySelector(".spbox");
+  const ful = root.querySelector(".spful"), msgEl = root.querySelector(".spmsg");
+  const vid = () => { const e = fx.firstElementChild; return e && e.tagName === "VIDEO" ? e : null; };
+
+  function say(t, cls){
+    if (!tools) return;
+    const m = tools.querySelector('[data-s="msg"]'); if (!m) return;
+    m.textContent = t || ""; m.className = "spn" + (cls ? " " + cls : "");
+  }
+  function fail(t){
+    if (dead) return;
+    msgEl.textContent = admin ? (t || MSG_FAIL) : MSG_FAIL;
+    msgEl.style.display = "flex";
+    say(t || MSG_FAIL, "err");
+  }
+  function animate(){
+    fx.classList.add("anim"); clearTimeout(T.anim);
+    T.anim = setTimeout(() => fx.classList.remove("anim"), 500);
+  }
+
+  /* ---------- تطبيق الضبط على الشاشة ---------- */
+  function apply(){
+    try{
+      if (dead) return;
+      const el = fx.firstElementChild; if (!el) return;
+      fx.style.filter = "brightness(" + S.br + "%) contrast(" + S.ct + "%) saturate(" + S.sa + "%)";
+      fx.style.transform = "scale(" + (S.fh ? -1 : 1) + "," + (S.fv ? -1 : 1) + ")";
+      const isPage = mode === "page", fs = inFS();
+      const live = !isPage || (cropOn && !selecting);
+      const L = live ? S.L : 0, Rr = live ? S.R : 0, Tp = live ? S.T : 0, Bt = live ? S.B : 0;
+      const z = live ? S.z : 1, ox = live ? S.x : 0, oy = live ? S.y : 0;
+      if (isPage && el.tagName === "IFRAME"){
+        const want = live ? "no" : "yes";
+        if (el.getAttribute("scrolling") !== want) el.setAttribute("scrolling", want);
+      }
+      /* الصفحة المقصوصة: الإطار ياخد نسبة أبعاد الفيديو نفسه فيتملّى بدون أشرطة سوداء */
+      if (isPage){
+        const rw0 = SP_VW * (1 - (L + Rr) / 100), rh0 = S.vh * (1 - (Tp + Bt) / 100);
+        root.style.aspectRatio = (live && !fs) ? (rw0 / rh0).toFixed(4) : "";
+      } else root.style.aspectRatio = "";
+
+      const W = root.clientWidth, H = root.clientHeight;
+      if (!W || !H) return;
+      const Vw = isPage ? SP_VW : W, Vh = isPage ? S.vh : H;
+      el.style.width = Vw + "px"; el.style.height = Vh + "px";
+      const rw = Vw * (1 - (L + Rr) / 100), rh = Vh * (1 - (Tp + Bt) / 100);
+      const s = Math.min(W / rw, H / rh) * z;       /* نفس النسبة في الاتجاهين: لا تمديد ولا تشويه */
+      if (!isPage) el.style.objectFit = S.fit === "fit" ? "contain" : S.fit === "fill" ? "cover" : "fill";
+      const tx = (W - rw * s) / 2 - Vw * L / 100 * s + ox / 100 * W;
+      const ty = (H - rh * s) / 2 - Vh * Tp / 100 * s + oy / 100 * H;
+      el.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + s + ")";
+
+      if (el.tagName === "VIDEO"){
+        const identity = !S.L && !S.R && !S.T && !S.B && S.z === 1 && !S.x && !S.y;
+        el.controls = identity;
+        ful.style.display = identity ? "none" : "";
+      } else ful.style.display = "";
+    }catch(e){}
+  }
+
+  /* ---------- التحميل ---------- */
+  function startPlay(v){
+    const p = v.play && v.play();
+    if (p && p.catch) p.catch(() => {
+      v.muted = true;
+      v.play().then(() => say("اتشغل بدون صوت (قيد من المتصفح) — فعّل الصوت من أدوات التشغيل")).catch(() => {});
+    });
+  }
+  function makeVideo(){
+    const v = document.createElement("video");
+    v.controls = true; v.autoplay = true; v.playsInline = true;
+    v.setAttribute("playsinline", ""); v.setAttribute("webkit-playsinline", "");
+    v.onerror = () => fail();
+    fx.appendChild(v);
+    return v;
+  }
+  async function playHls(){
+    const v = makeVideo();
+    const native = v.canPlayType("application/vnd.apple.mpegurl");
+    let ok = true;
+    try { await loadLib("hls"); } catch (e) { ok = false; }
+    if (dead) return;
+    if (ok && window.Hls && Hls.isSupported()){
+      let net = 0, med = 0;
+      hls = new Hls({enableWorker: true, lowLatencyMode: true});
+      hls.on(Hls.Events.ERROR, (e, d) => {
+        if (!d.fatal) return;
+        if (d.type === Hls.ErrorTypes.NETWORK_ERROR && net++ < 2){ hls.startLoad(); return; }
+        if (d.type === Hls.ErrorTypes.MEDIA_ERROR && med++ < 2){ hls.recoverMediaError(); return; }
+        fail("تعذر تشغيل البث — غالبًا الرابط منتهي أو السيرفر بيمنع التشغيل من موقع تاني.");
+      });
+      hls.loadSource(o.url);
+      hls.attachMedia(v);
+    } else if (native){
+      v.src = o.url;
+    } else { fail(); return; }
+    startPlay(v);
+  }
+  function playVideo(){
+    const v = makeVideo();
+    v.src = o.url;
+    startPlay(v);
+  }
+  function mountFrame(){
+    fx.innerHTML = "";
+    const f = document.createElement("iframe");
+    if (S.sb) f.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-presentation");
+    f.setAttribute("allow", "autoplay; fullscreen; encrypted-media; picture-in-picture");
+    f.setAttribute("allowfullscreen", "");
+    f.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
+    f.src = o.url;
+    fx.appendChild(f);
+    apply();
+  }
+
+  /* ---------- ملء الشاشة ---------- */
+  function afterFS(){ apply(); setTimeout(apply, 120); }
+  function pseudoFS(){ root.classList.add("sp-pfs"); document.body.classList.add("sp-lock"); afterFS(); }
+  function toggleFS(){
+    if (inFS()){
+      if (root.classList.contains("sp-pfs")){ root.classList.remove("sp-pfs"); document.body.classList.remove("sp-lock"); afterFS(); }
+      else (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      return;
+    }
+    const nat = root.requestFullscreen || root.webkitRequestFullscreen;
+    if (!nat){ pseudoFS(); return; }
+    try { const r = nat.call(root); if (r && r.catch) r.catch(pseudoFS); } catch (e) { pseudoFS(); }
+  }
+  ful.onclick = toggleFS;
+
+  /* ---------- التحديد بالسحب (أدمن) ---------- */
+  function startSelect(){
+    if (mode !== "page") return say("التحديد لصفحات الويب فقط", "err");
+    selecting = true; cropOn = false;
+    box.style.display = "none"; sel.style.display = "block";
+    animate(); apply();
+  }
+  function cancelSelect(){
+    selecting = false; sel.style.display = "none";
+    cropOn = hasRegion(); animate(); apply();
+  }
+  function commitSelect(a, b){
+    const x1 = Math.min(a.x, b.x), x2 = Math.max(a.x, b.x), y1 = Math.min(a.y, b.y), y2 = Math.max(a.y, b.y);
+    if (x2 - x1 < 30 || y2 - y1 < 30){ box.style.display = "none"; return say("المربع صغير، اسحب حوالين الفيديو كله", "err"); }
+    const W = root.clientWidth, H = root.clientHeight;
+    const s0 = Math.min(W / SP_VW, H / S.vh);
+    const tx0 = (W - SP_VW * s0) / 2, ty0 = (H - S.vh * s0) / 2;
+    const cl = v => Math.max(0, Math.min(100, v));
+    const L = cl((x1 - tx0) / s0 / SP_VW * 100), R = cl(100 - (x2 - tx0) / s0 / SP_VW * 100);
+    const Tt = cl((y1 - ty0) / s0 / S.vh * 100), Bt = cl(100 - (y2 - ty0) / s0 / S.vh * 100);
+    if (L + R > 95 || Tt + Bt > 95){ box.style.display = "none"; return say("المربع خارج الصفحة، حاول تاني", "err"); }
+    S.L = +L.toFixed(2); S.R = +R.toFixed(2); S.T = +Tt.toFixed(2); S.B = +Bt.toFixed(2);
+    S.z = 1; S.x = 0; S.y = 0;
+    selecting = false; sel.style.display = "none"; box.style.display = "none";
+    animate(); cropOn = true; sync(); apply(); setTimeout(apply, 80);
+    say("تم التحديد — راجع الشكل ثم اضغط «حفظ للزوار»", "ok");
+  }
+  if (admin){
+    const pos = e => { const r = root.getBoundingClientRect(); return {x: e.clientX - r.left, y: e.clientY - r.top}; };
+    const draw = p => {
+      box.style.left = Math.min(selStart.x, p.x) + "px"; box.style.top = Math.min(selStart.y, p.y) + "px";
+      box.style.width = Math.abs(p.x - selStart.x) + "px"; box.style.height = Math.abs(p.y - selStart.y) + "px";
+    };
+    sel.addEventListener("pointerdown", e => {
+      if (e.target.closest(".sphint")) return;
+      selStart = pos(e);
+      try { sel.setPointerCapture(e.pointerId); } catch (_) {}
+      box.style.display = "block"; draw(selStart);
+      e.preventDefault();
+    });
+    sel.addEventListener("pointermove", e => { if (selStart) draw(pos(e)); });
+    sel.addEventListener("pointerup", e => { if (selStart){ const end = pos(e), st = selStart; selStart = null; commitSelect(st, end); } });
+    sel.addEventListener("pointercancel", () => { selStart = null; box.style.display = "none"; });
+    root.querySelector(".sphint button").onclick = cancelSelect;
+  }
+
+  /* ---------- أدوات الأدمن ---------- */
+  function exportObj(){ const r = {}; SP_KEYS.forEach(k => { r[k] = S[k]; }); return r; }
+  function status(){
+    if (!tools) return;
+    const st = tools.querySelector('[data-s="st"]'); if (!st) return;
+    const cur = spSer(S);
+    let t, c = "";
+    if (savedJson && cur === savedJson){ t = "✓ الضبط محفوظ ويظهر للزوار"; c = "ok"; }
+    else if (!savedJson && cur === spSer(SP_BASE)){ t = "لا يوجد ضبط محفوظ لهذا السيرفر"; }
+    else { t = "⚠ فيه تعديلات غير محفوظة — اضغط «حفظ للزوار»"; c = "err"; }
+    st.textContent = t; st.className = "spn " + c;
+  }
+  function sync(){
+    if (!tools) return;
+    SP_GROUPS.forEach(g => g[2].forEach(d => {
+      const k = d[0], r = tools.querySelector('input[data-k="' + k + '"]'); if (!r) return;
+      r.value = S[k];
+      tools.querySelector('[data-v="' + k + '"]').textContent = k === "z" ? "×" + (+S[k]).toFixed(2) : Math.round(S[k] * 10) / 10;
+    }));
+    tools.querySelectorAll('[data-a="fit"]').forEach(b => b.classList.toggle("on", b.dataset.v === S.fit));
+    const fh = tools.querySelector('[data-a="fh"]'), fv = tools.querySelector('[data-a="fv"]');
+    if (fh) fh.classList.toggle("on", S.fh); if (fv) fv.classList.toggle("on", S.fv);
+    const sb = tools.querySelector('[data-a="sb"]'); if (sb) sb.checked = !!S.sb;
+    const vh = tools.querySelector('[data-a="vh"]'); if (vh) vh.value = String(S.vh);
+    status();
+  }
+  function setK(k, v){
+    S[k] = Math.round(v * 1000) / 1000;
+    if (k === "L" || k === "R"){ if (S.L + S.R > 95) S[k] = Math.max(0, 95 - (k === "L" ? S.R : S.L)); }
+    if (k === "T" || k === "B"){ if (S.T + S.B > 95) S[k] = Math.max(0, 95 - (k === "T" ? S.B : S.T)); }
+    if (mode === "page" && !selecting && SP_VIEW_KEYS.includes(k)) cropOn = true;
+    sync(); apply();
+  }
+  function persist(obj){
+    if (!o.onSave) return false;
+    return o.onSave(obj) !== false;
+  }
+  function doSave(){
+    if (mode === "page" && hasRegion() && !cropOn){ cropOn = true; apply(); }
+    const obj = exportObj();
+    if (!persist(obj)) return say("تعذر الحفظ", "err");
+    savedJson = spSer(S);
+    try { localStorage.setItem("sp_last", JSON.stringify(obj)); } catch (e) {}
+    sync(); say("✓ تم الحفظ — الزوار هيشوفوا الفيديو بالقص ده", "ok");
+  }
+  function doReset(){
+    S = Object.assign({}, SP_BASE); cropOn = false; selecting = false; sel.style.display = "none";
+    animate(); if (mode === "page") mountFrame(); else apply();
+    sync(); say("");
+  }
+  function doDelete(){
+    if (!persist(null)) return say("تعذر الحذف", "err");
+    savedJson = "";
+    doReset();
+    say("تم حذف الضبط المحفوظ — الزوار هيشوفوا الأصل", "ok");
+  }
+  function videoOnly(){
+    if (mode !== "page") return;
+    if (hasRegion()){ animate(); cropOn = true; apply(); sync(); }
+    else startSelect();
+  }
+  function fullPage(){
+    if (mode !== "page") return;
+    selecting = false; sel.style.display = "none";
+    animate(); cropOn = false; apply();
+  }
+  function detectBars(){
+    const v = vid();
+    if (!v || !v.videoWidth) return say("شغّل الفيديو أولاً ثم جرّب", "err");
+    try{
+      const w = 160, h = 90, c = document.createElement("canvas"); c.width = w; c.height = h;
+      const g = c.getContext("2d", {willReadFrequently: true});
+      g.drawImage(v, 0, 0, w, h);
+      const d = g.getImageData(0, 0, w, h).data;
+      const lum = (x, y) => { const i = (y * w + x) * 4; return .299 * d[i] + .587 * d[i+1] + .114 * d[i+2]; };
+      const row = y => { let s = 0; for (let x = 0; x < w; x++) s += lum(x, y); return s / w; };
+      const col = x => { let s = 0; for (let y = 0; y < h; y++) s += lum(x, y); return s / h; };
+      let t = 0, b = 0, l = 0, r = 0;
+      while (t < 40 && row(t) < 18) t++;
+      while (b < 40 && row(h - 1 - b) < 18) b++;
+      while (l < 70 && col(l) < 18) l++;
+      while (r < 70 && col(w - 1 - r) < 18) r++;
+      S.T = Math.min(45, +(t / h * 100).toFixed(1)); S.B = Math.min(45, +(b / h * 100).toFixed(1));
+      S.L = Math.min(45, +(l / w * 100).toFixed(1)); S.R = Math.min(45, +(r / w * 100).toFixed(1));
+      sync(); apply();
+      say(t + b + l + r ? "تم قص الحواف السوداء — عدّل بالشرائح لو محتاج" : "مفيش حواف سوداء واضحة في الصورة الحالية");
+    }catch(e){ say("السيرفر بيمنع قراءة الصورة، اضبط القص يدويًا بالشرائح.", "err"); }
+  }
+  function pbLive(v){
+    try{
+      if (hls && hls.liveSyncPosition) v.currentTime = hls.liveSyncPosition;
+      else if (v.seekable && v.seekable.length) v.currentTime = v.seekable.end(v.seekable.length - 1);
+      v.play();
+    }catch(e){}
+  }
+
+  function buildTools(){
+    const isP = mode === "page";
+    tools.classList.remove("hide");
+    let h = '<div class="sph"><span>🎬 أدوات المشغّل</span><span class="spbadge">تظهر لك فقط</span></div>';
+    h += '<div class="spr">' +
+      (isP ? '<button type="button" class="g" data-a="vo">🎥 الفيديو فقط</button><button type="button" data-a="sel">🎯 تحديد الفيديو من جديد</button><button type="button" data-a="full">📄 الصفحة كاملة</button>' : '') +
+      '<button type="button" data-a="fs">⤢ ملء الشاشة</button></div>';
+    h += '<div class="spr"><button type="button" class="p" data-a="save">💾 حفظ للزوار</button><button type="button" data-a="reset">↺ إعادة الضبط</button><button type="button" class="d" data-a="del">🗑 حذف المحفوظ</button><button type="button" data-a="tab">↗ فتح في تبويب</button></div>';
+    h += '<div class="spn" data-s="st"></div><div class="spn" data-s="msg"></div>';
+    if (!isP) h += '<details><summary>📐 شكل الفيديو</summary><div class="spr seg" style="margin:6px 0"><button type="button" data-a="fit" data-v="fit">ملاءمة (بدون قص)</button><button type="button" data-a="fit" data-v="fill">ملء</button><button type="button" data-a="fit" data-v="stretch">تمديد</button></div></details>';
+    SP_GROUPS.forEach(g => {
+      h += '<details><summary>' + g[1] + '</summary><div data-g="' + g[0] + '"></div>';
+      if (g[0] === "view") h += '<div class="spr seg" style="margin-top:6px"><button type="button" data-a="fh">⇆ قلب أفقي</button><button type="button" data-a="fv">⇅ قلب رأسي</button></div>';
+      if (g[0] === "crop" && !isP) h += '<div class="spr seg" style="margin-top:6px"><button type="button" class="g" data-a="bars">🔍 كشف الحواف السوداء تلقائيًا</button></div>';
+      h += '</details>';
+    });
+    if (!isP) h += '<details><summary>▶ التشغيل</summary><div class="spr seg" style="margin:6px 0"><button type="button" data-a="pbplay">⏯ تشغيل / إيقاف</button><button type="button" data-a="pbmute">🔊 كتم / صوت</button><button type="button" data-a="pblive">⏭ للبث الآن</button><button type="button" data-a="pbpip">⧉ صورة داخل صورة</button></div>' +
+      '<div class="sl" style="grid-template-columns:78px minmax(0,1fr)"><span>الصوت</span><input type="range" data-a="vol" min="0" max="1" step="0.05" value="1"></div>' +
+      '<div class="spf"><span class="spn">السرعة</span><select data-a="spd"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></div></details>';
+    if (isP) h += '<details><summary>🛡 خيارات الصفحة</summary>' +
+      '<label class="spc"><input type="checkbox" data-a="sb"> منع النوافذ المنبثقة (sandbox) — لو الموقع ما اشتغلش بيها، شيلها</label>' +
+      '<div class="spf"><span class="spn">طول الصفحة المعروضة</span><select data-a="vh"><option value="720">عادي</option><option value="1000">طويل</option><option value="1400">أطول</option><option value="2000">الأطول</option></select></div>' +
+      '<div class="spn" style="margin-top:6px">لو الفيديو بعيد في أسفل الصفحة، زوّد الطول عشان يظهر من غير سكرول، وبعدها حدّد الفيديو.</div></details>';
+    tools.innerHTML = h;
+
+    SP_GROUPS.forEach(g => {
+      const holder = tools.querySelector('[data-g="' + g[0] + '"]');
+      g[2].forEach(d => {
+        const k = d[0], row = document.createElement("div"); row.className = "sl";
+        row.innerHTML = '<span>' + d[1] + '</span><button type="button" class="n" data-k="' + k + '" data-d="-1">−</button>' +
+          '<input type="range" data-k="' + k + '" min="' + d[2] + '" max="' + d[3] + '" step="' + d[4] + '">' +
+          '<button type="button" class="n" data-k="' + k + '" data-d="1">+</button><span class="v" data-v="' + k + '"></span>';
+        holder.appendChild(row);
+      });
+    });
+
+    tools.onclick = e => {
+      const b = e.target.closest("button"); if (!b || !tools.contains(b)) return;
+      if (b.classList.contains("n")){
+        const k = b.dataset.k, df = SP_DEF[k];
+        setK(k, Math.min(df.max, Math.max(df.min, S[k] + (+b.dataset.d) * df.step * 2)));
+        return;
+      }
+      const v = vid();
+      switch (b.dataset.a){
+        case "vo": videoOnly(); break;
+        case "sel": startSelect(); break;
+        case "full": fullPage(); break;
+        case "fs": toggleFS(); break;
+        case "save": doSave(); break;
+        case "reset": doReset(); break;
+        case "del": doDelete(); break;
+        case "tab": window.open(o.url, "_blank", "noopener"); break;
+        case "fit": S.fit = b.dataset.v; sync(); apply(); break;
+        case "fh": S.fh = !S.fh; sync(); apply(); break;
+        case "fv": S.fv = !S.fv; sync(); apply(); break;
+        case "bars": detectBars(); break;
+        case "pbplay": if (v) v.paused ? v.play() : v.pause(); break;
+        case "pbmute": if (v){ v.muted = !v.muted; if (!v.muted && v.volume === 0) v.volume = 1; } break;
+        case "pblive": if (v) pbLive(v); break;
+        case "pbpip":
+          if (v && document.pictureInPictureEnabled) v.requestPictureInPicture().catch(() => say("المتصفح منع صورة داخل صورة", "err"));
+          else say("صورة داخل صورة غير مدعومة هنا", "err");
+          break;
+      }
+    };
+    tools.oninput = e => {
+      const t = e.target;
+      if (t.dataset.k) setK(t.dataset.k, +t.value);
+      else if (t.dataset.a === "vol"){ const v = vid(); if (v){ v.volume = +t.value; v.muted = +t.value === 0; } }
+    };
+    tools.onchange = e => {
+      const t = e.target, v = vid();
+      if (t.dataset.a === "spd" && v) v.playbackRate = +t.value;
+      else if (t.dataset.a === "sb"){ S.sb = t.checked; mountFrame(); sync(); }
+      else if (t.dataset.a === "vh"){
+        S.vh = +t.value; S.L = S.T = S.R = S.B = 0; S.z = 1; S.x = S.y = 0; cropOn = false;
+        animate(); sync(); apply();
+      }
+    };
+  }
+
+  /* ---------- أحداث عامة ---------- */
+  const onResize = () => apply();
+  const onFsChange = () => afterFS();
+  window.addEventListener("resize", onResize);
+  document.addEventListener("fullscreenchange", onFsChange);
+  document.addEventListener("webkitfullscreenchange", onFsChange);
+  let ro = null;
+  if (window.ResizeObserver){
+    let lw = 0, lh = 0;
+    ro = new ResizeObserver(() => {
+      if (root.clientWidth !== lw || root.clientHeight !== lh){ lw = root.clientWidth; lh = root.clientHeight; requestAnimationFrame(apply); }
+    });
+    ro.observe(root);
+  }
+  fx.addEventListener("click", () => { const v = vid(); if (v && !v.controls) v.paused ? v.play() : v.pause(); });
+
+  /* ---------- تشغيل ---------- */
+  cropOn = mode === "page" && hasRegion();
+  if (admin){ buildTools(); sync(); }
+  if (mode === "page"){
+    mountFrame();
+    if (admin) T.frame = setTimeout(() => say("لو الشاشة فاضية فالموقع غالبًا بيمنع عرضه داخل صفحة تانية — جرّب «فتح في تبويب».", "err"), 6000);
+  } else if (mode === "hls") playHls();
+  else playVideo();
+  apply();
+  setTimeout(apply, 80);
+  if (admin && mode === "page" && !cropOn) say("اضغط «تحديد الفيديو من جديد» واسحب مربعًا حوالين الفيديو، ثم «حفظ للزوار».");
+  if (admin && preloaded) say("تم تطبيق آخر قص استخدمته — راجعه ثم اضغط «حفظ للزوار».", "ok");
+
+  this.destroy = function(){
+    dead = true;
+    clearTimeout(T.frame); clearTimeout(T.anim);
+    if (hls){ try { hls.destroy(); } catch (e) {} hls = null; }
+    const v = vid();
+    if (v){ try { v.pause(); v.removeAttribute("src"); v.load(); } catch (e) {} }
+    window.removeEventListener("resize", onResize);
+    document.removeEventListener("fullscreenchange", onFsChange);
+    document.removeEventListener("webkitfullscreenchange", onFsChange);
+    if (ro) ro.disconnect();
+    if (document.fullscreenElement === root){ try { document.exitFullscreen(); } catch (e) {} }
+    root.classList.remove("sp-pfs"); document.body.classList.remove("sp-lock");
+    if (tools){ tools.onclick = tools.oninput = tools.onchange = null; tools.innerHTML = ""; tools.classList.add("hide"); }
+    root.classList.remove("sp"); root.style.aspectRatio = ""; root.innerHTML = "";
+  };
+}
+
+/* يشغّل سيرفر مباراة بالمشغّل الذكي (أو بالقديم لو النوع غير مدعوم) */
+function spPlay(m, k, p){
+  stop();
+  const src = (m.sources || [])[k] || {};
+  const url = normUrl(src.url);
+  if (!url){ curKill = mountStream("", p); return; }
+  const s = streamKind(url);
+  if (s.k !== "hls" && s.k !== "video" && s.k !== "iframe"){ curKill = mountStream(src.url, p); return; }
+  const inst = new SmartPlayer(p, {
+    kind: s.k === "iframe" ? "page" : s.k,
+    url: s.k === "iframe" ? toEmbed(s.u) : s.u,
+    crop: src.crop,
+    admin: isAdmin(),
+    onSave: crop => {
+      const cur = spFindMatch(m), sr = cur && (cur.sources || [])[k];
+      if (!sr){ toast("تعذر الحفظ: المباراة غير موجودة"); return false; }
+      if (crop) sr.crop = crop; else delete sr.crop;
+      aSave();
+      return true;
+    }
+  });
+  curKill = () => inst.destroy();
+}
+
 /* ===== الأدمن ===== */
 let adminOK = false, editing = -1;
 
@@ -1700,6 +2231,7 @@ function publishFb(){
 }
 
 function showPanel(){
+  adminSeen = true;
   $("#alogin").classList.add("hide");
   $("#apanel").style.display = "grid";
   $("#alogout").classList.toggle("hide", !fbOn);
@@ -1819,12 +2351,13 @@ function toLocalInput(iso){
   return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()) + "T" + z(d.getHours()) + ":" + z(d.getMinutes());
 }
 
-function aRow(name, url){
+function aRow(name, url, crop){
   const r = document.createElement("div");
   r.className = "row";
   r.innerHTML = '<input class="n" placeholder="الاسم"><input class="u l" placeholder="رابط البث: m3u8 / mpd / mp4 / ts / embed / iframe / WebRTC"><button class="tst">تجربة</button><button class="d rm">✕</button>';
   r.querySelector(".n").value = name || "";
   r.querySelector(".u").value = url || "";
+  if (crop && typeof crop === "object") r._crop = crop;
   r.querySelector(".tst").onclick = () => { playUrl(r.querySelector(".u").value, $("#atp")); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
   r.querySelector(".rm").onclick = () => r.remove();
   $("#arows").appendChild(r);
@@ -1879,7 +2412,7 @@ $("#asave").onclick = () => {
   if (!m.home || !m.away || !m.time){ toast("اكتب اسمي الفريقين وحدّد الموعد"); return; }
   document.querySelectorAll("#arows .row").forEach((r, i) => {
     const url = normUrl(r.querySelector(".u").value);
-    if (url) m.sources.push({name: r.querySelector(".n").value.trim() || "سيرفر " + (i + 1), url});
+    if (url){ const sv = {name: r.querySelector(".n").value.trim() || "سيرفر " + (i + 1), url}; if (r._crop) sv.crop = r._crop; m.sources.push(sv); }
   });
   const inf = infoFromForm(); if (inf) m.info = inf;
   if (editing >= 0){ const o = MATCHES[editing] || {}; ["fid","hid","aid"].forEach(k => { if (o[k] != null) m[k] = o[k]; }); MATCHES[editing] = m; } else MATCHES.push(m);
@@ -1957,7 +2490,7 @@ function aList(){
       $("#aleague").value = m.league || ""; $("#achan").value = m.channel || ""; $("#acomm").value = m.commentator || ""; $("#atime").value = toLocalInput(m.time);
       $("#asch").value = (m.scoreHome ?? ""); $("#asca").value = (m.scoreAway ?? ""); $("#aended").checked = !!m.ended; $("#anote").value = m.note || ""; infoToForm(m.info);
       $("#arows").innerHTML = "";
-      (m.sources && m.sources.length ? m.sources : [{}]).forEach(x => aRow(x.name, x.url));
+      (m.sources && m.sources.length ? m.sources : [{}]).forEach(x => aRow(x.name, x.url, x.crop));
       $("#aft").textContent = "تعديل مباراة";
       $("#acancel").style.display = "";
       adminTab("addm");
