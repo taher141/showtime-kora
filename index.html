@@ -1702,7 +1702,9 @@ function spClean(c){
   return r;
 }
 const spSer = s => JSON.stringify(SP_KEYS.map(k => s[k]));
-function spLast(){ try { return JSON.parse(localStorage.getItem("sp_last") || "null"); } catch (e) { return null; } }
+/* اسم الموقع (الدومين) من الرابط — بيتحفظ القص باسمه عشان كل موقع له أبعاده */
+function spHost(u){ try { return new URL(u, location.href).hostname.toLowerCase().replace(/^www\./, "").replace(/\./g, "_"); } catch (e) { return ""; } }
+function spLast(h){ try { return JSON.parse(localStorage.getItem("sp_last" + (h ? ":" + h : "")) || "null"); } catch (e) { return null; } }
 function spFindMatch(m){ return MATCHES.includes(m) ? m : MATCHES.find(x => x.home === m.home && x.away === m.away && x.time === m.time); }
 
 function SmartPlayer(root, o){
@@ -1711,8 +1713,9 @@ function SmartPlayer(root, o){
   let V = null;                             /* اختيار الزائر لشكل الشاشة (محفوظ على جهازه فقط) */
   try { const v0 = localStorage.getItem("sp_vis"); if (v0 === "auto" || v0 === "fit" || v0 === "fill" || v0 === "stretch") V = v0; } catch (e) {}
   let mode = o.kind;                       /* page | hls | video */
-  /* قص واحد ثابت لكل روابط الصفحات (iframe): لو متحفظ في إعدادات الموقع بيتطبق على أي رابط */
-  const GC = (mode === "page" && SETTINGS.crop && typeof SETTINGS.crop === "object") ? SETTINGS.crop : null;
+  /* قص ثابت لكل موقع (iframe): بيتحفظ باسم دومين الرابط ويتطبق على كل روابط نفس الموقع بس */
+  const HK = mode === "page" ? spHost(o.url) : "";
+  const GC = (HK && SETTINGS.crops && typeof SETTINGS.crops === "object" && SETTINGS.crops[HK] && typeof SETTINGS.crops[HK] === "object") ? SETTINGS.crops[HK] : null;
   const baseCrop = GC || o.crop;
   let S = spClean(baseCrop), savedJson = baseCrop ? spSer(S) : "", preloaded = false;
   let hls = null, dead = false, cropOn = false, selecting = false, selStart = null;
@@ -1722,7 +1725,7 @@ function SmartPlayer(root, o){
   const prefMode = fs => V || ((fs || mode === "page") ? S.fs : S.fit);
 
   if (!baseCrop && admin && mode === "page"){
-    const last = spLast();
+    const last = spLast(HK);
     if (last){ S = spClean(last); preloaded = true; }
   }
 
@@ -1804,10 +1807,22 @@ function SmartPlayer(root, o){
       const ty = (H - rh * sy) / 2 - Vh * Tp / 100 * sy + oy / 100 * H;
       el.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + sx + "," + sy + ")";
 
+      /* مساحة الفيديو الفعلية (بدون الأشرطة السودا) عشان الكلام يثبت عليها في الطولي وملء الشاشة */
+      let rl = (W - rw * sx) / 2 + ox / 100 * W, rt = (H - rh * sy) / 2 + oy / 100 * H, rW = rw * sx, rH = rh * sy;
+      if (!isPage && el.tagName === "VIDEO" && el.videoWidth && el.videoHeight && el.style.objectFit === "contain"){
+        const ar = el.videoWidth / el.videoHeight, cw = Math.min(rW, rH * ar), ch = cw / ar;
+        rl += (rW - cw) / 2; rt += (rH - ch) / 2; rW = cw; rH = ch;
+      }
+      const vl = Math.max(0, rl), vt = Math.max(0, rt), vr2 = Math.min(W, rl + rW), vb = Math.min(H, rt + rH);
+      VR = (vr2 - vl > 20 && vb - vt > 20) ? {l: vl, t: vt, w: vr2 - vl, h: vb - vt} : null;
+      applyOv();
+
       if (el.tagName === "VIDEO"){
         const identity = !S.L && !S.R && !S.T && !S.B && S.z === 1 && !S.x && !S.y;
         el.controls = identity;
-        ful.style.display = identity ? "none" : "";
+        /* زرار ملء الشاشة بتاعنا دايمًا ظاهر (فوق لو أزرار الفيديو الأصلية ظاهرة) عشان الكلام يفضل على الفيديو */
+        ful.style.display = "";
+        ful.style.top = identity ? "10px" : ""; ful.style.bottom = identity ? "auto" : "";
       } else ful.style.display = "";
     }catch(e){}
   }
@@ -1824,6 +1839,11 @@ function SmartPlayer(root, o){
     const v = document.createElement("video");
     v.controls = true; v.autoplay = true; v.playsInline = true;
     v.setAttribute("playsinline", ""); v.setAttribute("webkit-playsinline", "");
+    v.setAttribute("controlsList", "nofullscreen");
+    v.addEventListener("webkitbeginfullscreen", () => {   /* آيفون: لو دخل ملء الشاشة الأصلي نرجّعه لملء الشاشة بتاعنا */
+      try { v.webkitExitFullscreen(); } catch (e) {}
+      setTimeout(() => { if (!inFS()) toggleFS(); }, 150);
+    });
     v.onerror = () => fail();
     v.addEventListener("loadedmetadata", () => apply());
     fx.appendChild(v);
@@ -1860,8 +1880,7 @@ function SmartPlayer(root, o){
     fx.innerHTML = "";
     const f = document.createElement("iframe");
     if (S.sb) f.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-presentation");
-    f.setAttribute("allow", "autoplay; fullscreen; encrypted-media; picture-in-picture");
-    f.setAttribute("allowfullscreen", "");
+    f.setAttribute("allow", "autoplay; encrypted-media; picture-in-picture");   /* من غير fullscreen: ملء الشاشة من زرارنا بس عشان الكلام يفضل ظاهر */
     f.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
     f.src = o.url;
     fx.appendChild(f);
@@ -1931,18 +1950,22 @@ function SmartPlayer(root, o){
 
   /* ---------- النص على الشاشة ---------- */
   let OV = spOvClean(SETTINGS.ov), ovDirty = false, ovRep = null;
+  let VR = null;   /* مساحة الفيديو الفعلية جوه الحاوية {l,t,w,h} — الكلام بيتثبت عليها مش على الحاوية كلها */
+  const ovRect = () => { const W = root.clientWidth, H = root.clientHeight; return (VR && VR.w > 20 && VR.h > 20) ? VR : {l: 0, t: 0, w: W, h: H}; };
   function applyOv(){
     const t = (OV.t || "").trim();
     if (!t){ ov.style.display = "none"; return; }
     const W = root.clientWidth, H = root.clientHeight; if (!W || !H) return;
+    const vr = ovRect();
     ov.textContent = t; ov.style.display = "block";
-    ov.style.fontSize = Math.max(10, H * OV.s / 100) + "px";
+    ov.style.maxWidth = Math.round(vr.w * .92) + "px";
+    ov.style.fontSize = Math.max(10, vr.h * OV.s / 100) + "px";
     ov.style.opacity = OV.o / 100; ov.style.color = OV.c;
     ov.style.background = OV.b ? "rgba(0,0,0,.6)" : "transparent";
     ov.classList.toggle("ed", admin);
     const w = ov.offsetWidth, h = ov.offsetHeight;
-    const cx = Math.min(Math.max(W * OV.x / 100, w / 2), W - w / 2);
-    const cy = Math.min(Math.max(H * OV.y / 100, h / 2), H - h / 2);
+    const cx = Math.min(Math.max(vr.l + vr.w * OV.x / 100, vr.l + w / 2), vr.l + vr.w - w / 2);
+    const cy = Math.min(Math.max(vr.t + vr.h * OV.y / 100, vr.t + h / 2), vr.t + vr.h - h / 2);
     ov.style.transform = "translate(" + Math.max(0, cx - w / 2) + "px," + Math.max(0, cy - h / 2) + "px)";
   }
   function refreshOv(){ if (!admin) OV = spOvClean(SETTINGS.ov); applyOv(); }
@@ -1988,15 +2011,17 @@ function SmartPlayer(root, o){
     let dr = null;
     ov.addEventListener("pointerdown", e => {
       const r = root.getBoundingClientRect(); if (!r.width || !r.height) return;
-      dr = {dx: (e.clientX - r.left) / r.width * 100 - OV.x, dy: (e.clientY - r.top) / r.height * 100 - OV.y};
+      const vr = ovRect();
+      dr = {dx: (e.clientX - r.left - vr.l) / vr.w * 100 - OV.x, dy: (e.clientY - r.top - vr.t) / vr.h * 100 - OV.y};
       try { ov.setPointerCapture(e.pointerId); } catch (_) {}
       e.preventDefault(); e.stopPropagation();
     });
     ov.addEventListener("pointermove", e => {
       if (!dr) return;
       const r = root.getBoundingClientRect(); if (!r.width || !r.height) return;
-      OV.x = Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100 - dr.dx));
-      OV.y = Math.min(100, Math.max(0, (e.clientY - r.top) / r.height * 100 - dr.dy));
+      const vr = ovRect();
+      OV.x = Math.min(100, Math.max(0, (e.clientX - r.left - vr.l) / vr.w * 100 - dr.dx));
+      OV.y = Math.min(100, Math.max(0, (e.clientY - r.top - vr.t) / vr.h * 100 - dr.dy));
       applyOv(); syncOv();
     });
     const endDrag = () => { if (dr){ dr = null; ovChanged(); } };
@@ -2011,7 +2036,7 @@ function SmartPlayer(root, o){
     const st = tools.querySelector('[data-s="st"]'); if (!st) return;
     const cur = spSer(S);
     let t, c = "";
-    if (savedJson && cur === savedJson){ t = mode === "page" ? "✓ القص الثابت محفوظ ويظهر للزوار على كل الروابط" : "✓ الضبط محفوظ ويظهر للزوار"; c = "ok"; }
+    if (savedJson && cur === savedJson){ t = mode === "page" ? "✓ القص الثابت محفوظ ويظهر للزوار على كل روابط الموقع ده" : "✓ الضبط محفوظ ويظهر للزوار"; c = "ok"; }
     else if (!savedJson && cur === spSer(SP_BASE)){ t = mode === "page" ? "لا يوجد قص ثابت محفوظ — حدّد الفيديو ثم اضغط «حفظ للزوار»" : "لا يوجد ضبط محفوظ لهذا السيرفر"; }
     else { t = "⚠ فيه تعديلات غير محفوظة — اضغط «حفظ للزوار»"; c = "err"; }
     st.textContent = t; st.className = "spn " + c;
@@ -2047,11 +2072,14 @@ function SmartPlayer(root, o){
   function doSave(){
     if (mode === "page" && hasRegion() && !cropOn){ cropOn = true; apply(); }
     const obj = exportObj();
-    if (mode === "page"){ SETTINGS.crop = obj; persistSettings(); }
+    if (mode === "page"){
+      if (!HK) return say("تعذر تحديد الموقع من الرابط", "err");
+      SETTINGS.crops = Object.assign({}, SETTINGS.crops, {[HK]: obj}); delete SETTINGS.crop; persistSettings();
+    }
     else if (!persist(obj)) return say("تعذر الحفظ", "err");
     savedJson = spSer(S);
-    try { localStorage.setItem("sp_last", JSON.stringify(obj)); } catch (e) {}
-    sync(); say(mode === "page" ? "✓ تم حفظ القص الثابت — بيظهر لكل الزوار على كل روابط الصفحات" : (o.savedMsg || "✓ تم الحفظ — الزوار هيشوفوا الفيديو بالقص ده"), "ok");
+    try { localStorage.setItem("sp_last" + (HK ? ":" + HK : ""), JSON.stringify(obj)); } catch (e) {}
+    sync(); say(mode === "page" ? "✓ تم حفظ القص الثابت — بيظهر لكل الزوار على كل روابط الموقع ده بس" : (o.savedMsg || "✓ تم الحفظ — الزوار هيشوفوا الفيديو بالقص ده"), "ok");
   }
   function doReset(){
     S = Object.assign({}, SP_BASE); cropOn = false; selecting = false; sel.style.display = "none";
@@ -2059,7 +2087,10 @@ function SmartPlayer(root, o){
     sync(); say("");
   }
   function doDelete(){
-    if (mode === "page"){ delete SETTINGS.crop; persistSettings(); }
+    if (mode === "page"){
+      if (SETTINGS.crops && HK){ const c = Object.assign({}, SETTINGS.crops); delete c[HK]; SETTINGS.crops = c; }
+      delete SETTINGS.crop; persistSettings();
+    }
     else if (!persist(null)) return say("تعذر الحذف", "err");
     savedJson = "";
     doReset();
@@ -2276,7 +2307,15 @@ function SmartPlayer(root, o){
 
   /* ---------- أحداث عامة ---------- */
   const onResize = () => apply();
-  const onFsChange = () => { afterFS(); syncBar(); };
+  const onFsChange = () => {
+    const fe = document.fullscreenElement || document.webkitFullscreenElement;
+    if (fe && fe !== root && root.contains(fe)){   /* اتكبّر الفيديو/الإطار لوحده → نرجّع التكبير للحاوية كلها */
+      try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {}
+      setTimeout(() => { if (!inFS()) toggleFS(); }, 150);
+      return;
+    }
+    afterFS(); syncBar();
+  };
   window.addEventListener("resize", onResize);
   document.addEventListener("fullscreenchange", onFsChange);
   document.addEventListener("webkitfullscreenchange", onFsChange);
