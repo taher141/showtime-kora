@@ -640,13 +640,37 @@ html:has(body.adm){scroll-padding-top:calc(var(--atabsH,0px) + 60px)}
 .sptools input[type=color]{width:42px;height:34px;padding:2px;border:1px solid var(--bd);border-radius:8px;background:var(--in);cursor:pointer}
 .sptools .spmv{display:grid;grid-template-columns:repeat(3,46px);gap:6px;justify-content:center;margin:8px 0}
 .sptools .spmv button{padding:6px 0;font-size:17px;line-height:1.3}
-:is(#player,#atp,#tvp,.np).sp .spsel{position:absolute;inset:0;z-index:7;display:none;cursor:crosshair;touch-action:none;background:rgba(0,0,0,.12)}
-:is(#player,#atp,#tvp,.np).sp .spbox{position:absolute;display:none;border:2px solid var(--team);background:rgba(134,239,172,.2);pointer-events:none}
+:is(#player,#atp,#tvp,.np).sp .spsel{position:absolute;inset:0;z-index:7;display:none;cursor:crosshair;touch-action:pan-y pinch-zoom;overflow:hidden;background:rgba(0,0,0,.08)}
+:is(#player,#atp,#tvp,.np).sp .spbox{position:absolute;display:none;border:2px solid #86efac;pointer-events:none;box-shadow:0 0 0 4000px rgba(0,0,0,.5)}
 :is(#player,#atp,#tvp,.np).sp .sphint{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.82);color:#fff;padding:6px 10px;border-radius:8px;font-size:12.5px;white-space:nowrap}
 :is(#player,#atp,#tvp,.np).sp .sphint button{border:0;background:#dc2626;color:#fff;border-radius:6px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer}
 :is(#player,#atp,#tvp,.np).sp:fullscreen,:is(#player,#atp,#tvp,.np).sp:-webkit-full-screen{max-height:none;border-radius:0;aspect-ratio:auto}
 :is(#player,#atp,#tvp,.np).sp.sp-pfs{position:fixed;inset:0;z-index:9999;width:100vw;height:100vh;height:100dvh;max-height:none;border-radius:0;aspect-ratio:auto!important}
 body.sp-lock{overflow:hidden}
+:is(#player,#atp,#tvp,.np).sp.sp-tall{max-height:none!important}
+:is(#player,#atp,#tvp,.np).sp .spbox i{position:absolute;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:#fff;border:3px solid #16a34a;box-shadow:0 1px 6px rgba(0,0,0,.6);pointer-events:auto;touch-action:none;cursor:pointer;box-sizing:border-box;font-style:normal}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=tl]{left:0;top:0;cursor:nwse-resize}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=tr]{left:100%;top:0;cursor:nesw-resize}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=bl]{left:0;top:100%;cursor:nesw-resize}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=br]{left:100%;top:100%;cursor:nwse-resize;border-color:#dc2626}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=tl]{border-color:#16a34a}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=tm],:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=bm],:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=ml],:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=mr]{width:22px;height:22px;margin:-11px 0 0 -11px;border-width:2px;border-color:#86efac}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=tm]{left:50%;top:0;cursor:ns-resize}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=bm]{left:50%;top:100%;cursor:ns-resize}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=ml]{left:0;top:50%;cursor:ew-resize}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=mr]{left:100%;top:50%;cursor:ew-resize}
+:is(#player,#atp,#tvp,.np).sp .spbox i[data-h=mv]{left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;background:rgba(0,0,0,.65);border-color:#fff;color:#fff;font-size:20px;line-height:34px;text-align:center;cursor:move}
+:is(#player,#atp,#tvp,.np).sp .spbox b{position:absolute;font-size:11px;font-weight:800;padding:2px 7px;border-radius:5px;pointer-events:none;white-space:nowrap;color:#fff}
+:is(#player,#atp,#tvp,.np).sp .spbox .spl1{left:8px;top:8px;background:#16a34a}
+:is(#player,#atp,#tvp,.np).sp .spbox .spl2{right:8px;bottom:8px;background:#dc2626}
+.spbar2{position:fixed;left:0;right:0;bottom:0;z-index:10000;background:rgba(17,17,17,.97);color:#fff;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));border-top:2px solid #86efac;font-size:13.5px;line-height:1.6;box-shadow:0 -6px 20px rgba(0,0,0,.5)}
+.spbar2 .t{margin-bottom:8px;text-align:center}
+.spbar2 .b{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.spbar2 button{border:1px solid #555;background:#333;color:#fff;border-radius:8px;padding:9px 14px;font:inherit;font-weight:700;cursor:pointer}
+.spbar2 button[data-b=ok]{background:#16a34a;border-color:#16a34a}
+.spbar2 button[data-b=x]{background:#dc2626;border-color:#dc2626}
+.spbar2 button:disabled{opacity:.4;cursor:default}
+
 
 .sptools{margin-top:12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;display:grid;gap:10px}
 .sptools.hide{display:none}
@@ -1652,17 +1676,18 @@ let adminSeen = false;
 const isAdmin = () => fbOn ? !!fbUser : adminSeen;
 
 const SP_VW = 1280;
-const SP_BASE = {L:0, T:0, R:0, B:0, x:0, y:0, z:1, br:100, ct:100, sa:100, fh:false, fv:false, fit:"fit", fs:"auto", vh:720, sb:false};
+const SP_BASE = {L:0, T:0, R:0, B:0, po:0, x:0, y:0, z:1, br:100, ct:100, sa:100, fh:false, fv:false, fit:"fit", fs:"auto", vh:720, sb:false};
 const SP_AUTO = 0.20;   /* تلقائي: يملّى الشاشة لو اللي هيتقص ≤ 20%، وإلا يعرضه كامل */
 const SP_KEYS = Object.keys(SP_BASE);
 const SP_GROUPS = [
   ["view", "🔍 ضبط دقيق للتكبير والمكان", [["z","التكبير",1,4,.02], ["x","إزاحة أفقية",-100,100,.5], ["y","إزاحة رأسية",-100,100,.5]]],
   ["crop", "✂️ قص الحواف بالشرائح", [["T","من أعلى",0,90,.5], ["B","من أسفل",0,90,.5], ["L","من اليسار",0,90,.5], ["R","من اليمين",0,90,.5]]],
+  ["page", "📜 إزاحة بداية الصفحة", [["po","إزاحة (بكسل)",-600,1500,5]]],
   ["color", "🎨 الألوان", [["br","السطوع",40,160,1], ["ct","التباين",40,160,1], ["sa","التشبع",0,200,1]]]
 ];
 const SP_DEF = {};
 SP_GROUPS.forEach(g => g[2].forEach(d => { SP_DEF[d[0]] = {min: d[2], max: d[3], step: d[4]}; }));
-const SP_VIEW_KEYS = ["z","x","y","L","T","R","B"];
+const SP_VIEW_KEYS = ["z","x","y","L","T","R","B","po"];
 
 /* ===== النص على شاشة البث: واحد لكل الروابط (SETTINGS.ov) ===== */
 const SP_OV_BASE = {t:"", x:50, y:90, s:5, o:90, b:true, c:"#ffffff"};
@@ -1683,6 +1708,67 @@ function spOvClean(c){
 }
 const SP_FS_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>';
 
+
+/* ===== كشف مستطيل الفيديو من لقطة الشاشة (تقريبي): يلاقي أكبر كتلة "مختلفة عن خلفية الصفحة" بشكل مستطيل ونسبته قريبة من 16:9 ===== */
+function spFindVideoRect(px, w, h, B){
+  const gw = Math.floor(w / B), gh = Math.floor(h / B);
+  if (gw < 8 || gh < 6) return null;
+  const N = gw * gh, mean = new Float32Array(N * 3), sd = new Float32Array(N);
+  for (let gy = 0; gy < gh; gy++) for (let gx = 0; gx < gw; gx++){
+    let sr = 0, sg = 0, sb = 0, sl = 0, sl2 = 0, n = 0;
+    for (let y = gy * B; y < gy * B + B; y++) for (let x = gx * B; x < gx * B + B; x++){
+      const i = (y * w + x) * 4, r = px[i], g = px[i + 1], b = px[i + 2], l = .299 * r + .587 * g + .114 * b;
+      sr += r; sg += g; sb += b; sl += l; sl2 += l * l; n++;
+    }
+    const c = gy * gw + gx, m = sl / n;
+    mean[c * 3] = sr / n; mean[c * 3 + 1] = sg / n; mean[c * 3 + 2] = sb / n;
+    sd[c] = Math.sqrt(Math.max(0, sl2 / n - m * m));
+  }
+  const cnt = new Map(); let bk = -1, bn = 0;
+  for (let c = 0; c < N; c++){
+    if (sd[c] > 6) continue;
+    const k = ((mean[c * 3] >> 4) << 8) | ((mean[c * 3 + 1] >> 4) << 4) | (mean[c * 3 + 2] >> 4);
+    const v = (cnt.get(k) || 0) + 1; cnt.set(k, v); if (v > bn){ bn = v; bk = k; }
+  }
+  if (bk < 0) return null;
+  const br = ((bk >> 8) & 15) * 16 + 8, bg = ((bk >> 4) & 15) * 16 + 8, bb = (bk & 15) * 16 + 8;
+  const fg = new Uint8Array(N);
+  for (let c = 0; c < N; c++){
+    const d = Math.abs(mean[c * 3] - br) + Math.abs(mean[c * 3 + 1] - bg) + Math.abs(mean[c * 3 + 2] - bb);
+    fg[c] = (sd[c] >= 10 || d > 60) ? 1 : 0;
+  }
+  const dil = new Uint8Array(N);
+  for (let gy = 0; gy < gh; gy++) for (let gx = 0; gx < gw; gx++){
+    let on = 0;
+    for (let dy = -1; dy <= 1 && !on; dy++) for (let dx = -1; dx <= 1; dx++){
+      const x = gx + dx, y = gy + dy;
+      if (x >= 0 && y >= 0 && x < gw && y < gh && fg[y * gw + x]){ on = 1; break; }
+    }
+    dil[gy * gw + gx] = on;
+  }
+  const seen = new Uint8Array(N); let best = null, bestScore = 0;
+  for (let s = 0; s < N; s++){
+    if (!dil[s] || seen[s]) continue;
+    const st = [s]; seen[s] = 1;
+    let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1, raw = 0;
+    while (st.length){
+      const c = st.pop(), cx = c % gw, cy = (c / gw) | 0;
+      if (fg[c]){ raw++; if (cx < x0) x0 = cx; if (cx > x1) x1 = cx; if (cy < y0) y0 = cy; if (cy > y1) y1 = cy; }
+      if (cx > 0 && dil[c - 1] && !seen[c - 1]){ seen[c - 1] = 1; st.push(c - 1); }
+      if (cx < gw - 1 && dil[c + 1] && !seen[c + 1]){ seen[c + 1] = 1; st.push(c + 1); }
+      if (cy > 0 && dil[c - gw] && !seen[c - gw]){ seen[c - gw] = 1; st.push(c - gw); }
+      if (cy < gh - 1 && dil[c + gw] && !seen[c + gw]){ seen[c + gw] = 1; st.push(c + gw); }
+    }
+    if (x1 < 0) continue;
+    const bw = x1 - x0 + 1, bh = y1 - y0 + 1, area = bw * bh;
+    if (bw < 12 || bh < 7 || area > 0.92 * N) continue;
+    const fill = raw / area, ar = bw / bh, arOK = (ar >= 1.2 && ar <= 2.4) ? 1 : 0.35;
+    const score = area * fill * fill * arOK;
+    if (score > bestScore){ bestScore = score; best = {l: x0 * B, t: y0 * B, r: (x1 + 1) * B, b: (y1 + 1) * B, fill, ar}; }
+  }
+  return best;
+}
+
 /* تنظيف أي ضبط قادم من البيانات قبل استخدامه */
 function spClean(c){
   const r = Object.assign({}, SP_BASE);
@@ -1698,6 +1784,7 @@ function spClean(c){
   if (r.L + r.R > 95) r.L = r.R = 0;
   if (r.T + r.B > 95) r.T = r.B = 0;
   r.z = Math.min(4, Math.max(1, r.z));
+  r.po = Math.min(1500, Math.max(-600, r.po));
   r.vh = Math.min(4000, Math.max(300, r.vh));
   return r;
 }
@@ -1711,7 +1798,7 @@ function SmartPlayer(root, o){
   const admin = !!o.admin, tools = admin ? (o.tools || $("#spTools")) : null;
   const bar = !admin ? (o.bar || $("#spBar")) : null;
   let V = null;                             /* اختيار الزائر لشكل الشاشة (محفوظ على جهازه فقط) */
-  try { const v0 = localStorage.getItem("sp_vis"); if (v0 === "auto" || v0 === "fit" || v0 === "fill" || v0 === "stretch") V = v0; } catch (e) {}
+  if (!admin) try { const v0 = localStorage.getItem("sp_vis"); if (v0 === "auto" || v0 === "fit" || v0 === "fill" || v0 === "stretch") V = v0; } catch (e) {}
   let mode = o.kind;                       /* page | hls | video */
   /* قص ثابت لكل موقع (iframe): بيتحفظ باسم دومين الرابط ويتطبق على كل روابط نفس الموقع بس */
   const HK = mode === "page" ? spHost(o.url) : "";
@@ -1735,7 +1822,7 @@ function SmartPlayer(root, o){
   root.innerHTML =
     '<div class="spst"><div class="spx"></div></div>' +
     '<div class="spov"></div>' +
-    '<div class="spsel"><div class="spbox"></div><div class="sphint"><span>اسحب مربعًا حوالين الفيديو فقط</span><button type="button">إلغاء</button></div></div>' +
+    '<div class="spsel"><div class="spbox"><b class="spl1">▶ ابدأ من هنا</b><b class="spl2">انتهي هنا ◀</b><i data-h="tl"></i><i data-h="tr"></i><i data-h="bl"></i><i data-h="br"></i><i data-h="tm"></i><i data-h="bm"></i><i data-h="ml"></i><i data-h="mr"></i><i data-h="mv">✥</i></div></div>' +
     '<button type="button" class="spful" title="ملء الشاشة" aria-label="ملء الشاشة">' + SP_FS_ICON + '</button>' +
     '<div class="spmsg"></div>';
   const fx = root.querySelector(".spx"), sel = root.querySelector(".spsel"), box = root.querySelector(".spbox");
@@ -1769,7 +1856,7 @@ function SmartPlayer(root, o){
       const isPage = mode === "page", fs = inFS();
       const live = !isPage || (cropOn && !selecting);
       const L = live ? S.L : 0, Rr = live ? S.R : 0, Tp = live ? S.T : 0, Bt = live ? S.B : 0;
-      const z = live ? S.z : 1, ox = live ? S.x : 0, oy = live ? S.y : 0;
+      const z = live ? S.z : 1, ox = live ? S.x : 0, oy = live ? S.y : 0, po = (isPage && live) ? S.po : 0;
       if (isPage && el.tagName === "IFRAME"){
         const want = live ? "no" : "yes";
         if (el.getAttribute("scrolling") !== want) el.setAttribute("scrolling", want);
@@ -1777,9 +1864,12 @@ function SmartPlayer(root, o){
       /* الصفحة المقصوصة: الإطار ياخد نسبة أبعاد الفيديو نفسه فيتملّى بدون أشرطة سوداء */
       if (isPage){
         const rw0 = SP_VW * (1 - (L + Rr) / 100), rh0 = S.vh * (1 - (Tp + Bt) / 100);
+        /* الأدمن وهو بيحدد/بيشوف الصفحة كاملة: الحاوية بنفس نسبة الصفحة (عرض 1280 × الطول) فتتشاف كلها من غير سكرول */
+        const tall = admin && !live && !fs;
+        root.classList.toggle("sp-tall", tall);
         /* اختيار الزائر (أصلي/تكبير/تمديد) يشتغل جوه صندوق 16:9 ثابت عشان الفرق يبان فورًا */
-        root.style.aspectRatio = (live && !fs && !(V && V !== "auto")) ? (rw0 / rh0).toFixed(4) : "";
-      } else root.style.aspectRatio = "";
+        root.style.aspectRatio = tall ? (SP_VW / S.vh).toFixed(4) : ((live && !fs && !(V && V !== "auto")) ? (rw0 / rh0).toFixed(4) : "");
+      } else { root.style.aspectRatio = ""; root.classList.remove("sp-tall"); }
 
       const W = root.clientWidth, H = root.clientHeight;
       if (!W || !H) return;
@@ -1804,7 +1894,7 @@ function SmartPlayer(root, o){
         el.style.objectFit = f === "fit" ? "contain" : f === "fill" ? "cover" : "fill";
       }
       const tx = (W - rw * sx) / 2 - Vw * L / 100 * sx + ox / 100 * W;
-      const ty = (H - rh * sy) / 2 - Vh * Tp / 100 * sy + oy / 100 * H;
+      const ty = (H - rh * sy) / 2 - Vh * Tp / 100 * sy + oy / 100 * H - po * sy;   /* إزاحة بداية الصفحة: ترفع الصفحة لفوق (أو تنزّلها لو بالسالب) */
       el.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + sx + "," + sy + ")";
 
       /* مساحة الفيديو الفعلية (بدون الأشرطة السودا) عشان الكلام يثبت عليها في الطولي وملء الشاشة */
@@ -1824,6 +1914,7 @@ function SmartPlayer(root, o){
         ful.style.display = "";
         ful.style.top = identity ? "10px" : ""; ful.style.bottom = identity ? "auto" : "";
       } else ful.style.display = "";
+      if (selecting) drawBox();
     }catch(e){}
   }
 
@@ -1902,50 +1993,180 @@ function SmartPlayer(root, o){
   }
   ful.onclick = toggleFS;
 
-  /* ---------- التحديد بالسحب (أدمن) ---------- */
+  /* ---------- التحديد (أدمن) ----------
+     - الصفحة بتتعرض كاملة (طول 3000 افتراضيًا) من غير سكرول، والتحديد بيتحسب على الصفحة كلها.
+     - ضغطة واحدة على الفيديو (أو سحب بالماوس) بترسم إطار 16:9 تلقائي، وبعدها تظبطه بالمقابض.
+     - شريط التعليمات والأزرار ثابت أسفل الشاشة. */
+  const SEL_VH = 3000, SEL_MIN = 60;
+  let vb = null, prevS = null, selBar = null, drag = null, gest = null, barNote = "";
+  const canCap = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) && !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "") && !(window.matchMedia && matchMedia("(pointer:coarse)").matches);
+  const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+  const geo = () => { const W = root.clientWidth, H = root.clientHeight, s0 = Math.min(W / SP_VW, H / S.vh) || 1; return {s0, tx0: (W - SP_VW * s0) / 2, ty0: (H - S.vh * s0) / 2}; };
+  const pagePt = e => { const r = root.getBoundingClientRect(), g = geo(); return {x: clampN((e.clientX - r.left - g.tx0) / g.s0, 0, SP_VW), y: clampN((e.clientY - r.top - g.ty0) / g.s0, 0, S.vh)}; };
+
+  function barText(){
+    if (!selBar) return;
+    const t = selBar.querySelector(".t"), ok = selBar.querySelector('[data-b="ok"]');
+    if (ok) ok.disabled = !vb;
+    if (!t) return;
+    if (barNote){ t.textContent = barNote; return; }
+    if (!vb) t.textContent = canCap ? "اضغط ضغطة واحدة على الفيديو ليتحدد تلقائيًا (أو اسحب بالماوس حواليه، أو جرّب «كشف تلقائي»)" : "اضغط ضغطة واحدة على الفيديو وهيتحدد تلقائيًا، وبعدها اضبطه بالنقط. السكرول بإصبعك عادي.";
+    else t.textContent = "🟢 «ابدأ من هنا» أعلى اليسار · 🔴 «انتهي هنا» أسفل اليمين — اسحب النقط للضبط، ✥ للتحريك. الحجم: " + Math.round(vb.r - vb.l) + "×" + Math.round(vb.b - vb.t);
+  }
+  function barSay(t){ barNote = t || ""; barText(); }
+  function drawBox(){
+    if (!vb){ box.style.display = "none"; barText(); return; }
+    const g = geo();
+    box.style.display = "block";
+    box.style.left = (g.tx0 + vb.l * g.s0) + "px"; box.style.top = (g.ty0 + vb.t * g.s0) + "px";
+    box.style.width = ((vb.r - vb.l) * g.s0) + "px"; box.style.height = ((vb.b - vb.t) * g.s0) + "px";
+    barText();
+  }
+  function setBox(l, t, r, b){ vb = {l, t, r, b}; barNote = ""; drawBox(); }
+  function autoFrameAt(p){
+    const w = SP_VW * 0.6, h = w * 9 / 16, l = clampN(p.x - w / 2, 0, SP_VW - w), t = clampN(p.y - h / 2, 0, Math.max(0, S.vh - h));
+    setBox(l, t, l + w, Math.min(S.vh, t + h));
+  }
+  function fit169(){
+    if (!vb) return barSay("حدّد الفيديو الأول بضغطة عليه");
+    const w = vb.r - vb.l, h = vb.b - vb.t, tr = 16 / 9, cx = (vb.l + vb.r) / 2, cy = (vb.t + vb.b) / 2;
+    let nw = w, nh = h; if (w / h < tr) nw = h * tr; else nh = w / tr;
+    const k = Math.min(1, SP_VW / nw, S.vh / nh); nw *= k; nh *= k;
+    const l = clampN(cx - nw / 2, 0, SP_VW - nw), t = clampN(cy - nh / 2, 0, S.vh - nh);
+    setBox(l, t, l + nw, t + nh);
+  }
+  function openBar(){
+    closeBar();
+    selBar = document.createElement("div"); selBar.className = "spbar2";
+    selBar.innerHTML = '<div class="t"></div><div class="b"><button type="button" data-b="ok">✔ تأكيد</button><button type="button" data-b="169">📐 16:9</button>' +
+      (canCap ? '<button type="button" data-b="auto">🪄 كشف تلقائي</button>' : '') + '<button type="button" data-b="rl">⟳ إعادة تحميل</button><button type="button" data-b="x">✖ إلغاء</button></div>';
+    selBar.addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      switch (b.dataset.b){
+        case "ok": confirmSelect(); break;
+        case "169": fit169(); break;
+        case "auto": autoDetect(); break;
+        case "rl": mountFrame(); barSay("اتعملت إعادة تحميل للصفحة"); break;
+        case "x": cancelSelect(); break;
+      }
+    });
+    document.body.appendChild(selBar); barNote = ""; barText();
+  }
+  function closeBar(){ if (selBar){ selBar.remove(); selBar = null; } barNote = ""; }
+
   function startSelect(){
     if (mode !== "page") return say("التحديد لصفحات الويب فقط", "err");
-    selecting = true; cropOn = false;
-    box.style.display = "none"; sel.style.display = "block";
-    animate(); apply();
+    if (selecting) return;
+    prevS = Object.assign({}, S);
+    S.vh = Math.max(S.vh, SEL_VH); S.L = S.T = S.R = S.B = 0; S.po = 0; S.z = 1; S.x = 0; S.y = 0;
+    selecting = true; cropOn = false; vb = null; box.style.display = "none"; sel.style.display = "block";
+    openBar(); sync(); animate(); apply(); setTimeout(apply, 120);
+    try { root.scrollIntoView({block: "start", behavior: "smooth"}); } catch (e) {}
   }
   function cancelSelect(){
-    selecting = false; sel.style.display = "none";
-    cropOn = hasRegion(); animate(); apply();
+    if (prevS){ Object.assign(S, prevS); prevS = null; }
+    selecting = false; vb = null; sel.style.display = "none"; box.style.display = "none"; closeBar();
+    cropOn = hasRegion(); sync(); animate(); apply(); setTimeout(apply, 120);
   }
-  function commitSelect(a, b){
-    const x1 = Math.min(a.x, b.x), x2 = Math.max(a.x, b.x), y1 = Math.min(a.y, b.y), y2 = Math.max(a.y, b.y);
-    if (x2 - x1 < 30 || y2 - y1 < 30){ box.style.display = "none"; return say("المربع صغير، اسحب حوالين الفيديو كله", "err"); }
-    const W = root.clientWidth, H = root.clientHeight;
-    const s0 = Math.min(W / SP_VW, H / S.vh);
-    const tx0 = (W - SP_VW * s0) / 2, ty0 = (H - S.vh * s0) / 2;
-    const cl = v => Math.max(0, Math.min(100, v));
-    const L = cl((x1 - tx0) / s0 / SP_VW * 100), R = cl(100 - (x2 - tx0) / s0 / SP_VW * 100);
-    const Tt = cl((y1 - ty0) / s0 / S.vh * 100), Bt = cl(100 - (y2 - ty0) / s0 / S.vh * 100);
-    if (L + R > 95 || Tt + Bt > 95){ box.style.display = "none"; return say("المربع خارج الصفحة، حاول تاني", "err"); }
+  function confirmSelect(){
+    if (!vb) return barSay("اضغط على الفيديو الأول عشان يتحدد");
+    const cl = v => clampN(v, 0, 100);
+    const L = cl(vb.l / SP_VW * 100), R = cl(100 - vb.r / SP_VW * 100), Tt = cl(vb.t / S.vh * 100), Bt = cl(100 - vb.b / S.vh * 100);
+    if (L + R > 95 || Tt + Bt > 95) return barSay("المربع صغير أو خارج الصفحة، اضبطه تاني");
     S.L = +L.toFixed(2); S.R = +R.toFixed(2); S.T = +Tt.toFixed(2); S.B = +Bt.toFixed(2);
     S.z = 1; S.x = 0; S.y = 0;
-    selecting = false; sel.style.display = "none"; box.style.display = "none";
+    selecting = false; prevS = null; vb = null; sel.style.display = "none"; box.style.display = "none"; closeBar();
     animate(); cropOn = true; sync(); apply(); setTimeout(apply, 80);
+    setTimeout(() => { try { root.scrollIntoView({block: "center", behavior: "smooth"}); } catch (e) {} }, 150);
     say("تم التحديد — راجع الشكل ثم اضغط «حفظ للزوار»", "ok");
   }
+
+  /* كشف تلقائي من لقطة التاب (كمبيوتر فقط) */
+  async function autoDetect(){
+    if (!canCap) return barSay("الكشف التلقائي بمشاركة التاب مش مدعوم على الموبايل — اضغط على الفيديو بدلًا منه");
+    let stream = null;
+    barSay("اختار «هذا التاب» في نافذة المشاركة…");
+    try { stream = await navigator.mediaDevices.getDisplayMedia({video: {displaySurface: "browser"}, audio: false, preferCurrentTab: true, selfBrowserSurface: "include"}); }
+    catch (e) { return barSay("المشاركة اتلغت أو المتصفح رفضها"); }
+    const hide = on => { sel.style.visibility = on ? "hidden" : ""; if (selBar) selBar.style.visibility = on ? "hidden" : ""; };
+    try {
+      const v = document.createElement("video"); v.muted = true; v.playsInline = true; v.srcObject = stream;
+      await v.play(); await new Promise(r => setTimeout(r, 350));
+      hide(true); await new Promise(r => setTimeout(r, 250));
+      const vw = v.videoWidth, vh = v.videoHeight, iw = window.innerWidth, ih = window.innerHeight;
+      if (!vw || !vh) throw new Error("no-frame");
+      if (Math.abs(vw / vh - iw / ih) / (iw / ih) > 0.04) { hide(false); return barSay("لازم تختار «هذا التاب» مش نافذة أو شاشة كاملة، وجرّب تاني"); }
+      const k = vw / iw, rr = root.getBoundingClientRect();
+      const x0 = Math.max(0, rr.left), y0 = Math.max(0, rr.top), x1 = Math.min(iw, rr.right), y1 = Math.min(ih, rr.bottom);
+      if (x1 - x0 < 100 || y1 - y0 < 80){ hide(false); return barSay("اسكرول لحد ما الفيديو يظهر على الشاشة وجرّب تاني"); }
+      const cw = 640, ch = Math.max(48, Math.round(cw * (y1 - y0) / (x1 - x0)));
+      const cv = document.createElement("canvas"); cv.width = cw; cv.height = ch;
+      const cx = cv.getContext("2d", {willReadFrequently: true});
+      cx.drawImage(v, x0 * k, y0 * k, (x1 - x0) * k, (y1 - y0) * k, 0, 0, cw, ch);
+      hide(false);
+      const res = spFindVideoRect(cx.getImageData(0, 0, cw, ch).data, cw, ch, 4);
+      if (!res) return barSay("مقدرتش ألاقي الفيديو بوضوح — اضغط عليه بإصبعك/الماوس بدلًا منه");
+      const g = geo(), sx = (x1 - x0) / cw, sy = (y1 - y0) / ch;
+      const tp = (cxp, cyp) => ({x: clampN((x0 + cxp * sx - rr.left - g.tx0) / g.s0, 0, SP_VW), y: clampN((y0 + cyp * sy - rr.top - g.ty0) / g.s0, 0, S.vh)});
+      const a = tp(res.l, res.t), b = tp(res.r, res.b);
+      if (b.x - a.x < SEL_MIN || b.y - a.y < SEL_MIN) return barSay("الشكل المكتشف صغير — اضغط على الفيديو بنفسك");
+      setBox(a.x, a.y, b.x, b.y);
+      barSay("تم الكشف التلقائي (تقريبي) — راجع الإطار واضغط 16:9 لو لزم، ثم «تأكيد»");
+    } catch (e) { hide(false); barSay("تعذر الكشف التلقائي — اضغط على الفيديو بنفسك"); }
+    finally { stream.getTracks().forEach(t => { try { t.stop(); } catch (e) {} }); }
+  }
+
   if (admin){
-    const pos = e => { const r = root.getBoundingClientRect(); return {x: e.clientX - r.left, y: e.clientY - r.top}; };
-    const draw = p => {
-      box.style.left = Math.min(selStart.x, p.x) + "px"; box.style.top = Math.min(selStart.y, p.y) + "px";
-      box.style.width = Math.abs(p.x - selStart.x) + "px"; box.style.height = Math.abs(p.y - selStart.y) + "px";
-    };
+    const inBox = p => vb && p.x >= vb.l && p.x <= vb.r && p.y >= vb.t && p.y <= vb.b;
     sel.addEventListener("pointerdown", e => {
-      if (e.target.closest(".sphint")) return;
-      selStart = pos(e);
-      try { sel.setPointerCapture(e.pointerId); } catch (_) {}
-      box.style.display = "block"; draw(selStart);
-      e.preventDefault();
+      if (e.target.closest("[data-h]")) return;
+      gest = {id: e.pointerId, type: e.pointerType, x: e.clientX, y: e.clientY, t: Date.now(), moved: false, p0: pagePt(e)};
+      if (e.pointerType !== "touch"){ try { sel.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); }
     });
-    sel.addEventListener("pointermove", e => { if (selStart) draw(pos(e)); });
-    sel.addEventListener("pointerup", e => { if (selStart){ const end = pos(e), st = selStart; selStart = null; commitSelect(st, end); } });
-    sel.addEventListener("pointercancel", () => { selStart = null; box.style.display = "none"; });
-    root.querySelector(".sphint button").onclick = cancelSelect;
+    sel.addEventListener("pointermove", e => {
+      if (!gest || e.pointerId !== gest.id) return;
+      if (Math.hypot(e.clientX - gest.x, e.clientY - gest.y) > 8) gest.moved = true;
+      if (gest.type !== "touch" && gest.moved){
+        const p = pagePt(e), q = gest.p0;
+        setBox(Math.min(q.x, p.x), Math.min(q.y, p.y), Math.max(q.x, p.x), Math.max(q.y, p.y));
+      }
+    });
+    sel.addEventListener("pointerup", e => {
+      if (!gest || e.pointerId !== gest.id) return;
+      const g0 = gest; gest = null;
+      if (g0.type === "touch"){
+        if (!g0.moved && Date.now() - g0.t < 600 && !inBox(g0.p0)) autoFrameAt(g0.p0);
+        return;
+      }
+      if (!g0.moved){ if (!inBox(g0.p0)) autoFrameAt(g0.p0); return; }
+      if (vb && (vb.r - vb.l < SEL_MIN || vb.b - vb.t < SEL_MIN)) autoFrameAt(g0.p0);
+    });
+    sel.addEventListener("pointercancel", () => { gest = null; });
+
+    const dragMove = e => {
+      const p = pagePt(e), s = drag.s, h = drag.h;
+      let l = s.l, t = s.t, r = s.r, b = s.b;
+      if (h === "mv"){
+        const w = s.r - s.l, hh = s.b - s.t;
+        l = clampN(s.l + p.x - drag.p0.x, 0, SP_VW - w); t = clampN(s.t + p.y - drag.p0.y, 0, S.vh - hh); r = l + w; b = t + hh;
+      } else {
+        if (h.includes("l")) l = Math.min(p.x, s.r - SEL_MIN);
+        if (h.includes("r")) r = Math.max(p.x, s.l + SEL_MIN);
+        if (h.includes("t")) t = Math.min(p.y, s.b - SEL_MIN);
+        if (h.includes("b")) b = Math.max(p.y, s.t + SEL_MIN);
+        l = Math.max(0, l); t = Math.max(0, t); r = Math.min(SP_VW, r); b = Math.min(S.vh, b);
+      }
+      setBox(l, t, r, b);
+    };
+    box.addEventListener("pointerdown", e => {
+      const hd = e.target.closest("[data-h]"); if (!hd || !vb) return;
+      drag = {id: e.pointerId, h: hd.dataset.h, s: Object.assign({}, vb), p0: pagePt(e)};
+      try { hd.setPointerCapture(e.pointerId); } catch (_) {}
+      e.preventDefault(); e.stopPropagation();
+    });
+    box.addEventListener("pointermove", e => { if (drag && e.pointerId === drag.id) dragMove(e); });
+    const endDrag = e => { if (drag && e.pointerId === drag.id) drag = null; };
+    box.addEventListener("pointerup", endDrag); box.addEventListener("pointercancel", endDrag);
   }
 
   /* ---------- النص على الشاشة ---------- */
@@ -2082,7 +2303,7 @@ function SmartPlayer(root, o){
     sync(); say(mode === "page" ? "✓ تم حفظ القص الثابت — بيظهر لكل الزوار على كل روابط الموقع ده بس" : (o.savedMsg || "✓ تم الحفظ — الزوار هيشوفوا الفيديو بالقص ده"), "ok");
   }
   function doReset(){
-    S = Object.assign({}, SP_BASE); cropOn = false; selecting = false; sel.style.display = "none";
+    S = Object.assign({}, SP_BASE); cropOn = false; selecting = false; vb = null; prevS = null; closeBar(); sel.style.display = "none";
     animate(); if (mode === "page") mountFrame(); else apply();
     sync(); say("");
   }
@@ -2103,7 +2324,8 @@ function SmartPlayer(root, o){
   }
   function fullPage(){
     if (mode !== "page") return;
-    selecting = false; sel.style.display = "none";
+    if (selecting && prevS){ Object.assign(S, prevS); prevS = null; }
+    selecting = false; vb = null; sel.style.display = "none"; closeBar();
     animate(); cropOn = false; apply();
   }
   /* يضبط التحديد على 16:9 بتوسيعه حوالين مركزه (من غير ما يقص حاجة من الفيديو) */
@@ -2167,7 +2389,9 @@ function SmartPlayer(root, o){
       '<div class="spn">ده الإعداد الافتراضي للزوار، وهم يقدروا يغيّروه من الشريط فوق الفيديو. «تلقائي» يملّى الشاشة لو اللي هيتقص قليل ويعرض الصورة كاملة لو الفرق كبير. «أصلي» الصورة كاملة، «تكبير» يملّى بدون حواف، «تمديد» يتمدّد.</div></details>';
     if (!isP) h += '<details><summary>📐 شكل الفيديو</summary><div class="spr seg" style="margin:6px 0"><button type="button" data-a="fit" data-v="fit">أصلي</button><button type="button" data-a="fit" data-v="fill">تكبير</button><button type="button" data-a="fit" data-v="stretch">تمديد</button></div></details>';
     SP_GROUPS.forEach(g => {
+      if (g[0] === "page" && !isP) return;
       h += '<details><summary>' + g[1] + '</summary><div data-g="' + g[0] + '"></div>';
+      if (g[0] === "page") h += '<div class="spn" style="margin-top:6px">لو الموقع بيحمّل الصفحة بحيث الفيديو بيطلع أعلى أو أسفل مكانه بكام بكسل (بسبب إعلان أو شريط بيتأخر)، حرّك الصفحة لفوق (+) أو لتحت (−) بدل ما تعيد التحديد. بتتحفظ مع «حفظ للزوار».</div>';
       if (g[0] === "view") h += '<div class="spr seg" style="margin-top:6px"><button type="button" data-a="fh">⇆ قلب أفقي</button><button type="button" data-a="fv">⇅ قلب رأسي</button></div>';
       if (g[0] === "crop" && !isP) h += '<div class="spr seg" style="margin-top:6px"><button type="button" class="g" data-a="bars">🔍 كشف الحواف السوداء تلقائيًا</button></div>';
       h += '</details>';
@@ -2176,8 +2400,8 @@ function SmartPlayer(root, o){
       '<div class="sl" style="grid-template-columns:78px minmax(0,1fr)"><span>الصوت</span><input type="range" data-a="vol" min="0" max="1" step="0.05" value="1"></div>' +
       '<div class="spf"><span class="spn">السرعة</span><select data-a="spd"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></div></details>';
     if (isP) h += '<details><summary>🛡 خيارات الصفحة</summary>' +
-      '<div class="spf"><span class="spn">طول الصفحة المعروضة</span><select data-a="vh"><option value="720">عادي</option><option value="1000">طويل</option><option value="1400">أطول</option><option value="2000">الأطول</option></select></div>' +
-      '<div class="spn" style="margin-top:6px">لو الفيديو بعيد في أسفل الصفحة، زوّد الطول عشان يظهر من غير سكرول، وبعدها حدّد الفيديو.</div></details>';
+      '<div class="spf"><span class="spn">طول الصفحة المعروضة</span><select data-a="vh"><option value="720">عادي</option><option value="1000">طويل</option><option value="1400">أطول</option><option value="2000">الأطول</option><option value="3000">طويل جدًا (3000)</option><option value="4000">أقصى (4000)</option></select></div>' +
+      '<div class="spn" style="margin-top:6px">«تحديد الفيديو» بيعرض الصفحة بطول 3000 تلقائيًا فمش محتاج تغيّر ده غالبًا. لو الموقع بيمط الفيديو على طول الشاشة، جرّب طول أقل.</div></details>';
     h += '<details open><summary>✍️ النص على شاشة البث (ثابت لكل الروابط)</summary>' +
       '<div class="spf"><input type="text" data-o="t" maxlength="120" placeholder="اكتب اسم موقعك هنا — بيظهر على الفيديو"></div>' +
       '<div class="spn" style="margin-top:6px">اسحب النص بإصبعك أو بالماوس على الشاشة، أو حرّكه بالأسهم (اضغط مطولًا للحركة المستمرة) أو بالشرائح.</div>' +
@@ -2200,7 +2424,7 @@ function SmartPlayer(root, o){
     });
 
     SP_GROUPS.forEach(g => {
-      const holder = tools.querySelector('[data-g="' + g[0] + '"]');
+      const holder = tools.querySelector('[data-g="' + g[0] + '"]'); if (!holder) return;
       g[2].forEach(d => {
         const k = d[0], row = document.createElement("div"); row.className = "sl";
         row.innerHTML = '<span>' + d[1] + '</span><button type="button" class="n" data-k="' + k + '" data-d="-1">−</button>' +
@@ -2339,11 +2563,11 @@ function SmartPlayer(root, o){
   else playVideo();
   apply();
   setTimeout(apply, 80);
-  if (admin && mode === "page" && !cropOn) say("اضغط «تحديد الفيديو من جديد» واسحب مربعًا حوالين الفيديو، ثم «حفظ للزوار».");
+  if (admin && mode === "page" && !cropOn) say("اضغط «تحديد الفيديو من جديد» ثم اضغط على الفيديو مرة واحدة، اضبط الإطار ثم «تأكيد»، وبعدها «حفظ للزوار».");
   if (admin && preloaded) say("تم تطبيق آخر قص استخدمته — راجعه ثم اضغط «حفظ للزوار».", "ok");
 
   this.destroy = function(){
-    dead = true;
+    dead = true; closeBar();
     clearTimeout(T.frame); clearTimeout(T.anim);
     if (hls){ try { hls.destroy(); } catch (e) {} hls = null; }
     const v = vid();
