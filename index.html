@@ -718,6 +718,7 @@ body.sp-lock{overflow:hidden}
     <button id="menuBtn" aria-label="القائمة"><i></i><i></i><i></i></button>
   </div>
   <div id="menu" class="hide">
+    <button data-m="admin" id="menuAdmin" class="hide">⚙️ لوحة الأدمن</button>
     <button data-m="home" class="on">الصفحة الرئيسية</button>
     <button data-m="live">بث مباشر</button>
     <button id="themeBtn" aria-label="تغيير الوضع"><span class="tl"></span><span class="ti"></span></button>
@@ -954,6 +955,7 @@ body.sp-lock{overflow:hidden}
         <button id="aapply">تطبيق النص الملصق</button>
         <button id="aload">تحميل من الموقع</button>
         <button class="d hide" id="alogout">تسجيل خروج</button>
+        <button id="ahideMenu" type="button" title="يشيل «لوحة الأدمن» من القايمة على الجهاز ده فقط">🙈 إخفاء «لوحة الأدمن» من قايمة الجهاز ده</button>
       </div>
     </div>
     </div>
@@ -2817,8 +2819,14 @@ function publishFb(){
     .catch(() => toast("فشل النشر: تأكد من الدخول بإيميل الأدمن ومن قواعد الأمان"));
 }
 
+/* علامة "ده جهاز الأدمن": بتتحفظ في متصفحك أنت فقط (مش في السيرفر) وبتظهر «لوحة الأدمن» في القايمة */
+const ADM_KEY = "sk_admin_device";
+function admDev(){ try { return localStorage.getItem(ADM_KEY) === "1"; } catch (e) { return false; } }
+function syncAdminMenu(){ const b = document.getElementById("menuAdmin"); if (b) b.classList.toggle("hide", !admDev()); }
 function showPanel(){
   adminSeen = true;
+  try { localStorage.setItem(ADM_KEY, "1"); } catch (e) {}
+  syncAdminMenu();
   if (Date.now() - panelAt < 1500 && $("#apanel").style.display === "grid") return;
   panelAt = Date.now();
   $("#alogin").classList.add("hide");
@@ -4561,6 +4569,12 @@ document.querySelector("h1").onclick = () => {
   if (tapN >= 5){ tapN = 0; openAdmin(); }
 };
 function hashAdmin(){ if (location.hash === "#admin") openAdmin(); }
+syncAdminMenu();
+$("#ahideMenu").onclick = () => {
+  try { localStorage.removeItem(ADM_KEY); } catch (e) {}
+  syncAdminMenu();
+  toast("اتشالت «لوحة الأدمن» من قايمة الجهاز ده. هترجع تظهر أول ما تدخل الأدمن تاني.", 4500);
+};
 window.addEventListener("hashchange", hashAdmin);
 
 function demoMatches(){
