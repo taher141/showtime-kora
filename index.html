@@ -626,20 +626,20 @@ body.adm main{padding-top:calc(var(--atabsH,0px) + 10px)}
 #admin #alist .dayrow{z-index:18}
 html:has(body.adm){scroll-padding-top:calc(var(--atabsH,0px) + 60px)}
 /* ===== المشغّل الذكي (SmartPlayer) ===== */
-:is(#player,#atp).sp{display:block;position:relative;padding:0;max-height:85vh;color:#a3a3a3}
-:is(#player,#atp).sp .spst{position:absolute;inset:0;overflow:hidden;background:#000}
-:is(#player,#atp).sp .spx{position:absolute;inset:0;overflow:hidden}
-:is(#player,#atp).sp .spx>video,:is(#player,#atp).sp .spx>iframe{position:absolute;top:0;left:0;border:0;background:#000;transform-origin:0 0;max-width:none}
-:is(#player,#atp).sp .spx.anim>video,:is(#player,#atp).sp .spx.anim>iframe{transition:transform .4s ease}
-:is(#player,#atp).sp .spmsg{position:absolute;inset:0;z-index:6;display:none;align-items:center;justify-content:center;text-align:center;padding:16px;background:rgba(0,0,0,.88);color:#d4d4d4;font-size:14px;line-height:1.7}
-:is(#player,#atp).sp .spful{position:absolute;bottom:10px;inset-inline-end:10px;z-index:5;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;opacity:.7;cursor:pointer;transition:opacity .15s}
-:is(#player,#atp).sp .spful:hover{opacity:1}
-:is(#player,#atp).sp .spsel{position:absolute;inset:0;z-index:7;display:none;cursor:crosshair;touch-action:none;background:rgba(0,0,0,.12)}
-:is(#player,#atp).sp .spbox{position:absolute;display:none;border:2px solid var(--team);background:rgba(134,239,172,.2);pointer-events:none}
-:is(#player,#atp).sp .sphint{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.82);color:#fff;padding:6px 10px;border-radius:8px;font-size:12.5px;white-space:nowrap}
-:is(#player,#atp).sp .sphint button{border:0;background:#dc2626;color:#fff;border-radius:6px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer}
-:is(#player,#atp).sp:fullscreen,:is(#player,#atp).sp:-webkit-full-screen{max-height:none;border-radius:0;aspect-ratio:auto}
-:is(#player,#atp).sp.sp-pfs{position:fixed;inset:0;z-index:9999;width:100vw;height:100vh;height:100dvh;max-height:none;border-radius:0;aspect-ratio:auto!important}
+:is(#player,#atp,#tvp,.np).sp{display:block;position:relative;padding:0;max-height:85vh;color:#a3a3a3}
+:is(#player,#atp,#tvp,.np).sp .spst{position:absolute;inset:0;overflow:hidden;background:#000}
+:is(#player,#atp,#tvp,.np).sp .spx{position:absolute;inset:0;overflow:hidden}
+:is(#player,#atp,#tvp,.np).sp .spx>video,:is(#player,#atp,#tvp,.np).sp .spx>iframe{position:absolute;top:0;left:0;border:0;background:#000;transform-origin:0 0;max-width:none}
+:is(#player,#atp,#tvp,.np).sp .spx.anim>video,:is(#player,#atp,#tvp,.np).sp .spx.anim>iframe{transition:transform .4s ease}
+:is(#player,#atp,#tvp,.np).sp .spmsg{position:absolute;inset:0;z-index:6;display:none;align-items:center;justify-content:center;text-align:center;padding:16px;background:rgba(0,0,0,.88);color:#d4d4d4;font-size:14px;line-height:1.7}
+:is(#player,#atp,#tvp,.np).sp .spful{position:absolute;bottom:10px;inset-inline-end:10px;z-index:5;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;opacity:.7;cursor:pointer;transition:opacity .15s}
+:is(#player,#atp,#tvp,.np).sp .spful:hover{opacity:1}
+:is(#player,#atp,#tvp,.np).sp .spsel{position:absolute;inset:0;z-index:7;display:none;cursor:crosshair;touch-action:none;background:rgba(0,0,0,.12)}
+:is(#player,#atp,#tvp,.np).sp .spbox{position:absolute;display:none;border:2px solid var(--team);background:rgba(134,239,172,.2);pointer-events:none}
+:is(#player,#atp,#tvp,.np).sp .sphint{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.82);color:#fff;padding:6px 10px;border-radius:8px;font-size:12.5px;white-space:nowrap}
+:is(#player,#atp,#tvp,.np).sp .sphint button{border:0;background:#dc2626;color:#fff;border-radius:6px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer}
+:is(#player,#atp,#tvp,.np).sp:fullscreen,:is(#player,#atp,#tvp,.np).sp:-webkit-full-screen{max-height:none;border-radius:0;aspect-ratio:auto}
+:is(#player,#atp,#tvp,.np).sp.sp-pfs{position:fixed;inset:0;z-index:9999;width:100vw;height:100vh;height:100dvh;max-height:none;border-radius:0;aspect-ratio:auto!important}
 body.sp-lock{overflow:hidden}
 
 .sptools{margin-top:12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;display:grid;gap:10px}
@@ -734,7 +734,9 @@ body.sp-lock{overflow:hidden}
       <div class="tvmain">
         <h3 id="tvName" class="st hide"></h3>
         <div id="tvSrv"></div>
+        <div id="spBarTv" class="spbar hide"></div>
         <div id="tvp"></div>
+        <div id="spToolsTv" class="sptools hide"></div>
       </div>
     </div>
   </section>
@@ -1680,7 +1682,7 @@ function spFindMatch(m){ return MATCHES.includes(m) ? m : MATCHES.find(x => x.ho
 
 function SmartPlayer(root, o){
   const admin = !!o.admin, tools = admin ? (o.tools || $("#spTools")) : null;
-  const bar = !admin ? $("#spBar") : null;
+  const bar = !admin ? (o.bar || $("#spBar")) : null;
   let V = null;                             /* اختيار الزائر لشكل الشاشة (محفوظ على جهازه فقط) */
   try { const v0 = localStorage.getItem("sp_vis"); if (v0 === "auto" || v0 === "fit" || v0 === "fill" || v0 === "stretch") V = v0; } catch (e) {}
   let mode = o.kind;                       /* page | hls | video */
@@ -2177,8 +2179,8 @@ function SmartPlayer(root, o){
 }
 
 /* معاينة سيرفر داخل لوحة الأدمن (زر "تجربة"): نفس المشغّل بأدواته، والقص يُحفظ مع السيرفر عند "حفظ المباراة" */
-function spPreview(r){
-  const p = $("#atp"), raw = r.querySelector(".u").value;
+function spPreview(r, sel, saveBtn){
+  const p = $("#atp"), raw = r.querySelector(sel || ".u").value;
   stop();
   const url = normUrl(raw), s = url ? streamKind(url) : null;
   if (!s || (s.k !== "hls" && s.k !== "video" && s.k !== "iframe")){ curKill = mountStream(raw, p); return; }
@@ -2186,10 +2188,69 @@ function spPreview(r){
     kind: s.k === "iframe" ? "page" : s.k,
     url: s.k === "iframe" ? toEmbed(s.u) : s.u,
     crop: r._crop, admin: true, tools: $("#spToolsA"),
-    savedMsg: "✓ اتحفظ على السيرفر ده — اضغط «حفظ المباراة» تحت لتثبيته للزوار",
+    savedMsg: "✓ اتحفظ على السيرفر ده — اضغط «" + (saveBtn || "حفظ المباراة") + "» لتثبيته للزوار",
     onSave: crop => { if (crop) r._crop = crop; else delete r._crop; return true; }
   });
   curKill = () => inst.destroy();
+}
+
+/* تشغيل عام بالمشغّل الذكي (للتلفزيون وNBA): يرجّع دالة الإيقاف، أو null لو النوع غير مدعوم */
+function spRun(p, raw, opt){
+  const url = normUrl(raw); if (!url) return null;
+  const s = streamKind(url);
+  if (s.k !== "hls" && s.k !== "video" && s.k !== "iframe") return null;
+  const inst = new SmartPlayer(p, {
+    kind: s.k === "iframe" ? "page" : s.k,
+    url: s.k === "iframe" ? toEmbed(s.u) : s.u,
+    crop: opt.crop, admin: opt.admin, bar: opt.bar, tools: opt.tools, onSave: opt.onSave
+  });
+  return () => inst.destroy();
+}
+/* استعادة جلسة الأدمن المحفوظة ثم إعادة التشغيل بالأدوات */
+function spRestore(rerun){
+  if (!(fbOn && !fbUser && spHasSession())) return;
+  const tok = spTok;
+  ensureAuth().then(a => {
+    const off = a.onAuthStateChanged(u => { try { off(); } catch (e) {} if (u && tok === spTok) rerun(); });
+  }).catch(() => {});
+}
+/* قناة تلفزيون: سيرفر k */
+function tvPlay(c, k, tp){
+  const s = chSrcs(c)[k]; if (!s) return;
+  stop(); spTok++;
+  const kill = spRun(tp, s.url, {
+    crop: s.crop, admin: isAdmin(), bar: $("#spBarTv"), tools: $("#spToolsTv"),
+    onSave: crop => {
+      const ch = Array.isArray(SETTINGS.channels) ? SETTINGS.channels.find(x => x.name === c.name) : null;
+      const sr = ch && (ch.sources || []).find(y => y.url === s.url);
+      if (!sr){ toast("القنوات لسه على القائمة الافتراضية — احفظها من لوحة الأدمن (تبويب القنوات) الأول ثم أعد المحاولة"); return false; }
+      if (crop) sr.crop = crop; else delete sr.crop;
+      s.crop = sr.crop;
+      persistSettings();
+      return true;
+    }
+  });
+  if (!kill){ playUrl(s.url, tp); return; }
+  curKill = kill;
+  spRestore(() => { if (curKill === kill) tvPlay(c, k, tp); });
+}
+/* مباراة NBA (رابط واحد لكل مباراة) */
+function nbaPlay(x, url, p, card){
+  stop(); spTok++;
+  const kill = spRun(p, url, {
+    crop: x.crop, admin: isAdmin(), bar: card.querySelector(".spbar"), tools: card.querySelector(".sptools"),
+    onSave: crop => {
+      const g = (SETTINGS.nba || []).find(y => y.home === x.home && y.away === x.away && (y.url || "") === (x.url || ""));
+      if (!g){ toast("تعذر الحفظ: احفظ مباريات NBA من لوحة الأدمن الأول"); return false; }
+      if (crop) g.crop = crop; else delete g.crop;
+      x.crop = g.crop;
+      persistSettings();
+      return true;
+    }
+  });
+  if (!kill){ playUrl(url, p); return; }
+  curKill = kill;
+  spRestore(() => { if (curKill === kill && !p.classList.contains("hide")) nbaPlay(x, url, p, card); });
 }
 
 /* يشغّل سيرفر مباراة بالمشغّل الذكي (أو بالقديم لو النوع غير مدعوم) */
@@ -2998,7 +3059,7 @@ function buildNba(){
   list.forEach(x => {
     const c = document.createElement("div");
     c.className = "m";
-    c.innerHTML = '<div class="nhd"></div><div class="np hide"></div>';
+    c.innerHTML = '<div class="nhd"></div><div class="spbar hide"></div><div class="np hide"></div><div class="sptools hide"></div>';
     const p = c.querySelector(".np"), hd = c.querySelector(".nhd");
     const note = (x.note || "").trim(), url = (x.url || "").trim();
     let mid, sub = null, canOpen = false;
@@ -3019,7 +3080,7 @@ function buildNba(){
         if (!open) return;
         p.classList.remove("hide");
         if (DEMO) p.textContent = "وضع المعاينة: هنا يظهر مشغل البث";
-        else playUrl(url, p);
+        else nbaPlay(x, url, p, c);
         p.scrollIntoView({behavior:"smooth", block:"center"});
       };
     } else hd.style.cursor = "default";
@@ -3039,8 +3100,9 @@ function addNbaRow(g){
   r.querySelector(".u").value = g.url || "";
   r.querySelector(".nn").value = g.note || "";
   r.querySelector(".ed").checked = !!g.ended;
+  if (g.crop && typeof g.crop === "object") r._crop = g.crop;
   r.querySelector(".soonq").onclick = () => { const n = r.querySelector(".nn"); n.value = n.value ? "" : "المباراة بعد قليل"; };
-  r.querySelector(".tst").onclick = () => { playUrl(r.querySelector(".u").value, $("#atp")); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
+  r.querySelector(".tst").onclick = () => { spPreview(r, ".u", "حفظ مباريات NBA"); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
   r.querySelector(".rm").onclick = () => r.remove();
   $("#nrows").appendChild(r);
 }
@@ -3053,7 +3115,7 @@ $("#nadd").onclick = () => addNbaRow();
 $("#nsave").onclick = () => {
   SETTINGS.nbaIcon = $("#nicon").value.trim();
   SETTINGS.nba = [...document.querySelectorAll("#nrows .nrow")]
-    .map(r => ({home: r.querySelector(".h").value.trim(), away: r.querySelector(".a").value.trim(), url: normUrl(r.querySelector(".u").value), note: r.querySelector(".nn").value.trim(), ended: r.querySelector(".ed").checked}))
+    .map(r => { const o = {home: r.querySelector(".h").value.trim(), away: r.querySelector(".a").value.trim(), url: normUrl(r.querySelector(".u").value), note: r.querySelector(".nn").value.trim(), ended: r.querySelector(".ed").checked}; if (r._crop) o.crop = r._crop; return o; })
     .filter(x => x.url || x.home || x.away);
   persistSettings();
 };
@@ -3259,7 +3321,7 @@ function playCh(i){
   const go = k => {
     sv.querySelectorAll("button").forEach((b, j) => b.classList.toggle("on", j === k));
     if (DEMO) tp.textContent = "وضع المعاينة: هنا يظهر بث القناة";
-    else playUrl(src[k].url, tp);
+    else tvPlay(c, k, tp);
   };
   if (src.length > 1) src.forEach((x, k) => {
     const b = document.createElement("button");
@@ -3279,7 +3341,8 @@ function addSrcRow(card, x){
   r.innerHTML = '<input class="sn" placeholder="اسم السيرفر"><input class="su l" placeholder="رابط البث (أي نوع أو كود iframe)"><button type="button" class="st2">تجربة</button><button type="button" class="d">حذف</button>';
   r.querySelector(".sn").value = x.name || "";
   r.querySelector(".su").value = x.url || "";
-  r.querySelector(".st2").onclick = () => { playUrl(r.querySelector(".su").value, $("#atp")); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
+  if (x.crop && typeof x.crop === "object") r._crop = x.crop;
+  r.querySelector(".st2").onclick = () => { spPreview(r, ".su", "حفظ القنوات"); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
   r.querySelector(".d").onclick = () => r.remove();
   card.querySelector(".csrc").appendChild(r);
 }
@@ -3429,7 +3492,7 @@ $("#chSave").onclick = () => {
         color: card.querySelector(".cc").value,
         logo: logoUrl(card.querySelector(".cl").value),
         sources: [...card.querySelectorAll(".csrc .row")]
-          .map(r => ({name: r.querySelector(".sn").value.trim(), url: normUrl(r.querySelector(".su").value)}))
+          .map(r => { const o = {name: r.querySelector(".sn").value.trim(), url: normUrl(r.querySelector(".su").value)}; if (r._crop) o.crop = r._crop; return o; })
           .filter(y => y.url)
       };
       if (x.name) chans.push(x);
