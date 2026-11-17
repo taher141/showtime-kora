@@ -1428,7 +1428,7 @@ function openMatch(i){
     b.onclick = () => { srv.querySelectorAll("button").forEach(x => x.classList.remove("on")); b.classList.add("on"); spPlay(m, k, $("#player")); };
     srv.appendChild(b);
   });
-  const first = srv.querySelector("button");
+  const btns = srv.querySelectorAll("button"), first = btns[spDefIdx(m.sources)] || btns[0];
   if (first) first.click(); else playUrl("");
   const noStream = !hasSrc(m) && hasInfo(m);
   $("#player").classList.toggle("hide", noStream); $("#srv").classList.toggle("hide", noStream);
@@ -1794,6 +1794,12 @@ const spSer = s => JSON.stringify(SP_KEYS.map(k => s[k]));
 /* اسم الموقع (الدومين) من الرابط — بيتحفظ القص باسمه عشان كل موقع له أبعاده */
 function spHost(u){ try { return new URL(u, location.href).hostname.toLowerCase().replace(/^www\./, "").replace(/\./g, "_"); } catch (e) { return ""; } }
 function spLast(h){ try { return JSON.parse(localStorage.getItem("sp_last" + (h ? ":" + h : "")) || "null"); } catch (e) { return null; } }
+/* المصدر الافتراضي: آخر مصدر اتحفظ له قص (crop.at = وقت الحفظ)، وإلا الأول */
+function spDefIdx(list){
+  let best = 0, t = 0;
+  (list || []).forEach((x, k) => { const a = x && x.crop && Number(x.crop.at); if (a > t){ t = a; best = k; } });
+  return best;
+}
 function spFindMatch(m){ return MATCHES.includes(m) ? m : MATCHES.find(x => x.home === m.home && x.away === m.away && x.time === m.time); }
 
 function SmartPlayer(root, o){
@@ -2295,7 +2301,7 @@ function SmartPlayer(root, o){
   }
   function doSave(){
     if (mode === "page" && hasRegion() && !cropOn){ cropOn = true; apply(); }
-    const obj = exportObj();
+    const obj = exportObj(); obj.at = Date.now();
     if (!persist(obj)) return say("تعذر الحفظ", "err");   /* بيتحفظ على المصدر نفسه (مباراة/قناة/NBA) */
     fromHost = false;
     savedJson = spSer(S);
@@ -2664,7 +2670,8 @@ function nbaPlay(x, url, p, card){
 function spPlay(m, k, p){
   spTok++;
   stop();
-  const src = (m.sources || [])[k] || {};
+  const mNow = spFindMatch(m) || m;
+  const src = (mNow.sources || [])[k] || {};
   const url = normUrl(src.url);
   if (!url){ curKill = mountStream("", p); return; }
   const s = streamKind(url);
@@ -3742,7 +3749,7 @@ function playCh(i){
     b.onclick = () => go(k);
     sv.appendChild(b);
   });
-  go(0);
+  go(spDefIdx(src));
 }
 $("#tvBtn").onclick = openTv;
 $("#tvback").onclick = showHome;
