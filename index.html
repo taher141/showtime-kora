@@ -1794,12 +1794,8 @@ const spSer = s => JSON.stringify(SP_KEYS.map(k => s[k]));
 /* اسم الموقع (الدومين) من الرابط — بيتحفظ القص باسمه عشان كل موقع له أبعاده */
 function spHost(u){ try { return new URL(u, location.href).hostname.toLowerCase().replace(/^www\./, "").replace(/\./g, "_"); } catch (e) { return ""; } }
 function spLast(h){ try { return JSON.parse(localStorage.getItem("sp_last" + (h ? ":" + h : "")) || "null"); } catch (e) { return null; } }
-/* المصدر الافتراضي: آخر مصدر اتحفظ له قص (crop.at = وقت الحفظ)، وإلا الأول */
-function spDefIdx(list){
-  let best = 0, t = 0;
-  (list || []).forEach((x, k) => { const a = x && x.crop && Number(x.crop.at); if (a > t){ t = a; best = k; } });
-  return best;
-}
+/* المصدر الافتراضي: دايمًا أول سيرفر (القص بيتحفظ لكل سيرفر لوحده ومبيغيّرش السيرفر اللي بيفتح) */
+function spDefIdx(list){ return 0; }
 function spFindMatch(m){ return MATCHES.includes(m) ? m : MATCHES.find(x => x.home === m.home && x.away === m.away && x.time === m.time); }
 
 function SmartPlayer(root, o){
