@@ -116,6 +116,7 @@ main{max-width:960px;margin:0 auto;padding:16px}
 .mc-mid{align-self:start;height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;min-width:0}
 .mc-big{font-weight:700;font-size:27px;line-height:1;color:#111;direction:ltr;white-space:nowrap}
 .mc-big.tm{font-size:21px}
+.mc-big.rs{direction:rtl;unicode-bidi:isolate}
 .mc-pill{display:inline-block;padding:3px 14px;border-radius:999px;font-weight:600;font-size:13px;line-height:1.55;color:#fff;background:#64748b;max-width:100%;text-align:center}
 .mc-pill.live{background:#6fc690}
 .mc-pill.end{background:#1f2937}
@@ -1304,10 +1305,10 @@ function mcMid(m, st, note){
   const big = document.createElement("div"); big.className = "mc-big";
   const pill = document.createElement("span"); pill.className = "mc-pill";
   if (st === "ended"){
-    big.textContent = score || "0 - 0";
+    big.textContent = score || "0 - 0"; big.classList.add("rs");
     pill.classList.add("end"); pill.textContent = "انتهت المباراة";
   } else if (isLive(m)){
-    big.textContent = score || "0 - 0";
+    big.textContent = score || "0 - 0"; big.classList.add("rs");
     pill.classList.add("live"); pill.textContent = "جارية الآن";
   } else if (isCountdown(m)){
     big.textContent = mcTime(m); big.classList.add("tm");
@@ -1398,6 +1399,11 @@ document.addEventListener("click", e => {
 });
 
 function render(){
+  if (pendingWatch){
+    const k = pendingWatch, i = MATCHES.findIndex(m => mKey(m) === k);
+    if (i >= 0){ pendingWatch = null; openMatch(i); return; }
+    if (MATCHES.length) pendingWatch = null;
+  }
   lastSig = sigNow();
   const box = $("#list");
   box.innerHTML = "";
@@ -1414,8 +1420,17 @@ function render(){
   rows.forEach(({m, i}) => box.appendChild(mcCard(m, i)));
 }
 
+/* حفظ مكان الزائر: صفحة البث تفضل مفتوحة بعد الريفرش */
+const WKEY = "sk_watch";
+const mKey = m => [m.home, m.away, m.time].join("|");
+function setHash(h){ if (DEMO) return; try { history.replaceState(null, "", location.pathname + location.search + h); } catch (e) {} }
+let pendingWatch = null;
+try { if (location.hash === "#watch") pendingWatch = sessionStorage.getItem(WKEY); } catch (e) {}
+if (pendingWatch) setTimeout(() => { pendingWatch = null; }, 12000);
 function openMatch(i){
   const m = MATCHES[i]; stopTv();
+  try { sessionStorage.setItem(WKEY, mKey(m)); } catch (e) {}
+  setHash("#watch");
   $("#home").classList.add("hide");
   $("#watch").classList.remove("hide");
   teamsRow($("#wt"), m, xNode());
@@ -1436,6 +1451,8 @@ function openMatch(i){
 }
 
 function showHome(){
+  try { sessionStorage.removeItem(WKEY); } catch (e) {}
+  pendingWatch = null; setHash("");
   stop();
   stopMulti(); $("#multi").classList.add("hide"); $("#nba").classList.add("hide"); stopTv();
   $("#admin").classList.add("hide");
@@ -2852,6 +2869,7 @@ let adminOpening = false, panelAt = 0;
 function openAdmin(){
   if (adminOpening) return;
   adminOpening = true;
+  setHash("#admin");
   stop();
   $("#player").innerHTML = "";
   $("#home").classList.add("hide");
@@ -3449,6 +3467,7 @@ function buildMulti(){
 }
 function openMulti(){
   stop(); stopTv(); $("#player").innerHTML = "";
+  setHash(""); pendingWatch = null;
   $("#home").classList.add("hide"); $("#watch").classList.add("hide"); $("#admin").classList.add("hide"); $("#nba").classList.add("hide");
   $("#multi").classList.remove("hide");
   buildMulti();
@@ -3461,6 +3480,7 @@ $("#mback").onclick = showHome;
 /* ===== NBA: صفحة منفصلة داخل الأيقونة، كل مباراة في بطاقة وبثها الخاص ===== */
 function openNba(){
   stop(); stopMulti(); stopTv(); $("#player").innerHTML = "";
+  setHash(""); pendingWatch = null;
   ["#home", "#watch", "#admin", "#multi"].forEach(x => $(x).classList.add("hide"));
   $("#nba").classList.remove("hide");
   buildNba();
@@ -3710,6 +3730,7 @@ $("#tvDn").onclick = () => $("#tvList").scrollBy({top: 140, behavior: "smooth"})
 window.addEventListener("resize", () => { tvArrows(); fitNames(); });
 function openTv(){
   stop(); stopMulti(); stopRadio(); $("#player").innerHTML = "";
+  setHash(""); pendingWatch = null;
   ["#home", "#watch", "#admin", "#multi", "#nba"].forEach(x => $(x).classList.add("hide"));
   $("#tvp").textContent = "اختر قناة من القائمة لبدء المشاهدة"; $("#tvName").classList.add("hide"); $("#tvSrv").innerHTML = "";
   curCh = -1;
@@ -4088,6 +4109,7 @@ function buildRd(){
 }
 function openRadio(){
   stop(); stopMulti(); stopTv(); $("#player").innerHTML = "";
+  setHash(""); pendingWatch = null;
   ["#home", "#watch", "#admin", "#multi", "#nba", "#tv"].forEach(x => $(x).classList.add("hide"));
   const p = $("#rdp"); p.classList.remove("rdbox"); p.textContent = "اختر محطة من القائمة لبدء الاستماع";
   $("#rdName").classList.add("hide"); $("#rdSrv").innerHTML = "";
