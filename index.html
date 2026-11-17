@@ -122,7 +122,10 @@ main{max-width:960px;margin:0 auto;padding:16px}
 .mc-pill{display:inline-block;padding:3px 14px;border-radius:999px;font-weight:600;font-size:13px;line-height:1.55;color:#fff;background:#64748b;max-width:100%;text-align:center}
 .mc-pill.live{background:#6fc690}
 .mc-pill.end{background:#1f2937}
-.mc-mid.cd{gap:4px}
+.mc-mid.cd{gap:16px}
+.mc-mid.cd .mc-pill.cdn{font-size:26px;padding:2px 18px;line-height:1.4}
+.mc-mid.cd .mc-pill.soon{font-size:18px;padding:3px 18px}
+@media(max-width:640px){.mc-mid.cd{gap:12px;height:68px}.mc-mid.cd .mc-pill.cdn{font-size:19px;padding:2px 12px}.mc-mid.cd .mc-pill.soon{font-size:14px;padding:2px 10px}}
 .mc-pill.soon{background:#16a34a;white-space:nowrap}
 .mc-pill.cdn{background:#f59e0b;color:#fff;font-size:15px;transform:none;direction:ltr;font-variant-numeric:tabular-nums}
 .mc-info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:#f6f7f9;border-top:1px solid #e5e7eb}
@@ -727,7 +730,6 @@ body.sp-lock{overflow:hidden}
     <button data-m="home" class="on">الصفحة الرئيسية</button>
     <button data-m="live">بث مباشر</button>
     <button id="themeBtn" aria-label="تغيير الوضع"><span class="tl"></span><span class="ti"></span></button>
-    <div class="soon">قريباً قنوات بث مباشر</div>
   </div>
 </header>
 <div id="ov" class="hide"></div>
@@ -1316,7 +1318,6 @@ function mcMid(m, st, note){
     big.textContent = score || "0 - 0"; big.classList.add("rs");
     pill.classList.add("live"); pill.textContent = "جارية الآن";
   } else if (isCountdown(m)){
-    big.textContent = mcTime(m); big.classList.add("tm");
     const t = new Date(m.time).getTime();
     pill.classList.add("cdn"); pill.dataset.t = t; pill.textContent = cdText(t - Date.now());
     w.classList.add("cd");
@@ -1503,6 +1504,7 @@ document.querySelectorAll("#menu button[data-m]").forEach(b => b.onclick = () =>
   if (b.dataset.m === "admin"){ openAdmin(); return; }
   mode = b.dataset.m;
   showHome();
+  if (b.dataset.m === "home") requestAnimationFrame(() => window.scrollTo({top: 0, behavior: "smooth"}));
 });
 
 /* ===== مشغّل البث الشامل: m3u8 / mpd / mp4 / ts / flv / embed / iframe / WebRTC(WHEP) ===== */
@@ -4594,6 +4596,7 @@ let adminTab = function(){};
 let tapN = 0, tapT = null;
 document.querySelector("h1").style.touchAction = "manipulation";
 document.querySelector("h1").onclick = () => {
+  if (!$("#home").classList.contains("hide")) window.scrollTo({top: 0, behavior: "smooth"});
   if (adminOpening || !$("#admin").classList.contains("hide")){ tapN = 0; return; }
   tapN++; clearTimeout(tapT); tapT = setTimeout(() => { tapN = 0; }, 1500);
   if (tapN >= 5){ tapN = 0; openAdmin(); }
