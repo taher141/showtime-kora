@@ -1802,10 +1802,11 @@ function SmartPlayer(root, o){
   let V = null;                             /* اختيار الزائر لشكل الشاشة (محفوظ على جهازه فقط) */
   if (!admin) try { const v0 = localStorage.getItem("sp_vis"); if (v0 === "auto" || v0 === "fit" || v0 === "fill" || v0 === "stretch") V = v0; } catch (e) {}
   let mode = o.kind;                       /* page | hls | video */
-  /* قص ثابت لكل موقع (iframe): بيتحفظ باسم دومين الرابط ويتطبق على كل روابط نفس الموقع بس */
+  /* قص iframe: الأولوية لقص المصدر نفسه (sources[k].crop)، ولو المصدر ملوش قص بنرجع للقص القديم المشترك باسم الدومين */
   const HK = mode === "page" ? spHost(o.url) : "";
   const GC = (HK && SETTINGS.crops && typeof SETTINGS.crops === "object" && SETTINGS.crops[HK] && typeof SETTINGS.crops[HK] === "object") ? SETTINGS.crops[HK] : null;
-  const baseCrop = GC || o.crop;
+  const baseCrop = o.crop || GC;
+  let fromHost = !o.crop && !!GC;           /* القص الحالي جاي من الدومين (قديم) مش من المصدر */
   let S = spClean(baseCrop), savedJson = baseCrop ? spSer(S) : "", preloaded = false;
   let hls = null, dead = false, cropOn = false, selecting = false, selStart = null;
   const T = {frame: null, anim: null};
@@ -2259,8 +2260,8 @@ function SmartPlayer(root, o){
     const st = tools.querySelector('[data-s="st"]'); if (!st) return;
     const cur = spSer(S);
     let t, c = "";
-    if (savedJson && cur === savedJson){ t = mode === "page" ? "✓ القص الثابت محفوظ ويظهر للزوار على كل روابط الموقع ده" : "✓ الضبط محفوظ ويظهر للزوار"; c = "ok"; }
-    else if (!savedJson && cur === spSer(SP_BASE)){ t = mode === "page" ? "لا يوجد قص ثابت محفوظ — حدّد الفيديو ثم اضغط «حفظ للزوار»" : "لا يوجد ضبط محفوظ لهذا السيرفر"; }
+    if (savedJson && cur === savedJson){ t = mode === "page" ? (fromHost ? "قص قديم مشترك لكل روابط الموقع — اضغط «حفظ للزوار» لتثبيته للمصدر ده بس" : "✓ القص محفوظ للمصدر ده ويظهر للزوار") : "✓ الضبط محفوظ ويظهر للزوار"; c = fromHost ? "" : "ok"; }
+    else if (!savedJson && cur === spSer(SP_BASE)){ t = mode === "page" ? "لا يوجد قص محفوظ للمصدر ده — حدّد الفيديو ثم اضغط «حفظ للزوار»" : "لا يوجد ضبط محفوظ لهذا السيرفر"; }
     else { t = "⚠ فيه تعديلات غير محفوظة — اضغط «حفظ للزوار»"; c = "err"; }
     st.textContent = t; st.className = "spn " + c;
   }
@@ -2295,14 +2296,11 @@ function SmartPlayer(root, o){
   function doSave(){
     if (mode === "page" && hasRegion() && !cropOn){ cropOn = true; apply(); }
     const obj = exportObj();
-    if (mode === "page"){
-      if (!HK) return say("تعذر تحديد الموقع من الرابط", "err");
-      SETTINGS.crops = Object.assign({}, SETTINGS.crops, {[HK]: obj}); delete SETTINGS.crop; persistSettings();
-    }
-    else if (!persist(obj)) return say("تعذر الحفظ", "err");
+    if (!persist(obj)) return say("تعذر الحفظ", "err");   /* بيتحفظ على المصدر نفسه (مباراة/قناة/NBA) */
+    fromHost = false;
     savedJson = spSer(S);
     try { localStorage.setItem("sp_last" + (HK ? ":" + HK : ""), JSON.stringify(obj)); } catch (e) {}
-    sync(); say(mode === "page" ? "✓ تم حفظ القص الثابت — بيظهر لكل الزوار على كل روابط الموقع ده بس" : (o.savedMsg || "✓ تم الحفظ — الزوار هيشوفوا الفيديو بالقص ده"), "ok");
+    sync(); say(o.savedMsg || (mode === "page" ? "✓ تم حفظ القص للمصدر ده بس — بيظهر للزوار" : "✓ تم الحفظ — الزوار هيشوفوا الفيديو بالقص ده"), "ok");
   }
   function doReset(){
     S = Object.assign({}, SP_BASE); cropOn = false; selecting = false; vb = null; prevS = null; closeBar(); sel.style.display = "none";
@@ -2310,12 +2308,11 @@ function SmartPlayer(root, o){
     sync(); say("");
   }
   function doDelete(){
-    if (mode === "page"){
-      if (SETTINGS.crops && HK){ const c = Object.assign({}, SETTINGS.crops); delete c[HK]; SETTINGS.crops = c; }
-      delete SETTINGS.crop; persistSettings();
-    }
-    else if (!persist(null)) return say("تعذر الحذف", "err");
-    savedJson = "";
+    /* لو فيه قص قديم للدومين: نحفظ للمصدر ده "بدون قص" عشان القديم ما يرجعش عليه، وباقي المصادر ما تتأثرش */
+    const keepOrig = mode === "page" && !!GC;
+    if (!persist(keepOrig ? Object.assign({}, SP_BASE) : null)) return say("تعذر الحذف", "err");
+    fromHost = false;
+    savedJson = keepOrig ? spSer(SP_BASE) : "";
     doReset();
     say("تم حذف الضبط المحفوظ — الزوار هيشوفوا الأصل", "ok");
   }
