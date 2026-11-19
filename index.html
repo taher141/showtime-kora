@@ -2168,7 +2168,7 @@ function SmartPlayer(root, o){
      - الصفحة بتتعرض كاملة (طول 3000 افتراضيًا) من غير سكرول، والتحديد بيتحسب على الصفحة كلها.
      - ضغطة واحدة على الفيديو (أو سحب بالماوس) بترسم إطار 16:9 تلقائي، وبعدها تظبطه بالمقابض.
      - شريط التعليمات والأزرار ثابت أسفل الشاشة. */
-  const SEL_VH = 3000, SEL_MIN = 60;
+  const SEL_VH = 3000, SEL_MIN = 60, SEL_BAR = 70;   /* SEL_BAR: مساحة إضافية أسفل الفيديو لشريط الصوت/التحكم */
   let vb = null, prevS = null, selBar = null, drag = null, gest = null, barNote = "";
   const canCap = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) && !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "") && !(window.matchMedia && matchMedia("(pointer:coarse)").matches);
   const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -2195,7 +2195,7 @@ function SmartPlayer(root, o){
   }
   function setBox(l, t, r, b){ vb = {l, t, r, b}; barNote = ""; drawBox(); }
   function autoFrameAt(p){
-    const w = SP_VW * 0.6, h = w * 9 / 16, l = clampN(p.x - w / 2, 0, SP_VW - w), t = clampN(p.y - h / 2, 0, Math.max(0, S.vh - h));
+    const w = SP_VW * 0.6, v = w * 9 / 16, h = v + SEL_BAR, l = clampN(p.x - w / 2, 0, SP_VW - w), t = clampN(p.y - v / 2, 0, Math.max(0, S.vh - h));
     setBox(l, t, l + w, Math.min(S.vh, t + h));
   }
   function fit169(){
@@ -2209,13 +2209,15 @@ function SmartPlayer(root, o){
   function openBar(){
     closeBar();
     selBar = document.createElement("div"); selBar.className = "spbar2";
-    selBar.innerHTML = '<div class="t"></div><div class="b"><button type="button" data-b="ok">✔ تأكيد</button><button type="button" data-b="169">📐 16:9</button>' +
+    selBar.innerHTML = '<div class="t"></div><div class="b"><button type="button" data-b="ok">✔ تأكيد</button><button type="button" data-b="169">📐 16:9</button><button type="button" data-b="bd">⬇ شريط الصوت +</button><button type="button" data-b="bu">⬆ −</button>' +
       (canCap ? '<button type="button" data-b="auto">🪄 كشف تلقائي</button>' : '') + '<button type="button" data-b="rl">⟳ إعادة تحميل</button><button type="button" data-b="x">✖ إلغاء</button></div>';
     selBar.addEventListener("click", e => {
       const b = e.target.closest("button"); if (!b) return;
       switch (b.dataset.b){
         case "ok": confirmSelect(); break;
         case "169": fit169(); break;
+        case "bd": if (vb) setBox(vb.l, vb.t, vb.r, Math.min(S.vh, vb.b + 40)); else barSay("حدّد الفيديو الأول بضغطة عليه"); break;
+        case "bu": if (vb && vb.b - vb.t > SEL_MIN + 40) setBox(vb.l, vb.t, vb.r, vb.b - 40); break;
         case "auto": autoDetect(); break;
         case "rl": mountFrame(); barSay("اتعملت إعادة تحميل للصفحة"); break;
         case "x": cancelSelect(); break;
@@ -2668,7 +2670,14 @@ function SmartPlayer(root, o){
       if (t.dataset.a === "spd" && v) v.playbackRate = +t.value;
       else if (t.dataset.a === "sb"){ S.sb = t.checked; mountFrame(); sync(); }
       else if (t.dataset.a === "vh"){
-        S.vh = +t.value; S.L = S.T = S.R = S.B = 0; S.z = 1; S.x = S.y = 0; cropOn = false;
+        const oldH = S.vh, newH = +t.value;
+        let kept = false;
+        if (mode === "page" && hasRegion() && !selecting){
+          const tp = oldH * S.T / 100, bt = oldH * (1 - S.B / 100);   /* نحافظ على نفس المنطقة بالبكسل */
+          if (bt <= newH && bt - tp > 20){ S.T = +(tp / newH * 100).toFixed(2); S.B = +(100 - bt / newH * 100).toFixed(2); kept = true; }
+        }
+        S.vh = newH;
+        if (!kept){ S.L = S.T = S.R = S.B = 0; S.z = 1; S.x = S.y = 0; cropOn = false; }
         animate(); sync(); apply();
       }
     };
