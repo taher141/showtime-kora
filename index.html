@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>شوتايم كورة</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com"><link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--wt:#fff;--bg:#000;--card:#2b2b2b;--card2:#3a3a3a;--team:#86efac;--onteam:#000;--text:#e5e5e5;--muted:#a3a3a3;--bd:#444;--bd2:#222;--in:#1c1c1c;--live:#ef4444}
 :root[data-theme=light]{--wt:#111827;--bg:#eef0f3;--card:#fff;--card2:#e5e7eb;--team:#15803d;--onteam:#fff;--text:#111827;--muted:#6b7280;--bd:#d1d5db;--bd2:#e5e7eb;--in:#f9fafb}
@@ -719,17 +719,17 @@ body:has(#home:not(.hide)) header{border-bottom:0}
 #bc .spbar{margin:0;padding:6px 8px}
 #bc{padding:14px 12px 12px}
 .bch{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
-#bcName{margin:0;font-size:22px;font-weight:800;color:var(--text);line-height:1.25}
-.bclive{display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:700;color:var(--team);white-space:nowrap}
-.bclive i{display:block;width:12px;height:12px;border-radius:50%;background:var(--team);box-shadow:0 0 0 4px color-mix(in srgb,var(--team) 22%,transparent);animation:bcpulse 1.6s ease-in-out infinite}
+#bcName{margin:0;font-size:18px;font-weight:800;color:var(--text);line-height:1.25}
+.bclive{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--team);white-space:nowrap}
+.bclive i{display:block;width:10px;height:10px;border-radius:50%;background:var(--team);box-shadow:0 0 0 4px color-mix(in srgb,var(--team) 22%,transparent);animation:bcpulse 1.6s ease-in-out infinite}
 @keyframes bcpulse{50%{opacity:.4}}
-#bcReload{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:15px 12px;border-radius:16px;border:1px solid color-mix(in srgb,var(--team) 50%,transparent);background:var(--card);color:var(--text);font:inherit;font-size:17px;font-weight:700;cursor:pointer}
+#bcReload{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:14px;border:1px solid var(--team);background:var(--card);color:var(--text);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
 #bcReload:active{opacity:.8}
-#bcReload svg{width:20px;height:20px;display:block}
+#bcReload svg{width:17px;height:17px;display:block}
 #bcReload.spin svg{animation:sp .9s linear}
-.bcnote{display:inline-flex;align-items:center;gap:9px;margin:12px 0;padding:11px 16px;border-radius:14px;border:1px solid var(--bd);background:var(--card);color:var(--text);font-size:15px;font-weight:600}
-.bcnote svg{width:18px;height:18px;display:block;color:var(--team)}
-#bcw{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--bd);background:#000}
+.bcnote{display:inline-flex;align-items:center;gap:7px;margin:10px 0;padding:6px 12px;border-radius:12px;border:1px solid var(--team);background:var(--card);color:var(--text);font-size:12.5px;font-weight:600}
+.bcnote svg{width:15px;height:15px;display:block;color:var(--team)}
+#bcw{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--team);background:#000}
 #bcSnd{position:absolute;top:10px;inset-inline-end:10px;z-index:20;display:flex;align-items:center;gap:7px;padding:8px 14px;border:0;border-radius:999px;background:rgba(0,0,0,.65);color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px)}
 #bcSnd svg{width:20px;height:20px;display:block}
 #bcSnd.on{background:var(--team);color:var(--onteam)}
@@ -1229,6 +1229,14 @@ function bcHook(){
     v._bcH = 1;
     v.addEventListener("volumechange", bcSndSync);
     v.addEventListener("playing", () => { bcRetry = 0; });
+    const go = () => { if (v.paused){ try { const r = v.play(); if (r && r.catch) r.catch(() => {}); } catch (e) {} } };
+    v.addEventListener("loadedmetadata", go); v.addEventListener("canplay", go);
+    go();
+    if (!window._bcG){
+      window._bcG = 1;
+      const g = () => { ["pointerdown", "touchstart", "keydown", "scroll"].forEach(n => window.removeEventListener(n, g, true)); const x = document.querySelector("#bcp video"); if (x && x.paused){ try { const r = x.play(); if (r && r.catch) r.catch(() => {}); } catch (e) {} } };
+      ["pointerdown", "touchstart", "keydown", "scroll"].forEach(n => window.addEventListener(n, g, true));
+    }
   }
   bcSndSync();
 }
