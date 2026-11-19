@@ -1864,7 +1864,7 @@ let adminSeen = false;
 const isAdmin = () => fbOn ? !!fbUser : adminSeen;
 
 const SP_VW = 1280;
-const SP_BASE = {L:0, T:0, R:0, B:0, po:0, x:0, y:0, z:1, br:100, ct:100, sa:100, fh:false, fv:false, fit:"fit", fs:"auto", vh:720, sb:false};
+const SP_BASE = {L:0, T:0, R:0, B:0, po:0, x:0, y:0, z:1, br:100, ct:100, sa:100, fh:false, fv:false, fit:"stretch", fs:"stretch", vh:720, sb:false};
 const SP_AUTO = 0.20;   /* تلقائي: يملّى الشاشة لو اللي هيتقص ≤ 20%، وإلا يعرضه كامل */
 const SP_KEYS = Object.keys(SP_BASE);
 const SP_GROUPS = [
@@ -1999,8 +1999,8 @@ function spClean(c){
     const d = SP_BASE[k], v = c[k];
     if (typeof d === "number"){ const n = Number(v); if (v !== undefined && v !== null && v !== "" && isFinite(n)) r[k] = n; }
     else if (typeof d === "boolean") r[k] = !!v;
-    else if (k === "fit") r[k] = (v === "fill" || v === "stretch") ? v : "fit";
-    else if (k === "fs") r[k] = (v === "fit" || v === "fill" || v === "stretch") ? v : "auto";
+    else if (k === "fit") r[k] = "stretch";
+    else if (k === "fs") r[k] = "stretch";
   });
   ["L","T","R","B"].forEach(k => { r[k] = Math.min(90, Math.max(0, r[k])); });
   if (r.L + r.R > 95) r.L = r.R = 0;
@@ -2020,7 +2020,6 @@ function SmartPlayer(root, o){
   const admin = !!o.admin, tools = admin ? (o.tools || $("#spTools")) : null;
   const bar = !admin ? (o.bar || $("#spBar")) : null;
   let V = null;                             /* اختيار الزائر لشكل الشاشة (محفوظ على جهازه فقط) */
-  if (!admin) try { const v0 = localStorage.getItem("sp_vis"); if (v0 === "auto" || v0 === "fit" || v0 === "fill" || v0 === "stretch") V = v0; } catch (e) {}
   let mode = o.kind;                       /* page | hls | video */
   /* قص ثابت لكل موقع (iframe): بيتحفظ باسم دومين الرابط ويتطبق على كل روابط نفس الموقع بس */
   const HK = mode === "page" ? spHost(o.url) : "";
@@ -2031,7 +2030,7 @@ function SmartPlayer(root, o){
   const T = {frame: null, anim: null};
   const inFS = () => !!(document.fullscreenElement === root || document.webkitFullscreenElement === root || root.classList.contains("sp-pfs"));
   const hasRegion = () => !!(S.L || S.T || S.R || S.B);
-  const prefMode = fs => V || ((fs || mode === "page") ? S.fs : S.fit);
+  const prefMode = fs => "stretch";   /* عرض الصورة: تمديد فقط (ملء الإطار) */
 
   if (!baseCrop && admin && mode === "page"){
     const last = spLast(HK);
@@ -2218,7 +2217,7 @@ function SmartPlayer(root, o){
   ful.onclick = toggleFS;
 
   /* ---------- التحديد (أدمن) ----------
-     - الصفحة بتتعرض كاملة (طول 3000 افتراضيًا) من غير سكرول، والتحديد بيتحسب على الصفحة كلها.
+     - الصفحة بتتعرض بالطول المختار (عادي افتراضيًا ومبيتغيّرش لوحده)، والتحديد بيتحسب على الصفحة كلها.
      - ضغطة واحدة على الفيديو (أو سحب بالماوس) بترسم إطار 16:9 تلقائي، وبعدها تظبطه بالمقابض.
      - شريط التعليمات والأزرار ثابت أسفل الشاشة. */
   const SEL_VH = 3000, SEL_MIN = 60, SEL_BAR = 70;   /* SEL_BAR: مساحة إضافية أسفل الفيديو لشريط الصوت/التحكم */
@@ -2284,7 +2283,7 @@ function SmartPlayer(root, o){
     if (mode !== "page") return say("التحديد لصفحات الويب فقط", "err");
     if (selecting) return;
     prevS = Object.assign({}, S);
-    S.vh = Math.max(S.vh, SEL_VH); S.L = S.T = S.R = S.B = 0; S.po = 0; S.z = 1; S.x = 0; S.y = 0;
+    S.L = S.T = S.R = S.B = 0; S.po = 0; S.z = 1; S.x = 0; S.y = 0;
     selecting = true; cropOn = false; vb = null; box.style.display = "none"; sel.style.display = "block";
     openBar(); sync(); animate(); apply(); setTimeout(apply, 120);
     try { root.scrollIntoView({block: "start", behavior: "smooth"}); } catch (e) {}
@@ -2772,11 +2771,9 @@ function SmartPlayer(root, o){
       '<button type="button" data-a="fs">⤢ ملء الشاشة</button></div>';
     h += '<div class="spr"><button type="button" class="p" data-a="save">💾 حفظ للزوار</button><button type="button" data-a="reset">↺ إعادة الضبط</button><button type="button" class="d" data-a="del">🗑 حذف المحفوظ</button><button type="button" data-a="tab">↗ فتح في تبويب</button></div>';
     h += '<div class="spn" data-s="st"></div><div class="spn" data-s="msg"></div>';
-    h += '<details open><summary>🖥 عرض الصورة (الافتراضي للزوار)</summary><div class="spr seg" style="margin:6px 0">' +
-      '<button type="button" data-a="fsm" data-v="auto">تلقائي</button><button type="button" data-a="fsm" data-v="fit">أصلي</button>' +
-      '<button type="button" data-a="fsm" data-v="fill">تكبير</button><button type="button" data-a="fsm" data-v="stretch">تمديد</button></div>' +
-      '<div class="spn">ده الإعداد الافتراضي للزوار، وهم يقدروا يغيّروه من الشريط فوق الفيديو. «تلقائي» يملّى الشاشة لو اللي هيتقص قليل ويعرض الصورة كاملة لو الفرق كبير. «أصلي» الصورة كاملة، «تكبير» يملّى بدون حواف، «تمديد» يتمدّد.</div></details>';
-    if (!isP) h += '<details><summary>📐 شكل الفيديو</summary><div class="spr seg" style="margin:6px 0"><button type="button" data-a="fit" data-v="fit">أصلي</button><button type="button" data-a="fit" data-v="fill">تكبير</button><button type="button" data-a="fit" data-v="stretch">تمديد</button></div></details>';
+    h += '<details open><summary>🖥 عرض الصورة</summary><div class="spr seg" style="margin:6px 0">' +
+      '<button type="button" data-a="fsm" data-v="stretch">ملء الإطار</button></div>' +
+      '<div class="spn">الصورة بتتمدّد وتملّى الإطار بالكامل (ده الوضع الوحيد دلوقتي).</div></details>';
     SP_GROUPS.forEach(g => {
       if (g[0] === "page" && !isP) return;
       h += '<details><summary>' + g[1] + '</summary><div data-g="' + g[0] + '"></div>';
@@ -2790,7 +2787,7 @@ function SmartPlayer(root, o){
       '<div class="spf"><span class="spn">السرعة</span><select data-a="spd"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></div></details>';
     if (isP) h += '<details><summary>🛡 خيارات الصفحة</summary>' +
       '<div class="spf"><span class="spn">طول الصفحة المعروضة</span><select data-a="vh"><option value="720">عادي</option><option value="1000">طويل</option><option value="1400">أطول</option><option value="2000">الأطول</option><option value="3000">طويل جدًا (3000)</option><option value="4000">أقصى (4000)</option></select></div>' +
-      '<div class="spn" style="margin-top:6px">«تحديد الفيديو» بيعرض الصفحة بطول 3000 تلقائيًا فمش محتاج تغيّر ده غالبًا. لو الموقع بيمط الفيديو على طول الشاشة، جرّب طول أقل.</div></details>';
+      '<div class="spn" style="margin-top:6px">الطول ثابت على «عادي» ومبيتغيّرش لوحده. لو الفيديو بعيد في الصفحة أو محتاج مساحة أكبر غيّره من هنا بإيدك.</div></details>';
     h += '<details open><summary>✍️ النص على شاشة البث (ثابت لكل الروابط)</summary>' +
       '<div class="spf"><input type="text" data-o="t" maxlength="120" placeholder="اكتب اسم موقعك هنا — بيظهر على الفيديو"></div>' +
       '<div class="spn" style="margin-top:6px">اسحب النص بإصبعك أو بالماوس على الشاشة، أو حرّكه بالأسهم (اضغط مطولًا للحركة المستمرة) أو بالشرائح.</div>' +
@@ -2939,10 +2936,7 @@ function SmartPlayer(root, o){
 
   /* ---------- شريط الزائر: شكل الشاشة ---------- */
   const BAR_OPTS = [
-    ["auto", "تلقائي", "يختار الأنسب لشاشتك تلقائيًا"],
-    ["fit", "أصلي", "الصورة كاملة، وممكن تظهر حواف سودة"],
-    ["fill", "تكبير", "الصورة تملّى الشاشة، وممكن يتقص جزء بسيط من الأطراف"],
-    ["stretch", "تمديد", "الصورة تتمدّد على الشاشة، وممكن تتشوّه شوية"]
+    ["stretch", "ملء الإطار", "الصورة بتملّى الإطار بالكامل"]
   ];
   function syncBar(){
     if (!bar) return;
@@ -2956,9 +2950,7 @@ function SmartPlayer(root, o){
     bar.innerHTML = "<span>عرض الصورة:</span>" + BAR_OPTS.map(x => '<button type="button" data-v="' + x[0] + '" title="' + x[2] + '">' + x[1] + "</button>").join("") + '<div class="sphint2"></div>';
     bar.onclick = e => {
       const b = e.target.closest("button"); if (!b) return;
-      V = b.dataset.v;
-      try { localStorage.setItem("sp_vis", V); } catch (err) {}
-      syncBar(); apply();
+      syncBar();
     };
     syncBar();
   }
