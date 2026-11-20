@@ -768,6 +768,33 @@ body:has(#home:not(.hide)) header{border-bottom:0}
 #menu #menuNba{display:block}
 }
 @media(max-width:420px){#mvTop{width:36px;height:36px}}
+
+/* ===== ترتيب الدوريات والبطولات ===== */
+.stand{margin-top:26px}
+.stand .st{text-align:center;margin:0 0 12px}
+.stchips{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain}
+.stchips::-webkit-scrollbar{display:none}
+.stchips button{flex:0 0 auto;height:38px;padding:0 16px;border-radius:999px;border:2px solid #dde2ee;background:#fff;color:#3a3a3a;font:600 14px Cairo,Tahoma,"Segoe UI",Arial,sans-serif;line-height:1;cursor:pointer;white-space:nowrap}
+.stchips button.on{background:var(--g);border-color:var(--g);color:#fff;box-shadow:0 6px 14px rgba(22,163,74,.35)}
+.stwrap{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.sttbl{width:100%;border-collapse:collapse;table-layout:fixed;font-size:14px;color:var(--text)}
+.sttbl th{background:var(--card2);color:var(--muted);font-weight:700;font-size:12px;padding:9px 1px;text-align:center}
+.sttbl td{padding:9px 1px;text-align:center;border-top:1px solid var(--bd2)}
+.sttbl .n{width:38px;border-inline-start:4px solid var(--z,transparent);color:var(--muted);font-weight:700}
+.sttbl .c{width:29px}
+.sttbl .g{width:40px;color:var(--muted)}
+.sttbl .pt{width:42px;font-weight:800;color:var(--team)}
+.sttbl .t{text-align:start;padding-inline:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.sttbl tbody tr:nth-child(even) td{background:rgba(255,255,255,.025)}
+:root[data-theme=light] .sttbl tbody tr:nth-child(even) td{background:rgba(0,0,0,.025)}
+.stlg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 4px 0;font-size:12px;color:var(--muted)}
+.stlg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:5px;vertical-align:-1px}
+.stupd{margin:8px 4px 0;font-size:12px;color:var(--muted);text-align:center}
+#admin .stlrow{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-top:8px;border:1px solid var(--bd);border-radius:10px;background:var(--in)}
+#admin .stlrow b{flex:1;min-width:0}
+#admin .stlrow small{color:var(--muted)}
+#admin #stBox label.stck{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px}
+#admin #stBox label.stck input{width:auto;padding:0}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
@@ -815,6 +842,13 @@ body:has(#home:not(.hide)) header{border-bottom:0}
     </div>
     <h2 class="ttl hide" id="liveTtl">المباريات المباشرة الآن</h2>
     <div id="list" class="list"></div>
+    <section id="stand" class="stand hide">
+      <h2 class="st">📊 ترتيب الدوريات والبطولات</h2>
+      <div class="stchips" id="stChips"></div>
+      <div class="stwrap"><table class="sttbl" id="stTbl"></table></div>
+      <div class="stlg" id="stLg"></div>
+      <div class="stupd" id="stUpd"></div>
+    </section>
   </section>
 
   <section id="watch" class="hide">
@@ -881,7 +915,7 @@ body:has(#home:not(.hide)) header{border-bottom:0}
       <div class="bar"><button class="p" id="alogBtn">دخول</button></div>
     </div>
     <div id="apanel" style="display:grid;gap:14px">
-    <div class="atabs" id="atabs"><button type="button" id="aexit" aria-label="رجوع للموقع" title="رجوع للموقع"><span class="ic">🏠</span><span>الموقع</span></button><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="imp"><span class="ic">⬇️</span><span>استيراد</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="fxu"><span class="ic">🔄</span><span>تحديث المباريات</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="radio"><span class="ic">📻</span><span>الراديو</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="bc"><span class="ic">📡</span><span>البث الرئيسي</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
+    <div class="atabs" id="atabs"><button type="button" id="aexit" aria-label="رجوع للموقع" title="رجوع للموقع"><span class="ic">🏠</span><span>الموقع</span></button><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="imp"><span class="ic">⬇️</span><span>استيراد</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="fxu"><span class="ic">🔄</span><span>تحديث المباريات</span></button><button type="button" data-at="st"><span class="ic">📊</span><span>الترتيب</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="radio"><span class="ic">📻</span><span>الراديو</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="bc"><span class="ic">📡</span><span>البث الرئيسي</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
     <div class="box">
       <h2 id="aft">إضافة مباراة</h2>
       <div class="g2">
@@ -1026,6 +1060,16 @@ body:has(#home:not(.hide)) header{border-bottom:0}
       <h2>المباريات (<span id="acnt">0</span>)</h2>
       <div id="alist"></div>
       <p class="note">اضغط على اليوم لعرض مباريات ذلك اليوم فقط. المباراة تُحذف تلقائياً من الموقع بعد يومين من موعدها.</p>
+    </div>
+    <div class="box" id="stBox">
+      <h2>📊 ترتيب الدوريات والبطولات</h2>
+      <p class="note" style="margin-top:0">الصق الكود اللي بجهزه لك واضغط <b>تطبيق ونشر</b>. بيحدّث كل البطولات اللي في الكود مرة واحدة، وبيظهر الترتيب تحت المباريات في الموقع لكل الزوار.</p>
+      <textarea id="stPaste" spellcheck="false" style="min-height:170px;direction:rtl;font-family:inherit;font-size:13px" placeholder="تحديث: 2026-11-20&#10;&#10;# الدوري الإنجليزي | أبطال أوروبا:4 | الدوري الأوروبي:1 | هبوط:3&#10;أرسنال,10,9,0,1,10,27&#10;برايتون,10,7,1,2,19,22"></textarea>
+      <label class="stck"><input type="checkbox" id="stWipe"> امسح أي بطولة مش موجودة في الكود ده</label>
+      <div class="bar"><button class="p" id="stGo" type="button">تطبيق ونشر</button><button id="stSample" type="button">وضع مثال</button><button class="d" id="stClear" type="button">مسح كل الترتيب</button></div>
+      <p class="note" id="stMsg"></p>
+      <div id="stList"></div>
+      <p class="note">كل سطر فريق: الاسم, لعب, فاز, تعادل, خسر, فرق الأهداف, النقاط. وسطر البطولة يبدأ بـ # وبعده المناطق مثل أبطال أوروبا:4 أو هبوط:3.</p>
     </div>
     <div class="box">
       <h2>النشر للزوار</h2>
@@ -1178,6 +1222,7 @@ function applyNews(){
 }
 window.addEventListener("resize", () => { lastNews = null; applyNews(); });
 function applySettings(){
+  try { renderStand(); } catch (e) {}
   applyNews();
   try { bcSync(); } catch (e) {}
   try { spOvRefresh(); } catch (e) {}
@@ -1562,7 +1607,93 @@ document.addEventListener("click", e => {
   document.querySelectorAll(".mcard.go").forEach(c => c.classList.remove("go"));
 });
 
+/* ===== ترتيب الدوريات والبطولات (يظهر تحت المباريات) ===== */
+/*ST-BEGIN*/
+var stSel = "", stSig = "";
+const ST_COLS = ["#22c55e", "#3b82f6", "#a855f7", "#f59e0b"];
+const stEsc = x => String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function stRaw(){
+  const D = SETTINGS && SETTINGS.stand;
+  return D && Array.isArray(D.l) ? D.l.filter(x => x && x.n && Array.isArray(x.r) && x.r.length) : [];
+}
+/* التخزين نصوص (Firebase مبيقبلش مصفوفات جوه مصفوفات): "الفريق|لعب|فاز|تعادل|خسر|فرق|نقاط" */
+function stUnpack(l){
+  const z = (Array.isArray(l.z) ? l.z : []).map(a => Array.isArray(a) ? a : String(a).split(":")).map(a => [String(a[0]).trim(), parseInt(a[1], 10) || 0]);
+  const r = l.r.map(x => {
+    const a = Array.isArray(x) ? x : String(x).split("|"), g = parseInt(a[5], 10);
+    return [a[0], +a[1] || 0, +a[2] || 0, +a[3] || 0, +a[4] || 0, a[5] === "" || a[5] === null || a[5] === undefined || isNaN(g) ? null : g, +a[6] || 0];
+  });
+  return {n: l.n, u: l.u, z, r};
+}
+function stZones(lg){
+  const n = lg.r.length, z = new Array(n).fill(null), leg = [], legB = [], zs = Array.isArray(lg.z) ? lg.z : [];
+  const isBot = a => /هبوط|خروج/.test(a[0]);
+  let top = 0, ci = 0, end = n;
+  zs.filter(a => !isBot(a)).forEach(a => {
+    const col = ST_COLS[ci++ % ST_COLS.length], c = Math.max(0, Math.min(+a[1] || 0, end - top));
+    for (let i = top; i < top + c; i++) z[i] = col;
+    if (c) leg.push([col, a[0]]);
+    top += c;
+  });
+  zs.filter(isBot).reverse().forEach(a => {
+    const col = /ملحق/.test(a[0]) ? "#fb923c" : "#ef4444", c = Math.max(0, Math.min(+a[1] || 0, end - top));
+    for (let i = end - c; i < end; i++) z[i] = col;
+    if (c) legB.push([col, a[0]]);
+    end -= c;
+  });
+  return {z, leg: leg.concat(legB.reverse())};
+}
+function stPick(ls){
+  if (ls.some(x => x.n === stSel)) return;
+  let pick = null;
+  try {
+    const td = MATCHES.filter(m => !expired(m) && dayOffset(m) === 0).sort((a, b) => new Date(a.time) - new Date(b.time));
+    for (const m of td){ const f = ls.find(x => x.n === m.league); if (f){ pick = f; break; } }
+  } catch (e) {}
+  stSel = (pick || ls[0]).n;
+}
+function renderStand(){
+  const box = document.getElementById("stand"); if (!box) return;
+  const ls = stRaw();
+  if (!ls.length || mode === "live"){ box.classList.add("hide"); return; }
+  box.classList.remove("hide");
+  stPick(ls);
+  const sig = JSON.stringify(SETTINGS.stand) + "|" + stSel;
+  if (sig === stSig) return;
+  stSig = sig;
+  const chips = document.getElementById("stChips"), keep = chips.scrollLeft;
+  chips.innerHTML = "";
+  ls.forEach(l => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = l.n; if (l.n === stSel) b.className = "on";
+    b.onclick = () => { stSel = l.n; renderStand(); };
+    chips.appendChild(b);
+  });
+  chips.scrollLeft = keep;
+  const on = chips.querySelector(".on");
+  if (on && on.scrollIntoView){ try { on.scrollIntoView({block: "nearest", inline: "nearest"}); } catch (e) {} }
+  const lg = stUnpack(ls.find(x => x.n === stSel)), hasGd = lg.r.some(r => r[5] !== null && r[5] !== undefined);
+  const zz = stZones(lg);
+  let h = '<thead><tr><th class="n">#</th><th class="t">الفريق</th><th class="c">لعب</th><th class="c">ف</th><th class="c">ت</th><th class="c">خ</th>' + (hasGd ? '<th class="g">+/-</th>' : '') + '<th class="pt">نقاط</th></tr></thead><tbody>';
+  lg.r.forEach((r, i) => {
+    const gd = r[5];
+    h += '<tr><td class="n"' + (zz.z[i] ? ' style="--z:' + zz.z[i] + '"' : '') + '>' + (i + 1) + '</td><td class="t">' + stEsc(r[0]) + '</td><td class="c">' + r[1] + '</td><td class="c">' + r[2] + '</td><td class="c">' + r[3] + '</td><td class="c">' + r[4] + '</td>' +
+      (hasGd ? '<td class="g"><bdi>' + (gd === null || gd === undefined ? "" : (gd > 0 ? "+" : "") + gd) + '</bdi></td>' : '') + '<td class="pt">' + r[6] + '</td></tr>';
+  });
+  document.getElementById("stTbl").innerHTML = h + "</tbody>";
+  document.getElementById("stLg").innerHTML = zz.leg.map(a => '<span><i style="background:' + a[0] + '"></i>' + stEsc(a[1]) + '</span>').join("");
+  let u = "";
+  if (lg.u){
+    let f = lg.u;
+    try { const d = new Date(lg.u + "T12:00:00"); if (!isNaN(d)) f = new Intl.DateTimeFormat("ar", {day: "numeric", month: "long", year: "numeric"}).format(d); } catch (e) {}
+    u = "آخر تحديث: " + f;
+  }
+  document.getElementById("stUpd").textContent = u;
+}
+/*ST-END*/
+
 function render(){
+  try { renderStand(); } catch (e) {}
   if (pendingWatch){
     const k = pendingWatch, i = MATCHES.findIndex(m => mKey(m) === k);
     if (i >= 0){ pendingWatch = null; openMatch(i); return; }
@@ -3257,7 +3388,7 @@ function showPanel(){
   $("#apanel").style.display = "grid";
   $("#alogout").classList.toggle("hide", !fbOn);
   if (fbOn) $("#apub").textContent = "النشر مباشر: أي مباراة تحفظها أو تحذفها تظهر لكل الزوار فوراً من غير رفع ملفات. ويمكنك أيضاً تنزيل نسخة احتياطية من هنا.";
-  $("#sday").value = SETTINGS.day || ""; $("#swa").value = SETTINGS.wa || ""; $("#sfb").value = SETTINGS.fb || ""; $("#smail").value = SETTINGS.mail || ""; fillBc(); fillMulti(); fillNba(); fillCh(); fillRd(); $("#nicon").value = SETTINGS.nbaIcon || ""; $("#snews").value = SETTINGS.news || "";
+  $("#sday").value = SETTINGS.day || ""; $("#swa").value = SETTINGS.wa || ""; $("#sfb").value = SETTINGS.fb || ""; $("#smail").value = SETTINGS.mail || ""; fillBc(); try { fillSt(); } catch (e) {} fillMulti(); fillNba(); fillCh(); fillRd(); $("#nicon").value = SETTINGS.nbaIcon || ""; $("#snews").value = SETTINGS.news || "";
   if (pruneOld()) aSave();
   aReset(); aList();
   ajDirty = true;
@@ -4965,6 +5096,104 @@ fxBuild();
   }, 4000);
 })();
 
+/* ===== أدمن: لصق كود ترتيب الدوريات ===== */
+/*STA-BEGIN*/
+function stParse(txt){
+  txt = String(txt || "").replace(/^\s*```[a-z]*\s*/i, "").replace(/```\s*$/, "").replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g, "");
+  if (!txt.trim()) return {err: "الخانة فاضية، الصق الكود الأول"};
+  const num = x => { x = String(x).trim().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[−–—]/g, "-").replace(/^\+/, ""); return /^-?\d+$/.test(x) ? parseInt(x, 10) : NaN; };
+  const lines = txt.split(/\r?\n/), out = [], warn = [];
+  let cur = null, upd = "";
+  for (let i = 0; i < lines.length; i++){
+    const raw = lines[i].trim(), ln = i + 1;
+    if (!raw) continue;
+    const mu = raw.match(/^(?:آخر\s*)?تحديث\s*[:：]\s*(\d{4}-\d{2}-\d{2})$/);
+    if (mu){ upd = mu[1]; continue; }
+    if (raw[0] === "#"){
+      const parts = raw.replace(/^#+\s*/, "").split("|").map(x => x.trim()).filter(Boolean);
+      const name = parts.shift();
+      if (!name) return {err: "سطر " + ln + ": اسم البطولة ناقص بعد علامة #"};
+      const z = [];
+      for (const q of parts){
+        const k = q.split(/\s*[:：]\s*/), c = num(k[1]);
+        if (k.length !== 2 || !k[0].trim() || isNaN(c) || c < 0) return {err: "سطر " + ln + ": الجزء «" + q + "» غلط، الشكل الصح اسم:عدد زي أبطال أوروبا:4"};
+        z.push([k[0].trim(), c]);
+      }
+      if (out.some(x => x.n === name)) return {err: "سطر " + ln + ": البطولة «" + name + "» مكررة في الكود"};
+      cur = {n: name, z, r: []}; out.push(cur); continue;
+    }
+    if (!cur) return {err: "سطر " + ln + ": لازم الأول سطر اسم البطولة اللي يبدأ بعلامة # وبعدين الفرق"};
+    const f = raw.split(/\s*[,،|\t]\s*/);
+    if (f.length < 6 || f.length > 8) return {err: "سطر " + ln + " (" + (f[0] || raw) + "): عدد الخانات غلط. الشكل: الاسم, لعب, فاز, تعادل, خسر, فرق الأهداف, النقاط"};
+    const team = f[0].trim();
+    if (!team) return {err: "سطر " + ln + ": اسم الفريق فاضي"};
+    const v = f.slice(1).map(num);
+    if (v.some(isNaN)) return {err: "سطر " + ln + " (" + team + "): في خانة مش رقم"};
+    const p = v[0], w = v[1], d = v[2], l = v[3];
+    let gd = null, pts;
+    if (f.length === 6) pts = v[4];
+    else if (f.length === 7){ gd = v[4]; pts = v[5]; }
+    else { gd = v[4] - v[5]; pts = v[6]; }
+    if ([p, w, d, l, pts].some(x => x < 0)) return {err: "سطر " + ln + " (" + team + "): رقم سالب في اللعب أو الفوز أو التعادل أو الخسارة أو النقاط"};
+    if (cur.r.some(x => x[0] === team)) return {err: "سطر " + ln + ": الفريق «" + team + "» مكرر في «" + cur.n + "»"};
+    if (p !== w + d + l) warn.push(team + " (لعب مش بيساوي فاز+تعادل+خسر)");
+    cur.r.push([team, p, w, d, l, gd, pts]);
+  }
+  if (!out.length) return {err: "مفيش ولا بطولة في الكود. سطر البطولة لازم يبدأ بعلامة #"};
+  const small = out.find(x => x.r.length < 2);
+  if (small) return {err: "البطولة «" + small.n + "» فيها أقل من فريقين"};
+  return {leagues: out, upd, warn};
+}
+const stPack = l => ({n: l.n, u: l.u, z: l.z.map(q => q[0] + ":" + q[1]), r: l.r.map(r => r.map(x => x === null ? "" : x).join("|"))});
+const stToday = () => { const d = new Date(), z = n => String(n).padStart(2, "0"); return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()); };
+function stMsg(t){ const e = document.getElementById("stMsg"); if (e) e.textContent = t; }
+function fillSt(){
+  const box = document.getElementById("stList"); if (!box) return;
+  box.innerHTML = "";
+  const D = SETTINGS.stand, ls = D && Array.isArray(D.l) ? D.l : [];
+  if (!ls.length){ box.innerHTML = '<p class="note">لسه مفيش ترتيب متسجّل.</p>'; return; }
+  ls.forEach(l => {
+    const r = document.createElement("div"); r.className = "stlrow";
+    r.innerHTML = '<b></b><small></small><button type="button" class="d">✕</button>';
+    r.querySelector("b").textContent = l.n;
+    r.querySelector("small").textContent = l.r.length + " فريق" + (l.u ? " · " + l.u : "");
+    r.querySelector("button").onclick = () => {
+      if (!confirm("تمسح ترتيب «" + l.n + "»؟")) return;
+      const rest = ls.filter(x => x !== l);
+      if (rest.length) SETTINGS.stand = {l: rest}; else delete SETTINGS.stand;
+      stSig = "";
+      persistSettings(); fillSt(); stMsg("اتمسح ترتيب «" + l.n + "».");
+    };
+    box.appendChild(r);
+  });
+}
+document.getElementById("stGo").onclick = () => {
+  const p = stParse(document.getElementById("stPaste").value);
+  if (p.err){ stMsg("⚠️ " + p.err + " (ما اتغيرش حاجة)"); return; }
+  const old = SETTINGS.stand && Array.isArray(SETTINGS.stand.l) ? SETTINGS.stand.l : [];
+  let list;
+  p.leagues.forEach(l => { l.u = p.upd || stToday(); });
+  const packed = p.leagues.map(stPack);
+  if (document.getElementById("stWipe").checked) list = packed;
+  else { list = old.slice(); packed.forEach(l => { const k = list.findIndex(x => x.n === l.n); if (k >= 0) list[k] = l; else list.push(l); }); }
+  SETTINGS.stand = {l: list};
+  stSig = "";
+  persistSettings(); fillSt();
+  let t = "اتطبق ✓ " + p.leagues.length + " بطولة، " + p.leagues.reduce((a, l) => a + l.r.length, 0) + " فريق.";
+  if (p.warn.length) t += " تنبيه: " + p.warn.slice(0, 4).join("، ") + (p.warn.length > 4 ? " وغيرهم" : "") + ".";
+  stMsg(t);
+};
+document.getElementById("stSample").onclick = () => {
+  document.getElementById("stPaste").value = "تحديث: " + stToday() + "\n\n# الدوري الإنجليزي | أبطال أوروبا:4 | الدوري الأوروبي:1 | هبوط:3\nأرسنال,10,9,0,1,10,27\nبرايتون,10,7,1,2,19,22\nمانشستر سيتي,10,7,0,3,8,21\n\n# الدوري الإسباني | أبطال أوروبا:4 | هبوط:3\nبرشلونة,12,11,0,1,35,33\nريال مدريد,12,10,0,2,21,30";
+  stMsg("ده مثال بس، بدّله بالكود الحقيقي.");
+};
+document.getElementById("stClear").onclick = () => {
+  if (!SETTINGS.stand || !confirm("تمسح ترتيب كل البطولات؟")) return;
+  delete SETTINGS.stand; stSig = "";
+  persistSettings(); fillSt(); stMsg("اتمسح كل الترتيب.");
+};
+/*STA-END*/
+
 /* تبويبات الأدمن: كل قسم بأيقونة لوحده */
 let adminTab = function(){};
 (function(){
@@ -4974,6 +5203,7 @@ let adminTab = function(){};
   kids.forEach(k => {
     let t = "set";
     if (has(k, "#aft")) t = "addm";
+    else if (has(k, "#stPaste")) t = "st";
     else if (has(k, "#bcUrl")) t = "bc";
     else if (has(k, "#atp")) t = "addm ch nba multi radio bc";
     else if (has(k, "#chRows")) t = "ch";
