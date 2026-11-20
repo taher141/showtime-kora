@@ -1130,6 +1130,14 @@ body:has(#home:not(.hide)) header{border-bottom:0}
       <p class="note" id="stMsg"></p>
       <div id="stAdminList"></div>
       <p class="note">كل سطر فريق: الاسم, لعب, فاز, تعادل, خسر, فرق الأهداف, النقاط. وسطر البطولة يبدأ بـ # وبعده المناطق مثل أبطال أوروبا:4 أو هبوط:3.</p>
+      <hr style="border:0;border-top:1px solid var(--bd);margin:18px 0 14px">
+      <h2 style="font-size:15px">📰 أخبار الدوريات (الهامة فقط)</h2>
+      <p class="note" style="margin-top:0">الصق كود الأخبار واضغط <b>تطبيق ونشر الأخبار</b>. بتظهر تحت «أخبار الدوري» لما الزائر يضغط على شعار الدوري. كل دوري بيتحدّث لوحده من غير ما يمس الترتيب.</p>
+      <textarea id="lnPaste" spellcheck="false" style="min-height:150px;direction:rtl;font-family:inherit;font-size:13px" placeholder="تحديث: 2026-11-21&#10;&#10;# الدوري الإنجليزي&#10;خبر: نص الخبر الأول&#10;خبر: نص الخبر التاني"></textarea>
+      <div class="bar"><button class="p" id="lnGo" type="button">تطبيق ونشر الأخبار</button><button id="lnSample" type="button">وضع مثال</button><button class="d" id="lnClear" type="button">مسح كل الأخبار</button></div>
+      <p class="note" id="lnMsg"></p>
+      <div id="lnAdminList"></div>
+      <p class="note">سطر الدوري يبدأ بـ # (الدوري الإنجليزي، الإسباني، الإيطالي، الألماني، الفرنسي، المصري، التركي، السعودي). وكل خبر في سطر يبدأ بـ «خبر:». الدوري اللي في الكود بيتبدّل أخباره بالكامل.</p>
     </div>
     <div class="box">
       <h2>النشر للزوار</h2>
@@ -1723,7 +1731,7 @@ function renderStand(){
   const chip = strip && Array.from(strip.querySelectorAll(".league-chip")).find(c => c.dataset.league === activeLeagueLabel);
   const logo = activeLeagueLabel === "الدوري الإنجليزي" ? PL_LOGO : (chip && chip.querySelector("img") ? chip.querySelector("img").src : "");
   const list = document.getElementById("stList");
-  const sig = JSON.stringify(SETTINGS.stand) + "|" + stSel + "|" + activeLeagueLabel + "|" + (MATCHES||[]).length + "|" + String(SETTINGS.news||"");
+  const sig = JSON.stringify(SETTINGS.stand) + "|" + stSel + "|" + activeLeagueLabel + "|" + (MATCHES||[]).length + "|" + String(SETTINGS.news||"") + "|" + JSON.stringify(SETTINGS.lnews||null);
   if (sig === stSig) return;
   stSig = sig;
   list.innerHTML = "";
@@ -1758,13 +1766,18 @@ function renderStand(){
   const teamNames=new Set();
   if(selected) stUnpack(selected).r.forEach(r=>teamNames.add(String(r[0]).toLowerCase()));
   const news=String(SETTINGS.news||"").split(/\n+/).map(x=>x.trim()).filter(Boolean);
-  const relevant=news.filter(x=>alias.test(x)||Array.from(teamNames).some(t=>t.length>2&&x.toLowerCase().includes(t)));
+  const tickerRel=news.filter(x=>alias.test(x)||Array.from(teamNames).some(t=>t.length>2&&x.toLowerCase().includes(t)));
+  const ownL=(SETTINGS.lnews&&Array.isArray(SETTINGS.lnews.l))?SETTINGS.lnews.l.find(x=>x&&x.n===activeLeagueLabel):null;
+  const ownA=ownL&&Array.isArray(ownL.a)?ownL.a.filter(Boolean):[];
+  const relevant=ownA.concat(tickerRel.filter(x=>!ownA.includes(x)));
   const ns=document.createElement("section");ns.className="league-detail-section";
   const nh=document.createElement("h3");nh.textContent="أخبار الدوري";ns.appendChild(nh);
   const nl=document.createElement("div");nl.className="league-news-list";
   if(relevant.length) relevant.forEach(x=>{const n=document.createElement("article");n.className="league-news-item";n.textContent=x;nl.appendChild(n);});
   else {const e=document.createElement("div");e.className="league-detail-empty";e.textContent="لا توجد أخبار مسجلة لهذا الدوري حاليًا.";nl.appendChild(e);}
-  ns.appendChild(nl);list.appendChild(ns);
+  ns.appendChild(nl);
+  if(ownA.length&&ownL.u){let f=ownL.u;try{const d=new Date(ownL.u+"T12:00:00");if(!isNaN(d))f=new Intl.DateTimeFormat("ar",{day:"numeric",month:"long",year:"numeric"}).format(d);}catch(e){}const up=document.createElement("div");up.className="stupd";up.textContent="آخر تحديث: "+f;ns.appendChild(up);}
+  list.appendChild(ns);
 }
 
 var activeLeagueLabel = "";
@@ -3524,7 +3537,7 @@ function showPanel(){
   $("#apanel").style.display = "grid";
   $("#alogout").classList.toggle("hide", !fbOn);
   if (fbOn) $("#apub").textContent = "النشر مباشر: أي مباراة تحفظها أو تحذفها تظهر لكل الزوار فوراً من غير رفع ملفات. ويمكنك أيضاً تنزيل نسخة احتياطية من هنا.";
-  $("#sday").value = SETTINGS.day || ""; $("#swa").value = SETTINGS.wa || ""; $("#sfb").value = SETTINGS.fb || ""; $("#smail").value = SETTINGS.mail || ""; fillBc(); try { fillSt(); } catch (e) {} fillMulti(); fillNba(); fillCh(); fillRd(); $("#nicon").value = SETTINGS.nbaIcon || ""; $("#snews").value = SETTINGS.news || "";
+  $("#sday").value = SETTINGS.day || ""; $("#swa").value = SETTINGS.wa || ""; $("#sfb").value = SETTINGS.fb || ""; $("#smail").value = SETTINGS.mail || ""; fillBc(); try { fillSt(); } catch (e) {} try { fillLn(); } catch (e) {} fillMulti(); fillNba(); fillCh(); fillRd(); $("#nicon").value = SETTINGS.nbaIcon || ""; $("#snews").value = SETTINGS.news || "";
   if (pruneOld()) aSave();
   aReset(); aList();
   ajDirty = true;
@@ -5329,6 +5342,84 @@ document.getElementById("stClear").onclick = () => {
   persistSettings(); fillSt(); stMsg("اتمسح كل الترتيب.");
 };
 /*STA-END*/
+/* ===== أدمن: لصق كود أخبار الدوريات ===== */
+/*LN-BEGIN*/
+const LN_LEAGUES = ["دوري أبطال أوروبا","الدوري الإنجليزي","الدوري الإسباني","الدوري الإيطالي","الدوري الألماني","الدوري الفرنسي","الدوري التركي","الدوري المصري","الدوري السعودي"];
+function lnCanon(name){
+  name = String(name || "").trim();
+  return LN_LEAGUES.find(x => x === name) || LN_LEAGUES.find(x => leagueAlias(x).test(name)) || name;
+}
+function lnParse(txt){
+  txt = String(txt || "").replace(/^\s*```[a-z]*\s*/i, "").replace(/```\s*$/, "").replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g, "");
+  if (!txt.trim()) return {err: "الخانة فاضية، الصق الكود الأول"};
+  const lines = txt.split(/\r?\n/), out = [], warn = [];
+  let cur = null, upd = "";
+  for (let i = 0; i < lines.length; i++){
+    const raw = lines[i].trim(); if (!raw) continue;
+    const mu = raw.match(/^(?:آخر\s*)?تحديث\s*[:：]\s*(\d{4}-\d{2}-\d{2})$/);
+    if (mu){ upd = mu[1]; continue; }
+    if (raw[0] === "#"){
+      const name = lnCanon(raw.replace(/^#+\s*/, "").split("|")[0]);
+      if (!name) return {err: "سطر " + (i + 1) + ": اسم الدوري ناقص بعد علامة #"};
+      if (!LN_LEAGUES.includes(name)) warn.push(name);
+      cur = out.find(x => x.n === name);
+      if (!cur){ cur = {n: name, a: []}; out.push(cur); }
+      continue;
+    }
+    if (!cur) return {err: "سطر " + (i + 1) + ": لازم الأول سطر اسم الدوري اللي يبدأ بعلامة #"};
+    const t = raw.replace(/^(?:خبر|عاجل)\s*[:：]\s*/, "").replace(/^[-•*]\s*/, "").trim();
+    if (t) cur.a.push(t);
+  }
+  if (!out.length) return {err: "مفيش ولا دوري في الكود. سطر الدوري لازم يبدأ بعلامة #"};
+  const empty = out.find(x => !x.a.length);
+  if (empty) return {err: "الدوري «" + empty.n + "» مفيهوش ولا خبر"};
+  return {leagues: out, upd, warn};
+}
+function lnMsg(t){ const e = document.getElementById("lnMsg"); if (e) e.textContent = t; }
+function fillLn(){
+  const box = document.getElementById("lnAdminList"); if (!box) return;
+  box.innerHTML = "";
+  const D = SETTINGS.lnews, ls = D && Array.isArray(D.l) ? D.l : [];
+  if (!ls.length){ box.innerHTML = '<p class="note">لسه مفيش أخبار دوريات متسجّلة.</p>'; return; }
+  ls.forEach(l => {
+    const r = document.createElement("div"); r.className = "stlrow";
+    r.innerHTML = '<b></b><small></small><button type="button" class="d">✕</button>';
+    r.querySelector("b").textContent = l.n;
+    r.querySelector("small").textContent = (l.a ? l.a.length : 0) + " خبر" + (l.u ? " · " + l.u : "");
+    r.querySelector("button").onclick = () => {
+      if (!confirm("تمسح أخبار «" + l.n + "»؟")) return;
+      const rest = ls.filter(x => x !== l);
+      if (rest.length) SETTINGS.lnews = {l: rest}; else delete SETTINGS.lnews;
+      stSig = ""; persistSettings(); fillLn(); lnMsg("اتمسحت أخبار «" + l.n + "».");
+    };
+    box.appendChild(r);
+  });
+}
+document.getElementById("lnGo").onclick = () => {
+  const p = lnParse(document.getElementById("lnPaste").value);
+  if (p.err){ lnMsg("⚠️ " + p.err + " (ما اتغيرش حاجة)"); return; }
+  const old = SETTINGS.lnews && Array.isArray(SETTINGS.lnews.l) ? SETTINGS.lnews.l : [];
+  const list = old.slice();
+  p.leagues.forEach(l => {
+    l.a = l.a.slice(0, 12); l.u = p.upd || stToday();
+    const k = list.findIndex(x => x.n === l.n); if (k >= 0) list[k] = l; else list.push(l);
+  });
+  SETTINGS.lnews = {l: list};
+  stSig = ""; persistSettings(); fillLn();
+  let t = "اتطبق ✓ " + p.leagues.length + " دوري، " + p.leagues.reduce((a, l) => a + l.a.length, 0) + " خبر.";
+  if (p.warn.length) t += " تنبيه: «" + p.warn.join("، ") + "» مش من الدوريات المعروفة فمش هتظهر.";
+  lnMsg(t);
+};
+document.getElementById("lnSample").onclick = () => {
+  document.getElementById("lnPaste").value = "تحديث: " + stToday() + "\n\n# الدوري الإنجليزي\nخبر: مثال لخبر هام في الدوري الإنجليزي\n\n# الدوري الإسباني\nخبر: مثال لخبر هام في الدوري الإسباني";
+  lnMsg("ده مثال بس، بدّله بالكود الحقيقي.");
+};
+document.getElementById("lnClear").onclick = () => {
+  if (!SETTINGS.lnews || !confirm("تمسح أخبار كل الدوريات؟")) return;
+  delete SETTINGS.lnews; stSig = "";
+  persistSettings(); fillLn(); lnMsg("اتمسحت كل أخبار الدوريات.");
+};
+/*LN-END*/
 
 /* تبويبات الأدمن: كل قسم بأيقونة لوحده */
 let adminTab = function(){};
