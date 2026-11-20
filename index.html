@@ -781,6 +781,46 @@ body:has(#home:not(.hide)) header{border-bottom:0}
 .stitem.on .sthd .chv{transform:rotate(180deg)}
 .stbody{padding:0 0 10px}
 .stbody .stwrap{border:0;border-top:1px solid var(--bd);border-radius:0}
+
+
+/* شريط شعارات البطولات - سحب يدوي أفقي */
+.league-strip-wrap{margin:18px 0 4px;padding:10px 0 4px;min-width:0}
+.league-strip-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 3px 9px;color:var(--text);font-size:13px;font-weight:800}
+.league-strip-title small{color:var(--muted);font-size:10px;font-weight:500}
+.league-strip{display:flex;flex-direction:row;direction:rtl;gap:9px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 10px;scrollbar-width:thin;scrollbar-color:var(--team) transparent;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;cursor:grab;scroll-snap-type:x proximity}
+.league-strip:active{cursor:grabbing}
+.league-strip::-webkit-scrollbar{height:4px}
+.league-strip::-webkit-scrollbar-track{background:var(--bd2);border-radius:10px}
+.league-strip::-webkit-scrollbar-thumb{background:var(--team);border-radius:10px}
+.league-chip{flex:0 0 92px;width:92px;min-width:92px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;scroll-snap-align:start}
+.league-chip img{display:block;width:92px;height:66px;object-fit:contain;object-position:center;border:1px solid var(--bd);border-radius:11px;background:#fff;padding:6px;box-sizing:border-box;flex-shrink:0}
+.league-chip{border:0;background:transparent;color:inherit;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.league-chip:focus-visible{outline:2px solid var(--team);outline-offset:3px;border-radius:12px}
+.league-chip.active img{border:2px solid var(--team);box-shadow:0 0 0 3px color-mix(in srgb,var(--team) 18%,transparent)}
+.league-chip.active span{color:var(--team);font-weight:800}
+.league-chip span{max-width:100%;font-size:10px;line-height:1.35;text-align:center;color:var(--muted);white-space:nowrap}
+@media(min-width:700px){.league-chip{flex-basis:108px;width:108px;min-width:108px}.league-chip img{width:108px;height:76px}.league-chip span{font-size:11px}}
+
+/* تفاصيل الدوري: الترتيب ثم مباريات الدوري ثم أخباره */
+.league-detail-head{display:flex;align-items:center;gap:10px;margin:14px 0 10px;padding:12px;background:var(--card);border:1px solid var(--bd);border-radius:13px}
+.league-detail-head img{width:42px;height:42px;object-fit:contain;background:#fff;border-radius:9px;padding:4px;box-sizing:border-box}
+.league-detail-head strong{font-size:15px;color:var(--text)}
+.league-detail-section{margin:16px 0}
+.league-detail-section>h3{font-size:15px;margin:0 0 9px;color:var(--text)}
+.league-fixtures{display:flex;flex-direction:column;gap:10px}
+.league-news-list{display:flex;flex-direction:column;gap:8px}
+.league-news-item{padding:11px 13px;background:var(--card);border:1px solid var(--bd);border-radius:11px;color:var(--text);font-size:13px;line-height:1.7}
+.league-detail-empty{padding:12px;background:var(--card);border:1px dashed var(--bd);border-radius:10px;color:var(--muted);font-size:12px;text-align:center}
+/* زر فتح جداول الدوريات أسفل كروت المباريات */
+.stand-toggle{width:100%;display:flex;align-items:center;gap:12px;margin:18px 0 8px;padding:13px 15px;border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--text);font:700 14px Cairo,Tahoma,sans-serif;text-align:start;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.045);-webkit-tap-highlight-color:transparent}
+.stand-toggle:active{transform:scale(.99)}
+.stand-toggle-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:color-mix(in srgb,var(--team) 13%,var(--card));color:var(--team)}
+.stand-toggle-icon svg{width:25px;height:25px}
+.stand-toggle-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:1px}
+.stand-toggle-copy small{font-size:11px;font-weight:500;color:var(--muted)}
+.stand-toggle-arrow{width:19px;height:19px;color:var(--muted);transition:transform .2s}
+#standToggle[aria-expanded="true"] .stand-toggle-arrow{transform:rotate(180deg)}
+#stand{scroll-margin-top:14px}
 @media (prefers-reduced-motion:reduce){.sthd .chv{transition:none}}
 .stwrap{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
 .sttbl{width:100%;border-collapse:collapse;table-layout:fixed;font-size:14px;color:var(--text)}
@@ -848,8 +888,23 @@ body:has(#home:not(.hide)) header{border-bottom:0}
     </div>
     <h2 class="ttl hide" id="liveTtl">المباريات المباشرة الآن</h2>
     <div id="list" class="list"></div>
-    <section id="stand" class="stand hide">
-      <h2 class="st">📊 ترتيب الدوريات والبطولات</h2>
+
+    <div class="league-strip-wrap" aria-label="شعارات الدوريات والبطولات">
+      <div class="league-strip-title"><span>ترتيب الدوريات والبطولات</span><small>اضغط على شعار الدوري لعرض ترتيبه</small></div>
+      <div class="league-strip" id="leagueStrip" role="list">
+        <button type="button" class="league-chip" role="button" data-league="دوري أبطال أوروبا" aria-pressed="false"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/UEFA_Champions_League_logo_no_text.svg" alt="شعار دوري أبطال أوروبا" loading="lazy"><span>دوري أبطال أوروبا</span></button>
+        <button type="button" class="league-chip" data-league="الدوري الإنجليزي" aria-pressed="false"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pl-logo-light.svg" alt="الشعار الرسمي للدوري الإنجليزي الممتاز" loading="eager" decoding="async"><span>الدوري الإنجليزي</span></button>
+        <button type="button" class="league-chip" role="button" data-league="الدوري الإسباني" aria-pressed="false"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/LaLiga_logo_2023.svg" alt="شعار الدوري الإسباني" loading="lazy"><span>الدوري الإسباني</span></button>
+        <button type="button" class="league-chip" role="button" data-league="الدوري الإيطالي" aria-pressed="false"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Serie_A.svg" alt="شعار الدوري الإيطالي" loading="lazy"><span>الدوري الإيطالي</span></button>
+        <button type="button" class="league-chip" data-league="الدوري الألماني" aria-pressed="false"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/N%C4%9Bmeck%C3%A1_fotbalov%C3%A1_Bundesliga_logo.png" alt="الشعار الرسمي للدوري الألماني بوندسليجا" loading="eager" decoding="async"><span>الدوري الألماني</span></button>
+        <button type="button" class="league-chip" data-league="الدوري الفرنسي" aria-pressed="false"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_Ligue_1_McDonald%27s_2024.svg" alt="الشعار الرسمي للدوري الفرنسي ليج 1" loading="eager" decoding="async"><span>الدوري الفرنسي</span></button>
+        <button type="button" class="league-chip" data-league="الدوري التركي" aria-pressed="false"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Trendyol_S%C3%BCper_Lig_logo_dikey.svg" alt="الشعار الرسمي للدوري التركي الممتاز" loading="eager" decoding="async"><span>الدوري التركي</span></button>
+        <button type="button" class="league-chip" role="button" data-league="الدوري المصري" aria-pressed="false"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Egyptian_Premier_League_Logo_2026.jpg" alt="شعار الدوري المصري" loading="lazy"><span>الدوري المصري</span></button>
+        <button type="button" class="league-chip" role="button" data-league="الدوري السعودي" aria-pressed="false"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Saudi_Pro_League_Logo.svg" alt="شعار الدوري السعودي" loading="lazy"><span>الدوري السعودي</span></button>
+      </div>
+    </div>
+<section id="stand" class="stand hide">
+      <h2 class="st">ترتيب الدوريات والبطولات</h2>
       <div class="stlist" id="stList"></div>
     </section>
   </section>
@@ -1657,50 +1712,87 @@ function stPick(ls){
 }
 function renderStand(){
   const box = document.getElementById("stand"); if (!box) return;
-  const ls = stRaw();
-  if (!ls.length || mode === "live"){ box.classList.add("hide"); return; }
+  const selected = stRaw().find(x => x.n === stSel);
+  if (!activeLeagueLabel || !stSel){ box.classList.add("hide"); return; }
   box.classList.remove("hide");
-  if (stSel && !ls.some(x => x.n === stSel)) stSel = "";
-  const sig = JSON.stringify(SETTINGS.stand) + "|" + stSel;
+  const strip = document.getElementById("leagueStrip");
+  const chip = strip && Array.from(strip.querySelectorAll(".league-chip")).find(c => c.dataset.league === activeLeagueLabel);
+  const logo = chip && chip.querySelector("img") ? chip.querySelector("img").src : "";
+  const list = document.getElementById("stList");
+  const sig = JSON.stringify(SETTINGS.stand) + "|" + stSel + "|" + activeLeagueLabel + "|" + (MATCHES||[]).length + "|" + String(SETTINGS.news||"");
   if (sig === stSig) return;
   stSig = sig;
-  const list = document.getElementById("stList");
   list.innerHTML = "";
-  ls.forEach(l => {
-    const open = l.n === stSel;
-    const item = document.createElement("div");
-    item.className = "stitem" + (open ? " on" : "");
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "sthd"; b.setAttribute("aria-expanded", open ? "true" : "false");
-    b.innerHTML = '<span></span><svg class="chv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
-    b.firstChild.textContent = l.n;
-    b.onclick = () => { stSel = open ? "" : l.n; renderStand(); };
-    item.appendChild(b);
-    if (open){
-      const lg = stUnpack(l), hasGd = lg.r.some(r => r[5] !== null && r[5] !== undefined), zz = stZones(lg);
-      let h = '<thead><tr><th class="n">#</th><th class="t">الفريق</th><th class="c">لعب</th><th class="c">ف</th><th class="c">ت</th><th class="c">خ</th>' + (hasGd ? '<th class="g">+/-</th>' : '') + '<th class="pt">نقاط</th></tr></thead><tbody>';
-      lg.r.forEach((r, i) => {
-        const gd = r[5];
-        h += '<tr><td class="n"' + (zz.z[i] ? ' style="--z:' + zz.z[i] + '"' : '') + '>' + (i + 1) + '</td><td class="t">' + stEsc(r[0]) + '</td><td class="c">' + r[1] + '</td><td class="c">' + r[2] + '</td><td class="c">' + r[3] + '</td><td class="c">' + r[4] + '</td>' +
-          (hasGd ? '<td class="g"><bdi>' + (gd === null || gd === undefined ? "" : (gd > 0 ? "+" : "") + gd) + '</bdi></td>' : '') + '<td class="pt">' + r[6] + '</td></tr>';
-      });
-      let u = "";
-      if (lg.u){
-        let f = lg.u;
-        try { const d = new Date(lg.u + "T12:00:00"); if (!isNaN(d)) f = new Intl.DateTimeFormat("ar", {day: "numeric", month: "long", year: "numeric"}).format(d); } catch (e) {}
-        u = "آخر تحديث: " + f;
-      }
-      const body = document.createElement("div");
-      body.className = "stbody";
-      body.innerHTML = '<div class="stwrap"><table class="sttbl">' + h + '</tbody></table></div>' +
-        '<div class="stlg">' + zz.leg.map(a => '<span><i style="background:' + a[0] + '"></i>' + stEsc(a[1]) + '</span>').join("") + '</div>' +
-        (u ? '<div class="stupd">' + stEsc(u) + '</div>' : '');
-      item.appendChild(body);
-    }
-    list.appendChild(item);
-  });
+  const head = document.createElement("div"); head.className = "league-detail-head";
+  if (logo){ const im=document.createElement("img"); im.src=logo; im.alt=""; head.appendChild(im); }
+  const ht=document.createElement("strong"); ht.textContent=activeLeagueLabel || stSel; head.appendChild(ht); list.appendChild(head);
+  if (selected){
+    const lg = stUnpack(selected), hasGd = lg.r.some(r => r[5] !== null && r[5] !== undefined), zz = stZones(lg);
+    const sec=document.createElement("section"); sec.className="league-detail-section";
+    const title=document.createElement("h3"); title.textContent="جدول الترتيب"; sec.appendChild(title);
+    let h = '<thead><tr><th class="n">#</th><th class="t">الفريق</th><th class="c">لعب</th><th class="c">ف</th><th class="c">ت</th><th class="c">خ</th>' + (hasGd ? '<th class="g">+/-</th>' : '') + '<th class="pt">نقاط</th></tr></thead><tbody>';
+    lg.r.forEach((r, i) => { const gd=r[5]; h += '<tr><td class="n"'+(zz.z[i]?' style="--z:'+zz.z[i]+'"':'')+'>'+(i+1)+'</td><td class="t">'+stEsc(r[0])+'</td><td class="c">'+r[1]+'</td><td class="c">'+r[2]+'</td><td class="c">'+r[3]+'</td><td class="c">'+r[4]+'</td>'+(hasGd?'<td class="g"><bdi>'+(gd===null||gd===undefined?'':(gd>0?'+':'')+gd)+'</bdi></td>':'')+'<td class="pt">'+r[6]+'</td></tr>'; });
+    let u=""; if(lg.u){ let f=lg.u; try{const d=new Date(lg.u+"T12:00:00");if(!isNaN(d))f=new Intl.DateTimeFormat("ar",{day:"numeric",month:"long",year:"numeric"}).format(d);}catch(e){} u="آخر تحديث: "+f; }
+    const wrap=document.createElement("div"); wrap.className="stwrap"; wrap.innerHTML='<table class="sttbl">'+h+'</tbody></table>';
+    sec.appendChild(wrap);
+    if(zz.leg.length){const leg=document.createElement("div");leg.className="stlg";leg.innerHTML=zz.leg.map(a=>'<span><i style="background:'+a[0]+'"></i>'+stEsc(a[1])+'</span>').join("");sec.appendChild(leg);}
+    if(u){const upd=document.createElement("div");upd.className="stupd";upd.textContent=u;sec.appendChild(upd);}
+    list.appendChild(sec);
+  } else {
+    const no=document.createElement("div"); no.className="league-detail-empty"; no.textContent="جدول ترتيب هذا الدوري غير مضاف حاليًا."; list.appendChild(no);
+  }
+  // مباريات الدوري القادمة من نفس قائمة مباريات الموقع، وتُعرض بنفس كارت المباراة الأصلي.
+  const alias = leagueAlias(activeLeagueLabel);
+  const fixtures=(MATCHES||[]).map((m,i)=>({m,i})).filter(x=>!expired(x.m) && !isLive(x.m) && alias.test(String(x.m.league||""))).sort((a,b)=>new Date(a.m.time)-new Date(b.m.time));
+  const fs=document.createElement("section");fs.className="league-detail-section";
+  const fh=document.createElement("h3");fh.textContent="مباريات الجولة القادمة";fs.appendChild(fh);
+  const fl=document.createElement("div");fl.className="league-fixtures";
+  if(fixtures.length) fixtures.forEach(x=>fl.appendChild(mcCard(x.m,x.i)));
+  else {const e=document.createElement("div");e.className="league-detail-empty";e.textContent="لا توجد مباريات قادمة مسجلة لهذا الدوري حاليًا.";fl.appendChild(e);}
+  fs.appendChild(fl);list.appendChild(fs);
+  // الأخبار المعروضة هي الأخبار التي أدخلها مدير الموقع وتطابق اسم الدوري أو أحد أنديته.
+  const teamNames=new Set();
+  if(selected) stUnpack(selected).r.forEach(r=>teamNames.add(String(r[0]).toLowerCase()));
+  const news=String(SETTINGS.news||"").split(/\n+/).map(x=>x.trim()).filter(Boolean);
+  const relevant=news.filter(x=>alias.test(x)||Array.from(teamNames).some(t=>t.length>2&&x.toLowerCase().includes(t)));
+  const ns=document.createElement("section");ns.className="league-detail-section";
+  const nh=document.createElement("h3");nh.textContent="أخبار الدوري";ns.appendChild(nh);
+  const nl=document.createElement("div");nl.className="league-news-list";
+  if(relevant.length) relevant.forEach(x=>{const n=document.createElement("article");n.className="league-news-item";n.textContent=x;nl.appendChild(n);});
+  else {const e=document.createElement("div");e.className="league-detail-empty";e.textContent="لا توجد أخبار مسجلة لهذا الدوري حاليًا.";nl.appendChild(e);}
+  ns.appendChild(nl);list.appendChild(ns);
 }
-/*ST-END*/
+
+var activeLeagueLabel = "";
+function leagueAlias(name){
+  const map={
+    "دوري أبطال أوروبا":/دوري أبطال أوروبا|ابطال اوروبا|champions league|uefa/i,
+    "الدوري الإنجليزي":/الدوري الإنجليزي|الانجليزي الممتاز|premier league|england/i,
+    "الدوري الإسباني":/الدوري الإسباني|الإسباني|laliga|la liga|spain/i,
+    "الدوري الإيطالي":/الدوري الإيطالي|serie a|italy/i,
+    "الدوري الألماني":/الدوري الألماني|الماني|bundesliga|germany/i,
+    "الدوري الفرنسي":/الدوري الفرنسي|فرنسي|ligue\s*1|ligue1|france/i,
+    "الدوري التركي":/الدوري التركي|تركي|super\s*lig|süper\s*lig|turkey|türkiye/i,
+    "الدوري المصري":/الدوري المصري|مصري|egyptian premier|egypt/i,
+    "الدوري السعودي":/الدوري السعودي|دوري روشن|saudi pro|saudi/i
+  };
+  return map[name] || new RegExp(String(name||"").replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"i");
+}
+(function initLeagueStandings(){
+  const strip=document.getElementById("leagueStrip"),panel=document.getElementById("stand");if(!strip||!panel)return;
+  strip.querySelectorAll(".league-chip").forEach(chip=>chip.addEventListener("click",()=>{
+    const name=chip.dataset.league||chip.innerText.trim();
+    const aliases=leagueAlias(name);
+    const match=stRaw().find(x=>aliases.test(String(x.n))) || stRaw().find(x=>{
+      const n=String(x.n).toLowerCase(),k=name.toLowerCase();
+      return (k.includes("الإنجليزي")&&(n.includes("انجليزي")||n.includes("premier")))||(k.includes("الإسباني")&&(n.includes("اسباني")||n.includes("laliga")))||(k.includes("الإيطالي")&&(n.includes("ايطالي")||n.includes("serie a")))||(k.includes("الألماني")&&(n.includes("الماني")||n.includes("bundesliga")))||(k.includes("الفرنسي")&&(n.includes("فرنسي")||n.includes("ligue 1")||n.includes("ligue1")))||(k.includes("التركي")&&(n.includes("تركي")||n.includes("super lig")||n.includes("süper lig")))||(k.includes("المصري")&&(n.includes("مصري")||n.includes("egypt")))||(k.includes("السعودي")&&(n.includes("سعودي")||n.includes("روشن")||n.includes("saudi")))||(k.includes("أبطال أوروبا")&&(n.includes("ابطال اوروبا")||n.includes("champions league")));
+    });
+    if(activeLeagueLabel===name){activeLeagueLabel="";stSel="";stSig="";panel.classList.add("hide");}
+    else {activeLeagueLabel=name;stSel=match?match.n:"";if(!stSel)stSel="__league_without_table__";stSig="";}
+    strip.querySelectorAll(".league-chip").forEach(c=>{const on=c===chip&&!!activeLeagueLabel;c.classList.toggle("active",on);c.setAttribute("aria-pressed",on?"true":"false");});
+    if(activeLeagueLabel){renderStand();requestAnimationFrame(()=>panel.scrollIntoView({behavior:"smooth",block:"nearest"}));}
+  }));
+})();
 
 function render(){
   try { renderStand(); } catch (e) {}
