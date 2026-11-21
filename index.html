@@ -283,7 +283,7 @@ main{max-width:960px;margin:0 auto;padding:16px}
 .tvarr{flex:none;width:30px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:8px 0 8px 4px}
 .tvarr button{width:26px;height:34px;border:1px solid var(--bd);background:var(--card2);color:var(--text);border-radius:8px;font-size:12px;cursor:pointer;padding:0}
 .tvarr button:active{background:var(--team);color:var(--onteam)}
-#tvList button{--c:var(--g);--c2:#4ade80;display:flex;align-items:center;gap:8px;width:100%;text-align:right;background:linear-gradient(135deg,var(--c),var(--c2));border:2px solid transparent;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);border-radius:12px;padding:13px 10px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.25);transition:transform .15s,filter .15s}
+#tvList button{--c:var(--g);--c2:color-mix(in srgb,var(--g) 65%,#fff);display:flex;align-items:center;gap:8px;width:100%;text-align:right;background:linear-gradient(135deg,var(--c),var(--c2));border:2px solid transparent;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);border-radius:12px;padding:13px 10px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.25);transition:transform .15s,filter .15s}
 #tvList button:hover{filter:brightness(1.1)}
 #tvList button svg{width:22px;height:22px;flex:none;color:#fff}
 #tvList button.on{border-color:#fff;transform:scale(1.03);box-shadow:0 0 0 2px var(--c),0 4px 14px rgba(0,0,0,.4);font-weight:900}
@@ -538,7 +538,7 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 .tabs2 .mv{align-self:center}
 .tabs{display:flex;gap:9px;width:100%}
 .tabs button{flex:1 1 0;min-width:0;height:42px;padding:0!important;font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;font-size:16px;font-weight:600;line-height:1;color:#3a3a3a;background:#fff;border:2px solid #dde2ee;border-radius:14px;cursor:pointer;transition:background .15s,box-shadow .15s}
-.tabs button.on{background:var(--g);border-color:var(--g);color:#fff;box-shadow:0 6px 14px rgba(22,163,74,.35)}
+.tabs button.on{background:var(--g);border-color:var(--g);color:#fff;box-shadow:0 6px 14px color-mix(in srgb,var(--g) 35%,transparent)}
 #mvTop{display:none}
 @media(min-width:641px){#mvTop{display:flex;width:40px;height:40px;border-color:var(--team)}#mvTop svg{width:22px;height:22px;color:var(--team)}#sched #mvBtn{display:none}}
 
