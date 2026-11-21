@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <title>شوتايم كورة</title>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com"><link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -23,6 +23,8 @@
 :root:not([data-theme=light]) .tk{background:var(--in)}
 :root .tki::after{color:var(--team)}
 *{box-sizing:border-box}
+html{overflow-x:hidden;max-width:100%}
+body{overflow-x:clip;max-width:100%}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.5}
 header{position:relative;padding:12px 16px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;justify-content:space-between;gap:8px}
 /* الشريط العلوي (الاسم + الأيقونات) ثابت دايمًا أثناء النزول والطلوع، ويرجع لمكانه الطبيعي لما توصل لأول الصفحة */
@@ -1313,6 +1315,8 @@ function dayOffset(m){
 /* ===== اختر لونك المفضل (داكن + 5 ألوان) ===== */
 const MOON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>';
 const SUN = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+/* منع تحرّك الصفحة يمين/شمال على الموبايل */
+window.addEventListener("scroll", function(){ if (window.scrollX) window.scrollTo(0, window.scrollY); }, {passive: true});
 /* ارتفاع الشريط العلوي (للعناصر الثابتة اللي تحته) */
 (function(){
   const h = document.querySelector("header"); if (!h) return;
