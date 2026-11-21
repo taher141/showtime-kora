@@ -8,6 +8,10 @@
 <style>
 :root{--wt:#fff;--bg:#0a1220;--card:#131e33;--card2:#1b2a45;--team:#2dd4bf;--onteam:#04201c;--text:#e6edf7;--muted:#94a3b8;--bd:#27395c;--bd2:#162238;--in:#0e1829;--live:#ef4444;--acc:#14b8a6;--accd:#0f766e;--ctx:#1a2a44;--g:#0d9488;--amb:#f59e0b}
 :root[data-theme=light]{--wt:#0f1b2d;--bg:#eef3f8;--card:#fff;--card2:#e2eaf3;--team:#0d9488;--onteam:#fff;--text:#0f1b2d;--muted:#5b6b82;--bd:#cbd6e3;--bd2:#e1e8f0;--in:#f6f9fc;--acc:#0d9488;--accd:#0f766e;--ctx:#1a2a44;--g:#0d9488;--amb:#d97706}
+:root[data-theme=light][data-color=blue]{--wt:#0f1b33;--bg:#edf3fd;--card2:#dde8fa;--team:#2563eb;--text:#0f1b33;--muted:#5a6b88;--bd:#c7d5ee;--bd2:#dfe8f6;--in:#f5f8fd;--acc:#2563eb;--accd:#1d4ed8;--g:#2563eb}
+:root[data-theme=light][data-color=purple]{--wt:#1c1233;--bg:#f3effb;--card2:#e6dcf6;--team:#7c3aed;--text:#1c1233;--muted:#6b5f86;--bd:#d8cbee;--bd2:#e8e0f5;--in:#faf7fe;--acc:#7c3aed;--accd:#6d28d9;--g:#7c3aed}
+:root[data-theme=light][data-color=orange]{--wt:#2a1a0d;--bg:#fdf3ea;--card2:#f8e2cf;--team:#ea580c;--text:#2a1a0d;--muted:#86684f;--bd:#efd3bb;--bd2:#f6e4d4;--in:#fffaf5;--acc:#ea580c;--accd:#c2410c;--g:#ea580c;--amb:#b45309}
+:root[data-theme=light][data-color=pink]{--wt:#2a0f1c;--bg:#fdeff4;--card2:#f8dbe6;--team:#db2777;--text:#2a0f1c;--muted:#86576b;--bd:#f0c8d8;--bd2:#f7e0e9;--in:#fff7fa;--acc:#db2777;--accd:#be185d;--g:#db2777}
 :root:not([data-theme=light]) .ad{background:var(--bg)}
 :root:not([data-theme=light]) .ad img{mix-blend-mode:lighten}
 :root:not([data-theme=light]) .tk{background:var(--in)}
@@ -53,6 +57,14 @@ h1{font-size:22px;margin:0;color:var(--team);cursor:default;user-select:none;lin
 #menu #themeBtn{display:flex;align-items:center;justify-content:space-between;gap:10px}
 #menu #themeBtn svg{width:20px;height:20px;display:block}
 #menu #themeBtn.on{color:var(--text);font-weight:400}
+#menu #themeBtn .ti{display:flex;align-items:center}
+#menu #themeBtn .cd{display:block;width:18px;height:18px;border-radius:50%;border:2px solid var(--bd)}
+#themeRow{display:flex;gap:10px;justify-content:center;padding:6px 8px 10px}
+#themeRow.hide{display:none}
+#menu #themeRow button{width:32px;height:32px;padding:0;border-radius:50%;border:2px solid var(--bd);background:var(--c);display:block;flex:0 0 auto;position:relative}
+#menu #themeRow button:hover{background:var(--c);transform:scale(1.1)}
+#menu #themeRow button.cur{border-color:var(--text);box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--c)}
+#menu #themeRow button.cur::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 #menu .soon{color:var(--muted);font-size:14px;border-top:1px solid var(--bd);margin-top:4px}
 .ad{background:#000;border-bottom:0;line-height:0}
 .ad img{display:block;width:100%;max-width:none;height:auto;margin:0}
@@ -909,7 +921,7 @@ a.ln-card:active{transform:scale(.99)}
   #admin :is(#fxList,#alist) .fxc .fxa button{padding:8px 22px;font-size:14px}
 }
 </style>
-<script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
+<script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}catch(e){}</script>
 </head>
 <body>
 <header>
@@ -926,7 +938,8 @@ a.ln-card:active{transform:scale(.99)}
     <button data-m="home" class="on">الصفحة الرئيسية</button>
     <button data-m="live">بث مباشر</button>
     <button type="button" id="menuNba">🏀 NBA</button>
-    <button id="themeBtn" aria-label="تغيير الوضع"><span class="tl"></span><span class="ti"></span></button>
+    <button id="themeBtn" aria-label="اختر لونك المفضل" aria-expanded="false"><span class="tl">🎨 اختر لونك المفضل</span><span class="ti"></span></button>
+    <div id="themeRow" class="hide" role="group" aria-label="اختر لونك المفضل"><button type="button" data-t="dark" style="--c:#0a1220" title="داكن" aria-label="داكن"></button><button type="button" data-t="light" style="--c:#0d9488" title="أخضر مائي" aria-label="أخضر مائي"></button><button type="button" data-t="blue" style="--c:#2563eb" title="أزرق" aria-label="أزرق"></button><button type="button" data-t="purple" style="--c:#7c3aed" title="بنفسجي" aria-label="بنفسجي"></button><button type="button" data-t="orange" style="--c:#ea580c" title="برتقالي" aria-label="برتقالي"></button><button type="button" data-t="pink" style="--c:#db2777" title="وردي" aria-label="وردي"></button></div>
   </div>
 </header>
 <div id="ov" class="hide"></div>
@@ -1291,21 +1304,35 @@ function dayOffset(m){
   return Math.round((a - b) / 86400000);
 }
 
-/* ===== الوضع الليلي/النهاري ===== */
+/* ===== اختر لونك المفضل (داكن + 5 ألوان) ===== */
 const MOON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>';
 const SUN = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const THEMES = ["dark", "light", "blue", "purple", "orange", "pink"];
+const THEME_DOT = {dark: "#0a1220", light: "#0d9488", blue: "#2563eb", purple: "#7c3aed", orange: "#ea580c", pink: "#db2777"};
 function setTheme(t){
-  if (t === "light") document.documentElement.setAttribute("data-theme", "light");
-  else document.documentElement.removeAttribute("data-theme");
+  if (THEMES.indexOf(t) < 0) t = "dark";
+  const d = document.documentElement;
+  d.removeAttribute("data-color");
+  if (t === "dark") d.removeAttribute("data-theme");
+  else { d.setAttribute("data-theme", "light"); if (t !== "light") d.setAttribute("data-color", t); }
   themeUi(t);
   try { localStorage.setItem("sk_theme", t); } catch (e) {}
 }
 function themeUi(t){
-  $("#themeBtn .tl").textContent = t === "light" ? "الوضع الليلي" : "الوضع النهاري";
-  $("#themeBtn .ti").innerHTML = t === "light" ? MOON : SUN;
+  $("#themeBtn .ti").innerHTML = '<i class="cd" style="background:' + THEME_DOT[t] + '"></i>';
+  document.querySelectorAll("#themeRow button").forEach(b => b.classList.toggle("cur", b.dataset.t === t));
 }
-$("#themeBtn").onclick = (e) => { e.stopPropagation(); setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"); };
-themeUi(document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark");
+function themeCur(){
+  const d = document.documentElement;
+  return d.getAttribute("data-theme") === "light" ? (d.getAttribute("data-color") || "light") : "dark";
+}
+$("#themeBtn").onclick = (e) => {
+  e.stopPropagation();
+  const r = $("#themeRow"); r.classList.toggle("hide");
+  $("#themeBtn").setAttribute("aria-expanded", String(!r.classList.contains("hide")));
+};
+document.querySelectorAll("#themeRow button").forEach(b => b.onclick = (e) => { e.stopPropagation(); setTheme(b.dataset.t); });
+themeUi(themeCur());
 
 /* ===== إعدادات الموقع (جدول المباريات + روابط التواصل) ===== */
 function waLink(v){
@@ -1993,6 +2020,7 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) auto
 
 function menu(open){
   $("#menu").classList.toggle("hide", !open);
+  if (!open){ const r = $("#themeRow"); if (r){ r.classList.add("hide"); $("#themeBtn").setAttribute("aria-expanded", "false"); } }
   $("#ov").classList.toggle("hide", !open);
 }
 $("#menuBtn").onclick = () => menu($("#menu").classList.contains("hide"));
