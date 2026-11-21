@@ -7,6 +7,12 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com"><link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--wt:#fff;--bg:#0a1220;--card:#131e33;--card2:#1b2a45;--team:#2dd4bf;--onteam:#04201c;--text:#e6edf7;--muted:#94a3b8;--bd:#27395c;--bd2:#162238;--in:#0e1829;--live:#ef4444;--acc:#14b8a6;--accd:#0f766e;--ctx:#1a2a44;--g:#0d9488;--amb:#f59e0b}
+:root[data-color=black]{--wt:#fff;--bg:#000;--card:#0b0b10;--card2:#14141c;--team:#22d3ee;--onteam:#001418;--text:#f2f2f7;--muted:#9a9ab0;--bd:#26263a;--bd2:#14141f;--in:#07070b;--acc:#a78bfa;--accd:#7c3aed;--g:#34d399;--amb:#fbbf24;--ctx:#14141c}
+:root[data-color=black] .w{background:linear-gradient(90deg,#22d3ee,#a78bfa 55%,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+:root[data-color=black] .kw{color:#f472b6}
+:root[data-color=black] .tabs button.on{background:linear-gradient(135deg,#22d3ee,#a78bfa);border-color:transparent;color:#001418}
+:root[data-color=black] .mcard{box-shadow:0 0 0 1px rgba(167,139,250,.22),0 6px 18px rgba(34,211,238,.06)}
+:root[data-color=black] header{border-bottom:1px solid transparent;border-image:linear-gradient(90deg,#22d3ee,#a78bfa,#f472b6) 1}
 :root[data-theme=light]{--wt:#0f1b2d;--bg:#eef3f8;--card:#fff;--card2:#e2eaf3;--team:#0d9488;--onteam:#fff;--text:#0f1b2d;--muted:#5b6b82;--bd:#cbd6e3;--bd2:#e1e8f0;--in:#f6f9fc;--acc:#0d9488;--accd:#0f766e;--ctx:#1a2a44;--g:#0d9488;--amb:#d97706}
 :root[data-theme=light][data-color=blue]{--wt:#0f1b33;--bg:#edf3fd;--card2:#dde8fa;--team:#2563eb;--text:#0f1b33;--muted:#5a6b88;--bd:#c7d5ee;--bd2:#dfe8f6;--in:#f5f8fd;--acc:#2563eb;--accd:#1d4ed8;--g:#2563eb}
 :root[data-theme=light][data-color=purple]{--wt:#1c1233;--bg:#f3effb;--card2:#e6dcf6;--team:#7c3aed;--text:#1c1233;--muted:#6b5f86;--bd:#d8cbee;--bd2:#e8e0f5;--in:#faf7fe;--acc:#7c3aed;--accd:#6d28d9;--g:#7c3aed}
@@ -19,8 +25,8 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.5}
 header{position:relative;padding:12px 16px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;justify-content:space-between;gap:8px}
-/* موبايل فقط + الصفحة الرئيسية فقط: الشريط العلوي يثبت أثناء النزول ويرجع لمكانه الطبيعي فوق الصورة */
-@media(max-width:640px){body:has(#home:not(.hide)) header{position:sticky;top:0;z-index:40;background:var(--bg)}}
+/* الشريط العلوي (الاسم + الأيقونات) ثابت دايمًا أثناء النزول والطلوع، ويرجع لمكانه الطبيعي لما توصل لأول الصفحة */
+body:not(.adm) header{position:sticky;top:0;z-index:60;background:var(--bg);box-shadow:0 1px 0 var(--bd2)}
 h1{font-size:22px;margin:0;color:var(--team);cursor:default;user-select:none;line-height:1.2;white-space:nowrap}
 .brand small{display:block;font-size:12px;letter-spacing:3px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:2px;direction:ltr;text-align:right}
 .brand small.anim{display:flex;align-items:center;gap:1px;letter-spacing:0;font-size:16px;font-weight:900;color:var(--wt);margin-top:3px;justify-content:flex-end}
@@ -59,11 +65,11 @@ h1{font-size:22px;margin:0;color:var(--team);cursor:default;user-select:none;lin
 #menu #themeBtn.on{color:var(--text);font-weight:400}
 #menu #themeBtn .ti{display:flex;align-items:center}
 #menu #themeBtn .cd{display:block;width:18px;height:18px;border-radius:50%;border:2px solid var(--bd)}
-#themeRow{display:flex;gap:10px;justify-content:center;padding:6px 8px 10px}
+#themeRow{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;padding:6px 8px 10px}
 #themeRow.hide{display:none}
 #menu #themeRow button{width:32px;height:32px;padding:0;border-radius:50%;border:2px solid var(--bd);background:var(--c);display:block;flex:0 0 auto;position:relative}
 #menu #themeRow button:hover{background:var(--c);transform:scale(1.1)}
-#menu #themeRow button.cur{border-color:var(--text);box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--c)}
+#menu #themeRow button.cur{border-color:var(--text);box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--r,var(--c))}
 #menu #themeRow button.cur::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 #menu .soon{color:var(--muted);font-size:14px;border-top:1px solid var(--bd);margin-top:4px}
 .ad{background:#000;border-bottom:0;line-height:0}
@@ -244,7 +250,7 @@ main{max-width:960px;margin:0 auto;padding:16px}
 #tvBtn::after{content:"";position:absolute;top:1px;right:1px;width:9px;height:9px;border-radius:50%;background:var(--live);border:2px solid var(--card);animation:bl 1.2s ease-in-out infinite}
 .tvwrap{display:flex;gap:12px;align-items:flex-start}
 .tvmain{flex:1;min-width:0}
-.tvside{flex:none;width:190px;background:var(--card);border:1px solid var(--bd);border-radius:14px;overflow:hidden;position:sticky;top:8px}
+.tvside{flex:none;width:190px;background:var(--card);border:1px solid var(--bd);border-radius:14px;overflow:hidden;position:sticky;top:calc(var(--hdrH,0px) + 8px)}
 .tvsh{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 10px;font:inherit;font-weight:900;font-size:15px;background:var(--card2);color:var(--text);border:0;border-bottom:1px solid var(--bd);cursor:pointer}
 .tvsh .ar{display:inline-block;transition:transform .2s;font-size:12px}
 .tvside.closed .tvsh{border-bottom:0}
@@ -798,8 +804,8 @@ body:has(#home:not(.hide)) header{border-bottom:0}
 
 /* شريط شعارات البطولات - سحب يدوي أفقي */
 .league-strip-wrap{margin:18px 0 4px;padding:10px 0 4px;min-width:0}
-.league-strip-wrap.is-sticky{position:sticky;top:0;z-index:35;background:var(--bg);border-bottom:1px solid var(--bd2);box-shadow:0 5px 14px rgba(0,0,0,.10)}
-@media(max-width:640px){.league-strip-wrap.is-sticky{top:var(--league-sticky-top,64px)}}
+.league-strip-wrap.is-sticky{position:sticky;top:var(--hdrH,0px);z-index:35;background:var(--bg);border-bottom:1px solid var(--bd2);box-shadow:0 5px 14px rgba(0,0,0,.10)}
+@media(max-width:640px){.league-strip-wrap.is-sticky{top:var(--hdrH,var(--league-sticky-top,64px))}}
 .league-strip-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 3px 9px;color:var(--text);font-size:13px;font-weight:800}
 .league-strip-title small{color:var(--muted);font-size:10px;font-weight:500}
 .league-strip{display:flex;flex-direction:row;direction:rtl;gap:9px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 10px;scrollbar-width:thin;scrollbar-color:var(--team) transparent;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;cursor:grab;scroll-snap-type:x proximity}
@@ -921,7 +927,7 @@ a.ln-card:active{transform:scale(.99)}
   #admin :is(#fxList,#alist) .fxc .fxa button{padding:8px 22px;font-size:14px}
 }
 </style>
-<script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}catch(e){}</script>
+<script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
 </head>
 <body>
 <header>
@@ -939,7 +945,7 @@ a.ln-card:active{transform:scale(.99)}
     <button data-m="live">بث مباشر</button>
     <button type="button" id="menuNba">🏀 NBA</button>
     <button id="themeBtn" aria-label="اختر لونك المفضل" aria-expanded="false"><span class="tl">🎨 اختر لونك المفضل</span><span class="ti"></span></button>
-    <div id="themeRow" class="hide" role="group" aria-label="اختر لونك المفضل"><button type="button" data-t="dark" style="--c:#0a1220" title="داكن" aria-label="داكن"></button><button type="button" data-t="light" style="--c:#0d9488" title="أخضر مائي" aria-label="أخضر مائي"></button><button type="button" data-t="blue" style="--c:#2563eb" title="أزرق" aria-label="أزرق"></button><button type="button" data-t="purple" style="--c:#7c3aed" title="بنفسجي" aria-label="بنفسجي"></button><button type="button" data-t="orange" style="--c:#ea580c" title="برتقالي" aria-label="برتقالي"></button><button type="button" data-t="pink" style="--c:#db2777" title="وردي" aria-label="وردي"></button></div>
+    <div id="themeRow" class="hide" role="group" aria-label="اختر لونك المفضل"><button type="button" data-t="dark" style="--c:#0a1220" title="داكن" aria-label="داكن"></button><button type="button" data-t="black" style="--c:linear-gradient(135deg,#000 40%,#22d3ee 70%,#a78bfa);--r:#a78bfa" title="أسود" aria-label="أسود"></button><button type="button" data-t="light" style="--c:#0d9488" title="أخضر مائي" aria-label="أخضر مائي"></button><button type="button" data-t="blue" style="--c:#2563eb" title="أزرق" aria-label="أزرق"></button><button type="button" data-t="purple" style="--c:#7c3aed" title="بنفسجي" aria-label="بنفسجي"></button><button type="button" data-t="orange" style="--c:#ea580c" title="برتقالي" aria-label="برتقالي"></button><button type="button" data-t="pink" style="--c:#db2777" title="وردي" aria-label="وردي"></button></div>
   </div>
 </header>
 <div id="ov" class="hide"></div>
@@ -1307,13 +1313,21 @@ function dayOffset(m){
 /* ===== اختر لونك المفضل (داكن + 5 ألوان) ===== */
 const MOON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>';
 const SUN = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-const THEMES = ["dark", "light", "blue", "purple", "orange", "pink"];
-const THEME_DOT = {dark: "#0a1220", light: "#0d9488", blue: "#2563eb", purple: "#7c3aed", orange: "#ea580c", pink: "#db2777"};
+/* ارتفاع الشريط العلوي (للعناصر الثابتة اللي تحته) */
+(function(){
+  const h = document.querySelector("header"); if (!h) return;
+  const set = () => document.documentElement.style.setProperty("--hdrH", h.offsetHeight + "px");
+  set(); window.addEventListener("resize", set);
+  if (window.ResizeObserver) new ResizeObserver(set).observe(h);
+})();
+const THEMES = ["dark", "black", "light", "blue", "purple", "orange", "pink"];
+const THEME_DOT = {dark: "#0a1220", black: "linear-gradient(135deg,#000 40%,#22d3ee 70%,#a78bfa)", light: "#0d9488", blue: "#2563eb", purple: "#7c3aed", orange: "#ea580c", pink: "#db2777"};
 function setTheme(t){
   if (THEMES.indexOf(t) < 0) t = "dark";
   const d = document.documentElement;
   d.removeAttribute("data-color");
   if (t === "dark") d.removeAttribute("data-theme");
+  else if (t === "black") { d.removeAttribute("data-theme"); d.setAttribute("data-color", "black"); }
   else { d.setAttribute("data-theme", "light"); if (t !== "light") d.setAttribute("data-color", t); }
   themeUi(t);
   try { localStorage.setItem("sk_theme", t); } catch (e) {}
@@ -1324,7 +1338,7 @@ function themeUi(t){
 }
 function themeCur(){
   const d = document.documentElement;
-  return d.getAttribute("data-theme") === "light" ? (d.getAttribute("data-color") || "light") : "dark";
+  return d.getAttribute("data-theme") === "light" ? (d.getAttribute("data-color") || "light") : (d.getAttribute("data-color") === "black" ? "black" : "dark");
 }
 $("#themeBtn").onclick = (e) => {
   e.stopPropagation();
@@ -2051,7 +2065,6 @@ function normUrl(t){
   const pm = t.match(STREAM_PREFIX);
   if (pm){ pre = pm[0]; t = t.slice(pre.length).trim(); }
   if (t.startsWith("//")) t = "https:" + t;
-  if (location.protocol === "https:" && t.startsWith("http://")) t = "https://" + t.slice(7);
   return pre + t.replace(/&amp;/g, "&");
 }
 
@@ -2060,7 +2073,20 @@ function toEmbed(u){
   return m ? "https://www.youtube.com/embed/" + m[1] + "?autoplay=1" : u;
 }
 
+/* بروكسي روابط http: ضع هنا رابط سيرفر البروكسي (https) بعد ما ترفعه، مثال: "https://proxy.example.com"
+   لو فاضي: روابط http بتتحوّل لـ https زي الأول (بتشتغل بس لو السيرفر بيدعم https) */
+const STREAM_PROXY = "";
+function fixHttp(u, k){
+  if (location.protocol !== "https:" || !/^http:\/\//i.test(u)) return u;
+  if (STREAM_PROXY && /^(hls|video|mpegts|dash)$/.test(k)) return STREAM_PROXY.replace(/\/+$/, "") + "/?u=" + encodeURIComponent(u);
+  return "https://" + u.slice(7);
+}
 function streamKind(u){
+  const r = streamKindRaw(u);
+  if (r && r.u) r.u = fixHttp(r.u, r.k);
+  return r;
+}
+function streamKindRaw(u){
   let forced = "";
   const pm = u.match(STREAM_PREFIX);
   if (pm){ forced = pm[1].toLowerCase(); u = u.slice(pm[0].length).trim(); }
