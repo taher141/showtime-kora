@@ -884,6 +884,29 @@ a.ln-card:active{transform:scale(.99)}
   #bcReload svg{width:15px;height:15px}
   #bc>#bcw,#bc>#spBarBc,#bc>#spToolsBc{grid-column:1/-1}
 }
+/* ===== لاب فقط (1024px+): كروت المباريات داخل الأدمن (تحديث المباريات + قسم المباريات) بعرض الصفحة ===== */
+@media(min-width:1024px){
+  #admin :is(#fxList,#alist) .mcard.fxc{max-width:none;width:100%;margin:12px 0 0;padding:20px 28px 0;border-radius:18px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-top{grid-template-columns:minmax(0,1fr) minmax(240px,320px) minmax(0,1fr)}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-tm{gap:8px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-lg{width:112px;height:112px;border-radius:16px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-lg img{width:88px;height:88px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-lg .ph{font-size:36px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-n{font-size:20px;padding:0 2px 12px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-mid{height:112px;gap:10px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-big{font-size:36px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-big.tm{font-size:28px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-pill{font-size:16px;padding:3px 14px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-pill.cdn{font-size:18px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-info{margin-inline:-28px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-info>div{font-size:16px;padding:6px 4px;min-height:46px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-info>div>span:first-child{font-size:15px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-info .bein img{height:18px}
+  #admin :is(#fxList,#alist) .mcard.fxc .mc-info .bein b{font-size:15px}
+  #admin :is(#fxList,#alist) .fxc .fxa{padding:10px 16px;gap:10px}
+  #admin :is(#fxList,#alist) .fxc .fxa small{font-size:14px}
+  #admin :is(#fxList,#alist) .fxc .fxa button{padding:8px 22px;font-size:14px}
+}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
