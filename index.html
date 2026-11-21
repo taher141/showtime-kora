@@ -863,6 +863,26 @@ a.ln-card:active{transform:scale(.99)}
 #admin .stlrow small{color:var(--muted)}
 #admin #stBox label.stck{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px}
 #admin #stBox label.stck input{width:auto;padding:0}
+/* ===== لاب فقط (1024px+): كارت بعرض الشاشة + بث 1000px + شريط إعادة التحميل صغير في النص ===== */
+@media(min-width:1024px){
+  main:has(#home:not(.hide)){max-width:none;padding-inline:32px}
+  main:has(#home:not(.hide)) .league-strip-wrap,main:has(#home:not(.hide)) #stand{max-width:960px;margin-inline:auto}
+  .mcard{padding:20px 28px 0;border-radius:18px}
+  .mc-top{grid-template-columns:minmax(0,1fr) minmax(240px,320px) minmax(0,1fr)}
+  .mc-lg{width:112px;height:112px}
+  .mc-lg img{width:88px;height:88px}
+  .mc-n{font-size:20px;padding-bottom:12px}
+  .mc-mid{height:112px}
+  .mc-big{font-size:36px}
+  .mc-big.tm{font-size:28px}
+  .mc-info{margin-inline:-28px}
+  .mc-info>div{font-size:16px;min-height:46px}
+  #bc{max-width:1024px;margin-inline:auto}
+  .bch{justify-content:center}
+  #bcReload{display:flex;width:fit-content;margin:0 auto 8px;padding:6px 18px;border-radius:12px;font-size:13px}
+  #bcReload svg{width:15px;height:15px}
+  .bcnote{display:flex;width:fit-content;margin:8px auto 10px}
+}
 </style>
 <script>try{if(localStorage.getItem("sk_theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 </head>
