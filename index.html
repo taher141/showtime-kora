@@ -366,9 +366,19 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
   .tools{gap:6px}
 }
 
+
+/* زر نسخ الرابط بجانب «تجربة» */
+#admin button.cpy{white-space:nowrap}
+#admin .row:has(.cpy){grid-template-columns:84px 1fr auto auto auto}
+#admin .csrc .row:has(.cpy){grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto auto auto}
+#admin #rdRows .row:has(.cpy){grid-template-columns:1fr auto auto auto;grid-template-areas:"su su su su" "sn st cp d"}
+#admin #rdRows .row .cpy{grid-area:cp}
+.mrow:has(.cpy){grid-template-columns:1fr 1fr auto auto}
+.mrow:has(.cpy) .u{grid-column:1/3}
+
 /* ===== الراديو ===== */
-#radioBtn{position:relative;width:40px;height:40px;border-color:var(--amb);box-shadow:0 0 0 3px rgba(245,158,11,.12),0 0 14px rgba(245,158,11,.3)}
-#radioBtn svg{width:26px;height:26px;color:var(--amb)}
+#radioBtn{position:relative;width:40px;height:40px;border-color:var(--team);box-shadow:0 0 0 3px color-mix(in srgb,var(--team) 14%,transparent),0 0 14px color-mix(in srgb,var(--team) 32%,transparent)}
+#radioBtn svg{width:26px;height:26px;color:var(--team)}
 @media(max-width:420px){#radioBtn{width:36px;height:36px}#radioBtn svg{width:23px;height:23px}}
 #radio .st{text-align:center;margin:0 0 12px}
 #rdEmpty{padding:30px 10px;color:var(--muted);text-align:center}
@@ -950,7 +960,7 @@ a.ln-card:active{transform:scale(.99)}
   <div id="menu" class="hide">
     <button data-m="admin" id="menuAdmin" class="hide">⚙️ لوحة الأدمن</button>
     <button data-m="home" class="on">الصفحة الرئيسية</button>
-    <button data-m="live">بث مباشر</button>
+    <button data-m="live">البث المباشر</button>
     <button type="button" id="menuNba">🏀 NBA</button>
     <button id="themeBtn" aria-label="اختر لونك المفضل" aria-expanded="false"><span class="tl">🎨 اختر لونك المفضل</span><span class="ti"></span></button>
     <div id="themeRow" class="hide" role="group" aria-label="اختر لونك المفضل"><button type="button" data-t="dark" style="--c:#0a1220" title="داكن" aria-label="داكن"></button><button type="button" data-t="black" style="--c:linear-gradient(135deg,#000 40%,#22d3ee 70%,#a78bfa);--r:#a78bfa" title="أسود" aria-label="أسود"></button><button type="button" data-t="light" style="--c:#0d9488" title="أخضر مائي" aria-label="أخضر مائي"></button><button type="button" data-t="blue" style="--c:#2563eb" title="أزرق" aria-label="أزرق"></button><button type="button" data-t="purple" style="--c:#7c3aed" title="بنفسجي" aria-label="بنفسجي"></button><button type="button" data-t="orange" style="--c:#ea580c" title="برتقالي" aria-label="برتقالي"></button><button type="button" data-t="pink" style="--c:#db2777" title="وردي" aria-label="وردي"></button></div>
@@ -3587,6 +3597,59 @@ function toast(msg, ms){
   toastT = setTimeout(() => t.classList.add("hide"), ms || 2500);
 }
 
+/* نسخ سيرفر (الرابط + اسمه + إعدادات القص) للحافظة، ولصقه في أي خانة رابط في الأدمن بنفس القص */
+async function copyText(t){
+  let ok = false;
+  try { await navigator.clipboard.writeText(t); ok = true; } catch (e) {}
+  if (!ok){
+    try {
+      const a = document.createElement("textarea");
+      a.value = t; a.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+      document.body.appendChild(a); a.focus(); a.select();
+      ok = document.execCommand("copy"); a.remove();
+    } catch (e) {}
+  }
+  return ok;
+}
+async function copyServer(row, urlSel, nameSel){
+  const url = ((row.querySelector(urlSel) || {}).value || "").trim();
+  if (!url){ toast("مفيش رابط للنسخ"); return; }
+  const clip = {url};
+  const nm = nameSel && row.querySelector(nameSel);
+  if (nm && nm.value.trim()) clip.name = nm.value.trim();
+  if (row._crop && typeof row._crop === "object") clip.crop = JSON.parse(JSON.stringify(row._crop));
+  try { localStorage.setItem("sk_srvclip", JSON.stringify(clip)); } catch (e) {}
+  const ok = await copyText(url);
+  toast(ok ? (clip.crop ? "تم نسخ السيرفر مع إعدادات القص" : "تم نسخ الرابط") : "تعذّر النسخ");
+}
+function addCp(btn, row, urlSel, nameSel){
+  const c = document.createElement("button");
+  c.type = "button"; c.className = "cpy"; c.textContent = "نسخ"; c.title = "نسخ السيرفر بإعدادات القص";
+  c.onclick = () => copyServer(row, urlSel, nameSel);
+  btn.after(c);
+  return c;
+}
+/* عند لصق رابط منسوخ بالزرار في أي خانة رابط في الأدمن: يتطبق معاه القص (والاسم لو الخانة فاضية) */
+document.addEventListener("paste", ev => {
+  const el = ev.target;
+  if (!el || !el.matches || !el.matches("#admin input.u, #admin input.su, #admin #bcUrl")) return;
+  let clip = null;
+  try { clip = JSON.parse(localStorage.getItem("sk_srvclip") || "null"); } catch (e) {}
+  if (!clip || !clip.url) return;
+  const txt = ((ev.clipboardData && ev.clipboardData.getData("text")) || "").trim();
+  if (txt !== clip.url) return;
+  ev.preventDefault();
+  el.value = clip.url;
+  el.dispatchEvent(new Event("input", {bubbles: true}));
+  const row = el.closest("#bcBox, .row, .mrow, .nrow");
+  if (row){
+    if (clip.crop) row._crop = JSON.parse(JSON.stringify(clip.crop));
+    const nm = clip.name && row.querySelector(".n, .sn");
+    if (nm && !nm.value.trim()) nm.value = clip.name;
+  }
+  toast(clip.crop ? "تم لصق السيرفر مع إعدادات القص" : "تم لصق الرابط");
+}, true);
+
 /* ===== Firebase ===== */
 /* وضع المعاينة: افتح رابط الموقع وفي آخره #demo لترى بيانات تجريبية دون اتصال بـ Firebase ودون حفظ أي شيء */
 const DEMO = location.hash === "#demo";
@@ -3801,6 +3864,7 @@ function fillBc(){
 }
 $("#bcOn").onchange = () => { SETTINGS.bc = Object.assign({}, SETTINGS.bc, {on: $("#bcOn").checked}); persistSettings(); };
 $("#bcTest").onclick = () => spPreview($("#bcBox"), "#bcUrl", "حفظ البث");
+addCp($("#bcTest"), $("#bcBox"), "#bcUrl");
 $("#bcSave").onclick = () => {
   const b = $("#bcBox"), o = {on: $("#bcOn").checked, url: normUrl($("#bcUrl").value), name: $("#bcName2").value.trim()};
   if (b._crop) o.crop = b._crop;
@@ -3822,6 +3886,7 @@ function fillMulti(){
     r.querySelector(".a").value = m.away || "";
     r.querySelector(".u").value = m.url || "";
     r.querySelector(".tst").onclick = () => { playUrl(r.querySelector(".u").value, $("#atp")); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
+    addCp(r.querySelector(".tst"), r, ".u");
     box.appendChild(r);
   }
 }
@@ -3850,6 +3915,7 @@ function aRow(name, url, crop){
   r.querySelector(".u").value = url || "";
   if (crop && typeof crop === "object") r._crop = crop;
   r.querySelector(".tst").onclick = () => { spPreview(r); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
+  addCp(r.querySelector(".tst"), r, ".u", ".n");
   r.querySelector(".rm").onclick = () => r.remove();
   $("#arows").appendChild(r);
 }
@@ -4408,6 +4474,7 @@ function addNbaRow(g){
   if (g.crop && typeof g.crop === "object") r._crop = g.crop;
   r.querySelector(".soonq").onclick = () => { const n = r.querySelector(".nn"); n.value = n.value ? "" : "المباراة بعد قليل"; };
   r.querySelector(".tst").onclick = () => { spPreview(r, ".u", "حفظ مباريات NBA"); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
+  addCp(r.querySelector(".tst"), r, ".u");
   r.querySelector(".rm").onclick = () => r.remove();
   $("#nrows").appendChild(r);
 }
@@ -4649,6 +4716,7 @@ function addSrcRow(card, x){
   r.querySelector(".su").value = x.url || "";
   if (x.crop && typeof x.crop === "object") r._crop = x.crop;
   r.querySelector(".st2").onclick = () => { spPreview(r, ".su", "حفظ القنوات"); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
+  addCp(r.querySelector(".st2"), r, ".su", ".sn");
   r.querySelector(".d").onclick = () => r.remove();
   card.querySelector(".csrc").appendChild(r);
 }
@@ -5031,6 +5099,7 @@ function addRdSrc(card, x){
   r.querySelector(".sn").value = x.name || "";
   r.querySelector(".su").value = x.url || "";
   r.querySelector(".st2").onclick = () => { stop(); curKill = mountRadio(r.querySelector(".su").value, $("#atp")); $("#atp").scrollIntoView({behavior: "smooth", block: "center"}); };
+  addCp(r.querySelector(".st2"), r, ".su", ".sn");
   r.querySelector(".d").onclick = () => r.remove();
   card.querySelector(".csrc").appendChild(r);
 }
