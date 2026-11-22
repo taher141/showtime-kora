@@ -369,10 +369,13 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 
 /* زر نسخ الرابط بجانب «تجربة» */
 #admin button.cpy{white-space:nowrap}
-#admin .row:has(.cpy){grid-template-columns:84px 1fr auto auto auto}
-#admin .csrc .row:has(.cpy){grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto auto auto}
-#admin #rdRows .row:has(.cpy){grid-template-columns:1fr auto auto auto;grid-template-areas:"su su su su" "sn st cp d"}
-#admin #rdRows .row .cpy{grid-area:cp}
+/* صف السيرفر: خانة الرابط كبيرة وبعرض الصف كله، وتحتها اسم السيرفر (صغير) وأزرار تجربة / نسخ / حذف */
+#admin .row:has(.cpy){grid-template-columns:100px auto auto 1fr auto;grid-template-areas:"u u u u u" "n t c . d";align-items:center}
+#admin .row:has(.cpy)>.u,#admin .row:has(.cpy)>.su{grid-area:u;min-width:0}
+#admin .row:has(.cpy)>.n,#admin .row:has(.cpy)>.sn{grid-area:n;min-width:0;padding:6px 8px;font-size:13px}
+#admin .row:has(.cpy)>.tst,#admin .row:has(.cpy)>.st2{grid-area:t}
+#admin .row:has(.cpy)>.cpy{grid-area:c}
+#admin .row:has(.cpy)>.rm,#admin .row:has(.cpy)>.d{grid-area:d}
 .mrow:has(.cpy){grid-template-columns:1fr 1fr auto auto}
 .mrow:has(.cpy) .u{grid-column:1/3}
 
@@ -404,8 +407,6 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 .rdeq i{display:block;width:8px;height:8px;border-radius:4px;background:linear-gradient(#fbbf24,var(--amb));transition:height .25s}
 .rdeq.on i{animation:rdq 1s ease-in-out infinite}
 .rdeq.on i:nth-child(2){animation-delay:-.7s}.rdeq.on i:nth-child(3){animation-delay:-.4s}.rdeq.on i:nth-child(4){animation-delay:-.9s}.rdeq.on i:nth-child(5){animation-delay:-.2s}.rdeq.on i:nth-child(6){animation-delay:-.6s}.rdeq.on i:nth-child(7){animation-delay:-.1s}
-#admin #rdRows .row{grid-template-columns:1fr auto auto;grid-template-areas:"su su su" "sn st d"}
-#admin #rdRows .row .su{grid-area:su;min-width:0}#admin #rdRows .row .sn{grid-area:sn;min-width:0}#admin #rdRows .row .st2{grid-area:st}#admin #rdRows .row .d{grid-area:d}
 @keyframes rdq{0%,100%{height:8px}50%{height:50px}}
 
 /* ===== قائمة القنوات: تصميم احترافي ===== */
