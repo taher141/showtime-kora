@@ -2545,7 +2545,7 @@ function SmartPlayer(root, o){
       const L = live ? S.L : 0, Rr = live ? S.R : 0, Tp = live ? S.T : 0, Bt = live ? S.B : 0;
       const z = live ? S.z : 1, ox = live ? S.x : 0, oy = live ? S.y : 0, po = (isPage && live) ? S.po : 0;
       if (isPage && el.tagName === "IFRAME"){
-        const want = live ? "no" : "yes";
+        const want = (live || admin) ? "no" : "yes";   /* الأدمن: السكرول جوه الصفحة ممنوع، لأن التحديد المحفوظ بيتحسب من أول الصفحة وبعد الريفرش بترجع لأولها */
         if (el.getAttribute("scrolling") !== want) el.setAttribute("scrolling", want);
       }
       /* الصفحة المقصوصة: الإطار ياخد نسبة أبعاد الفيديو نفسه فيتملّى بدون أشرطة سوداء */
@@ -2661,6 +2661,7 @@ function SmartPlayer(root, o){
     if (S.sb) f.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-presentation");
     f.setAttribute("allow", "autoplay; encrypted-media; picture-in-picture");   /* من غير fullscreen: ملء الشاشة من زرارنا بس عشان الكلام يفضل ظاهر */
     f.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
+    if (admin || hasRegion()) f.setAttribute("scrolling", "no");
     f.src = o.url;
     fx.appendChild(f);
     apply();
@@ -2698,7 +2699,7 @@ function SmartPlayer(root, o){
     if (ok) ok.disabled = !vb;
     if (!t) return;
     if (barNote){ t.textContent = barNote; return; }
-    if (!vb) t.textContent = canCap ? "اضغط ضغطة واحدة على الفيديو ليتحدد تلقائيًا (أو اسحب بالماوس حواليه، أو جرّب «كشف تلقائي»)" : "اضغط ضغطة واحدة على الفيديو وهيتحدد تلقائيًا، وبعدها اضبطه بالنقط. السكرول بإصبعك عادي.";
+    if (!vb) t.textContent = canCap ? "اضغط ضغطة واحدة على الفيديو ليتحدد تلقائيًا (أو اسحب بالماوس حواليه، أو جرّب «كشف تلقائي»). لو الفيديو أسفل الصفحة ومش ظاهر كبّر «طول الصفحة المعروضة» من الأدوات" : "اضغط ضغطة واحدة على الفيديو وهيتحدد تلقائيًا، وبعدها اضبطه بالنقط. لو الفيديو أسفل الصفحة ومش ظاهر كبّر «طول الصفحة المعروضة» من الأدوات.";
     else t.textContent = "🟢 «ابدأ من هنا» أعلى اليسار · 🔴 «انتهي هنا» أسفل اليمين — اسحب النقط للضبط، ✥ للتحريك. الحجم: " + Math.round(vb.r - vb.l) + "×" + Math.round(vb.b - vb.t);
   }
   function barSay(t){ barNote = t || ""; barText(); }
