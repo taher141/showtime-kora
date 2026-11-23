@@ -221,7 +221,8 @@ main{max-width:960px;margin:0 auto;padding:16px}
 #wt{margin-bottom:12px}
 #player{background:#111;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#a3a3a3;text-align:center;padding:8px}
 #player video,#player iframe{width:100%;height:100%;border:0;background:#000}
-#srv{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px}
+#srv{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+#mq{margin:0 0 10px}
 #srv button{border:1px solid var(--bd);background:var(--card);color:var(--text);padding:8px 18px;border-radius:8px;font:inherit;cursor:pointer}
 #srv button.on{background:var(--team);border-color:var(--team);color:var(--onteam);font-weight:700}
 .tabs2{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
@@ -370,10 +371,17 @@ footer{color:var(--muted);font-size:13px;padding:22px 16px;border-top:1px solid 
 /* زر نسخ الرابط بجانب «تجربة» */
 #admin button.cpy,#admin button.pst{white-space:nowrap}
 /* صف السيرفر: خانة الرابط كبيرة وبعرض الصف كله، وتحتها اسم السيرفر (صغير) وأزرار تجربة / نسخ / حذف */
-#admin #arows,#admin .csrc{counter-reset:srv}
+#admin #arows,#admin .csrc,#admin #bcQRows{counter-reset:srv}
+/* كارت السيرفر في المباريات: رقم + اسم السيرفر + حذف، وتحته 3 صفوف جودات */
+#admin .srvc{border:1px solid var(--bd);border-radius:12px;padding:10px;margin:0 0 12px;background:var(--card)}
+#admin .srvc .sh{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+#admin .srvc .sno::before{counter-increment:srv;content:counter(srv);display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:50%;background:var(--team);color:var(--onteam);font-weight:800;font-size:14px}
+#admin .srvc .qrow{margin:0 0 8px;padding:0;border:0;background:transparent}
 #admin .row:has(.cpy){grid-template-columns:100px auto auto auto 1fr auto;grid-template-areas:"num num num num num num" "u u u u u u" "n t c p . d";align-items:center}
 #admin .row:has(.cpy)::before{counter-increment:srv;content:counter(srv);grid-area:num;text-align:center;font-weight:700;font-size:15px;color:var(--text);line-height:1.2}
 #admin .row:has(.cpy)>.pst{grid-area:p}
+#admin .qrow:has(.cpy){grid-template-columns:100px auto auto auto 1fr;grid-template-areas:"u u u u u" "n t c p ."}
+#admin .qrow:has(.cpy)::before{content:none}
 #admin .row:has(.cpy)>.u,#admin .row:has(.cpy)>.su{grid-area:u;min-width:0}
 #admin .row:has(.cpy)>.n,#admin .row:has(.cpy)>.sn{grid-area:n;min-width:0;padding:6px 8px;font-size:13px}
 #admin .row:has(.cpy)>.tst,#admin .row:has(.cpy)>.st2{grid-area:t}
@@ -797,6 +805,18 @@ body:has(#home:not(.hide)) header{border-bottom:0}
 .bcnote{display:inline-flex;align-items:center;gap:7px;margin:10px 0;padding:6px 12px;border-radius:12px;border:1px solid var(--team);background:var(--card);color:var(--text);font-size:12.5px;font-weight:600}
 .bcnote svg{width:15px;height:15px;display:block;color:var(--team)}
 #bcw{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--team);background:#000}
+/* شريط الجودات فوق البث الرئيسي: مربعات متلاصقة في شريط واحد */
+#bcQ,#mq{display:flex;margin:0 0 8px;border:1px solid var(--team);border-radius:14px;overflow:hidden;background:var(--card)}
+#bcQ.hide,#mq.hide{display:none}
+#bcQ button,#mq button{flex:1 1 0;min-width:0;border:0;border-inline-start:1px solid color-mix(in srgb,var(--team) 35%,transparent);background:transparent;color:var(--text);padding:8px 6px;font:inherit;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:background .15s,color .15s}
+#bcQ button:first-child,#mq button:first-child{border-inline-start:0}
+#bcQ button b,#mq button b{font-size:14px;font-weight:800;line-height:1.2;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#bcQ button small,#mq button small{font-size:10.5px;line-height:1.2;opacity:.85;display:flex;align-items:center;gap:4px}
+#bcQ button small::before,#mq button small::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6}
+#bcQ button.ok small::before,#mq button.ok small::before{background:#22c55e;opacity:1}
+#bcQ button.bad small::before,#mq button.bad small::before{background:#ef4444;opacity:1}
+#bcQ button.on,#mq button.on{background:var(--team);color:var(--onteam)}
+#bcQ button.empty,#mq button.empty{opacity:.4;cursor:default}
 #bcSnd{position:absolute;top:10px;inset-inline-end:10px;z-index:20;display:flex;align-items:center;gap:7px;padding:8px 14px;border:0;border-radius:999px;background:rgba(0,0,0,.65);color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px)}
 #bcSnd svg{width:20px;height:20px;display:block}
 #bcSnd{display:none!important}  /* زر الصوت العلوي اتلغى: الصوت من أزرار المشغل نفسها */
@@ -927,7 +947,7 @@ a.ln-card:active{transform:scale(.99)}
   #bc>.bcnote{grid-column:1;grid-row:2;display:flex;width:fit-content;justify-self:start;margin:0 0 10px}
   #bc>#bcReload{grid-column:2;grid-row:1/span 2;align-self:center;display:flex;width:fit-content;margin:0 0 10px;padding:6px 18px;border-radius:12px;font-size:13px}
   #bcReload svg{width:15px;height:15px}
-  #bc>#bcw,#bc>#spBarBc,#bc>#spToolsBc{grid-column:1/-1}
+  #bc>#bcw,#bc>#bcQ,#bc>#spBarBc,#bc>#spToolsBc{grid-column:1/-1}
 }
 /* ===== لاب فقط (1024px+): كروت المباريات داخل الأدمن (تحديث المباريات + قسم المباريات) بعرض الصفحة ===== */
 @media(min-width:1024px){
@@ -982,6 +1002,7 @@ a.ln-card:active{transform:scale(.99)}
     <div class="bch"><h2 id="bcName" class="hide"></h2><span class="bclive"><i></i>بث مباشر</span></div>
     <button type="button" id="bcReload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg><span>إعادة تحميل البث</span></button>
     <div class="bcnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>مشاهدة بدون إعلانات مزعجة</span></div>
+    <div id="bcQ" class="hide"></div>
     <div id="bcw"><div id="bcp"></div><button type="button" id="bcSnd" class="hide"></button></div>
     <div id="spBarBc" class="spbar hide"></div><div id="spToolsBc" class="sptools hide"></div>
   </div>
@@ -1024,9 +1045,10 @@ a.ln-card:active{transform:scale(.99)}
   <section id="watch" class="hide">
     <button class="back" id="back">→ رجوع</button>
     <div id="wt" class="m"></div>
-    <div id="srv"></div>
+    <div id="mq" class="hide"></div>
     <div id="spBar" class="spbar hide"></div>
     <div id="player"></div>
+    <div id="srv"></div>
     <div id="spTools" class="sptools hide"></div>
     <div id="dtl"></div>
   </section>
@@ -1135,10 +1157,10 @@ a.ln-card:active{transform:scale(.99)}
       <p class="note" style="margin-top:0">لو شلت العلامة يختفي البث من الموقع بالكامل، والرابط والقص بيفضلوا محفوظين لحد ما ترجّعه.</p>
       <label>اسم القناة (يظهر فوق البث)</label>
       <input id="bcName2" placeholder="مثال: beIN Sports 1">
-      <label>رابط البث (أي نوع: m3u8 / mpd / mp4 / ts / flv / embed / iframe / WebRTC / صفحة / يوتيوب)</label>
-      <input id="bcUrl" class="l" placeholder="https://...">
-      <div class="bar"><button type="button" id="bcTest">تجربة</button><button class="p" id="bcSave">حفظ البث</button></div>
-      <p class="note">اضغط «تجربة» وهيظهر الفيديو في مربع «تجربة الرابط» تحته بأدوات القص، عدّل ثم اضغط «حفظ البث».</p>
+      <label>جودات البث (حتى 3 — أي نوع رابط: m3u8 / mpd / mp4 / ts / flv / embed / iframe / WebRTC / صفحة / يوتيوب)</label>
+      <div id="bcQRows"></div>
+      <div class="bar"><button class="p" id="bcSave">حفظ البث</button></div>
+      <p class="note">اكتب اسم كل جودة (مثال: FHD) وحط رابطها، والموقع بيعرض الجودات في شريط فوق البث. لو الجودة الشغالة وقفت بيتحول تلقائيًا للجودة اللي بعدها. اضغط «تجربة» بجانب أي جودة وهيظهر الفيديو في «تجربة الرابط» تحته بأدوات القص (القص بيتحفظ لكل جودة)، وبعدها «حفظ البث».</p>
     </div>
     <div class="box">
       <h2>تجربة الرابط</h2>
@@ -1496,8 +1518,84 @@ var routeH = "", routeFix = false;
 var SP_SET_LIST = [];   /* مشغّلات صفحات الويب بتستنى وصول الإعدادات (القص الثابت) بعد الريفرش */
 function routeOpen(){ if (routeH === "#tv") openTv(); else if (routeH === "#radio") openRadio(); else if (routeH === "#nba") openNba(); else if (routeH === "#multi") openMulti(); }
 var bcSig = "", bcKill = null, bcRetry = 0, bcRetryT = null, bcLast = "";
+var bcSel = -1, bcBad = [0, 0, 0], bcOk = false, bcStuckT = null;
 function bcFail(){ if (bcRetry >= 3) return; bcRetry++; clearTimeout(bcRetryT); bcRetryT = setTimeout(() => { bcSig = ""; try { bcSync(); } catch (e) {} }, 3000 * bcRetry); }
-function bcKey(){ const c = SETTINGS.bc || {}; const u = c.on ? normUrl(c.url || "") : ""; return u ? u + "|" + JSON.stringify(c.crop || null) : ""; }
+/* جودات البث الرئيسي (حتى 3): بيانات قديمة (رابط واحد) بتتحول لأول جودة */
+function qsOf(c){
+  c = c || {};
+  let qs = Array.isArray(c.qs) ? c.qs.slice(0, 3) : [{url: c.url, crop: c.crop}];
+  while (qs.length < 3) qs.push({});
+  return qs.map(q => { q = q || {}; const o = {n: String(q.n || "").trim(), url: normUrl(q.url || "")}; if (q.crop) o.crop = q.crop; return o; });
+}
+function bcQs(){ return qsOf(SETTINGS.bc); }
+function bcKey(){ const c = SETTINGS.bc || {}; if (!c.on) return ""; const qs = bcQs(); return qs.some(q => q.url) ? JSON.stringify(qs) : ""; }
+function bcLbl(q, i){ return q.n || ("جودة " + (i + 1)); }
+function bcQRender(){
+  const el = $("#bcQ"); if (!el) return;
+  const qs = bcQs();
+  if (!bcSig || qs.filter(q => q.url).length < 2){ el.classList.add("hide"); el.innerHTML = ""; return; }
+  el.classList.remove("hide"); el.innerHTML = "";
+  qs.forEach((q, i) => {
+    const has = !!q.url, on = i === bcSel, bad = has && bcBad[i];
+    const b = document.createElement("button"); b.type = "button"; b.dataset.i = i;
+    const t = document.createElement("b"); t.textContent = bcLbl(q, i);
+    const sm = document.createElement("small");
+    let st = "مضاف";
+    if (!has) st = "فاضي";
+    else if (bad) st = "لا يعمل";
+    else if (on){ const s0 = streamKind(q.url); st = bcOk ? "متصل" : (s0 && s0.k === "iframe" ? "مضاف" : "جارٍ التشغيل"); }
+    sm.textContent = st;
+    b.append(t, sm);
+    b.className = [on ? "on" : "", has ? "" : "empty", bad ? "bad" : "", on && bcOk && !bad ? "ok" : ""].filter(Boolean).join(" ");
+    if (!has) b.disabled = true;
+    el.appendChild(b);
+  });
+}
+/* لو الجودة الشغالة وقفت أو فشلت: نحوّل تلقائيًا للجودة اللي بعدها (لو فيها رابط) */
+function bcQFail(i, stall){
+  if (i !== bcSel) return;
+  const qs = bcQs();
+  bcBad[i] = 1; bcOk = false;
+  for (let j = i + 1; j < 3; j++){
+    if (qs[j].url && !bcBad[j]){ toast("تم التحويل لجودة " + bcLbl(qs[j], j), 3500); bcPlay(j); return; }
+  }
+  bcQRender();
+  if (!stall) bcFail();
+}
+/* مراقبة: لو الفيديو واقف حوالي 26 ثانية يتحول للجودة اللي بعدها */
+function bcWatch(){
+  clearInterval(bcStuckT);
+  let last = -1, n = 0;
+  bcStuckT = setInterval(() => {
+    const v = document.querySelector("#bcp video");
+    if (!v || document.hidden || v.ended){ n = 0; return; }
+    const t = v.currentTime, stuck = t === last && (v.readyState < 3 || !v.paused);
+    n = stuck ? n + 2 : 0; last = t;
+    if (n >= 26){ n = 0; bcQFail(bcSel, true); }
+  }, 2000);
+}
+function bcPlay(i){
+  const qs = bcQs(), q = qs[i], p = $("#bcp"); if (!q || !q.url || !p) return;
+  bcSel = i; bcOk = false;
+  if (bcKill){ try { bcKill(); } catch (e) {} bcKill = null; }
+  p.innerHTML = ""; p.className = ""; bcSndSync();
+  ["#spBarBc", "#spToolsBc"].forEach(x => { const e = $(x); e.innerHTML = ""; e.classList.add("hide"); });
+  bcQRender();
+  const onFail = () => bcQFail(i);
+  bcKill = spRun(p, q.url, {
+    crop: q.crop, admin: isAdmin(), bar: $("#spBarBc"), tools: $("#spToolsBc"), muted: true, onFail,
+    onSave: crop => {
+      const n = Object.assign({}, SETTINGS.bc);
+      const nq = bcQs().map(x => { const o = {n: x.n, url: x.url}; if (x.crop) o.crop = x.crop; return o; });
+      if (crop) nq[i].crop = crop; else delete nq[i].crop;
+      n.qs = nq; n.url = nq[0].url;
+      if (nq[0].crop) n.crop = nq[0].crop; else delete n.crop;
+      SETTINGS.bc = n; bcSig = bcKey(); persistSettings();
+      return true;
+    }
+  }) || mountStream(q.url, p, {muted: true, onFail});
+  bcWatch();
+}
 function bcSync(){
   const sec = $("#bc"), p = $("#bcp"); if (!sec || !p) return;
   const homeOn = !$("#home").classList.contains("hide") && $("#admin").classList.contains("hide");
@@ -1506,22 +1604,17 @@ function bcSync(){
   const nmEl = $("#bcName"), nm = ((SETTINGS.bc || {}).name || "").trim();
   if (nmEl){ nmEl.textContent = nm; nmEl.classList.toggle("hide", !nm); }
   if (sig === bcSig) return;
-  if (sig !== bcLast){ bcLast = sig; bcRetry = 0; clearTimeout(bcRetryT); }
+  if (sig !== bcLast){ bcLast = sig; bcRetry = 0; clearTimeout(bcRetryT); bcBad = [0, 0, 0]; bcSel = -1; }
   bcSig = sig;
   if (bcKill){ try { bcKill(); } catch (e) {} bcKill = null; }
   p.innerHTML = ""; p.className = ""; bcSndSync();
   ["#spBarBc", "#spToolsBc"].forEach(q => { const e = $(q); e.innerHTML = ""; e.classList.add("hide"); });
-  if (!sig) return;
-  const c = SETTINGS.bc;
-  bcKill = spRun(p, c.url, {
-    crop: c.crop, admin: isAdmin(), bar: $("#spBarBc"), tools: $("#spToolsBc"), muted: true, onFail: bcFail,
-    onSave: crop => {
-      const n = Object.assign({}, SETTINGS.bc);
-      if (crop) n.crop = crop; else delete n.crop;
-      SETTINGS.bc = n; bcSig = bcKey(); persistSettings();
-      return true;
-    }
-  }) || mountStream(c.url, p, {muted: true, onFail: bcFail});
+  if (!sig){ clearInterval(bcStuckT); bcQRender(); return; }
+  const qs = bcQs();
+  let i = (bcSel >= 0 && qs[bcSel].url) ? bcSel : -1;
+  if (i < 0){ try { const sv = parseInt(localStorage.getItem("sk_bcq"), 10); if (sv >= 0 && sv < 3 && qs[sv].url) i = sv; } catch (e) {} }
+  if (i < 0) i = qs.findIndex(q => q.url);
+  bcPlay(i);
 }
 /* زر الصوت: البث بيبدأ بدون صوت والزائر يشغّله من الزر */
 var BC_ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m22 9-6 6M16 9l6 6"/></svg>';
@@ -1539,7 +1632,7 @@ function bcHook(){
   if (v && !v._bcH){
     v._bcH = 1;
     v.addEventListener("volumechange", bcSndSync);
-    v.addEventListener("playing", () => { bcRetry = 0; });
+    v.addEventListener("playing", () => { bcRetry = 0; if (bcSel >= 0){ bcBad[bcSel] = 0; bcOk = true; bcQRender(); } });
     const go = () => { if (v.paused){ try { const r = v.play(); if (r && r.catch) r.catch(() => {}); } catch (e) {} } };
     v.addEventListener("loadedmetadata", go); v.addEventListener("canplay", go);
     go();
@@ -1560,6 +1653,13 @@ try {
     if (!v.muted && v.volume === 0) v.volume = 1;
     try { const r = v.play(); if (r && r.catch) r.catch(() => {}); } catch (e) {}
     bcSndSync();
+  };
+  $("#bcQ").onclick = e => {
+    const b = e.target.closest("button[data-i]"); if (!b || b.disabled) return;
+    const i = +b.dataset.i;
+    bcBad[i] = 0; bcRetry = 0; clearTimeout(bcRetryT);
+    try { localStorage.setItem("sk_bcq", String(i)); } catch (e2) {}
+    bcPlay(i);
   };
   $("#bcReload").onclick = () => {
     const b = $("#bcReload"); b.classList.remove("spin"); void b.offsetWidth; b.classList.add("spin");
@@ -2056,6 +2156,7 @@ function openMatch(i){
   renderInfo(m);
   const srv = $("#srv");
   srv.innerHTML = "";
+  mq.m = null; mq.sel = -1; { const q0 = $("#mq"); if (q0){ q0.innerHTML = ""; q0.classList.add("hide"); } }
   (m.sources || []).forEach((s, k) => {
     const b = document.createElement("button");
     b.textContent = s.name || ("سيرفر " + (k + 1));
@@ -2121,7 +2222,7 @@ document.querySelectorAll("#menu button[data-m]").forEach(b => b.onclick = () =>
 
 /* ===== مشغّل البث الشامل: m3u8 / mpd / mp4 / ts / flv / embed / iframe / WebRTC(WHEP) ===== */
 let curKill = null;
-function stop(){ if (curKill){ try { curKill(); } catch (e) {} curKill = null; } }
+function stop(){ if (curKill){ try { curKill(); } catch (e) {} curKill = null; } try { clearInterval(mq.T); } catch (e) {} }
 
 /* لو الرابط بلا امتداد واضح اكتب نوعه قبله، مثال: hls:https://site/live/1  أو  ts:https://site/live/1 */
 const STREAM_PREFIX = /^(hls|dash|mpd|mp4|ts|flv|iframe|embed|webrtc|whep):(?!\/\/)/i;
@@ -3630,36 +3731,102 @@ function nbaPlay(x, url, p, card){
   spRestore(() => { if (curKill === kill && !p.classList.contains("hide")) nbaPlay(x, url, p, card); });
 }
 
-/* يشغّل سيرفر مباراة بالمشغّل الذكي (أو بالقديم لو النوع غير مدعوم) */
-function spPlay(m, k, p){
+/* جودات سيرفر المباراة: شريط فوق المشغّل، ولو الجودة الشغالة وقفت بيتحول تلقائيًا للي بعدها */
+var mq = {m: null, k: 0, sel: -1, bad: [0, 0, 0], ok: false, T: null};
+function mqRender(){
+  const el = $("#mq"); if (!el) return;
+  const src = mq.m && (mq.m.sources || [])[mq.k], qs = src ? qsOf(src) : [];
+  if (!src || qs.filter(q => q.url).length < 2){ el.classList.add("hide"); el.innerHTML = ""; return; }
+  el.classList.remove("hide"); el.innerHTML = "";
+  qs.forEach((q, i) => {
+    const has = !!q.url, on = i === mq.sel, bad = has && mq.bad[i];
+    const b = document.createElement("button"); b.type = "button";
+    const t = document.createElement("b"); t.textContent = bcLbl(q, i);
+    const sm = document.createElement("small");
+    let st = "مضاف";
+    if (!has) st = "فاضي";
+    else if (bad) st = "لا يعمل";
+    else if (on){ const s0 = streamKind(q.url); st = mq.ok ? "متصل" : (s0 && s0.k === "iframe" ? "مضاف" : "جارٍ التشغيل"); }
+    sm.textContent = st;
+    b.append(t, sm);
+    b.className = [on ? "on" : "", has ? "" : "empty", bad ? "bad" : "", on && mq.ok && !bad ? "ok" : ""].filter(Boolean).join(" ");
+    if (!has) b.disabled = true;
+    b.onclick = () => {
+      if (!has) return;
+      mq.bad[i] = 0;
+      try { localStorage.setItem("sk_mq", String(i)); } catch (e) {}
+      spPlay(mq.m, mq.k, $("#player"), i);
+    };
+    el.appendChild(b);
+  });
+}
+function mqFail(i){
+  if (i !== mq.sel || !mq.m) return;
+  const qs = qsOf((mq.m.sources || [])[mq.k] || {});
+  mq.bad[i] = 1; mq.ok = false;
+  for (let j = i + 1; j < 3; j++){
+    if (qs[j].url && !mq.bad[j]){ toast("تم التحويل لجودة " + bcLbl(qs[j], j), 3500); spPlay(mq.m, mq.k, $("#player"), j); return; }
+  }
+  mqRender();
+}
+function mqWatch(){
+  clearInterval(mq.T);
+  let last = -1, n = 0;
+  mq.T = setInterval(() => {
+    const v = document.querySelector("#player video");
+    if (!v || document.hidden || v.ended){ n = 0; return; }
+    const t = v.currentTime;
+    if (!mq.ok && !v.paused && v.readyState >= 3 && t > last && last >= 0){ mq.ok = true; mqRender(); }
+    const stuck = t === last && (v.readyState < 3 || !v.paused);
+    n = stuck ? n + 1 : 0; last = t;
+    if (n >= 26){ n = 0; mqFail(mq.sel); }
+  }, 1000);
+}
+/* يشغّل سيرفر مباراة بالمشغّل الذكي (أو بالقديم لو النوع غير مدعوم). qi = رقم الجودة (فاضي = الجودة المحفوظة أو أول جودة) */
+function spPlay(m, k, p, qi){
   spTok++;
   stop();
-  const src = (m.sources || [])[k] || {};
-  const url = normUrl(src.url);
-  if (!url){ curKill = mountStream("", p); return; }
+  clearInterval(mq.T);
+  const src = (m.sources || [])[k] || {}, qs = qsOf(src);
+  if (qi == null){
+    mq.bad = [0, 0, 0];
+    try { const sv = parseInt(localStorage.getItem("sk_mq"), 10); if (sv >= 0 && sv < 3 && qs[sv].url) qi = sv; } catch (e) {}
+    if (qi == null) qi = qs.findIndex(q => q.url);
+  }
+  mq.m = m; mq.k = k; mq.ok = false; mq.sel = qi;
+  if (qi < 0 || !qs[qi] || !qs[qi].url){ mq.sel = -1; mqRender(); curKill = mountStream("", p); return; }
+  mqRender();
+  const q = qs[qi], url = normUrl(q.url);
   const s = streamKind(url);
-  if (s.k !== "hls" && s.k !== "video" && s.k !== "iframe"){ curKill = mountStream(src.url, p); return; }
+  const onFail = () => mqFail(qi);
+  if (s.k !== "hls" && s.k !== "video" && s.k !== "iframe"){ curKill = mountStream(q.url, p, {onFail}); mqWatch(); return; }
   const inst = new SmartPlayer(p, {
     kind: s.k === "iframe" ? "page" : s.k,
     url: s.k === "iframe" ? toEmbed(s.u) : s.u,
-    crop: src.crop,
+    crop: q.crop,
     admin: isAdmin(),
+    onFail,
     onSave: crop => {
       const cur = spFindMatch(m), sr = cur && (cur.sources || [])[k];
       if (!sr){ toast("تعذر الحفظ: المباراة غير موجودة"); return false; }
-      if (crop) sr.crop = crop; else delete sr.crop;
+      const nq = qsOf(sr).map(x => { const o = {n: x.n, url: x.url}; if (x.crop) o.crop = x.crop; return o; });
+      if (crop) nq[qi].crop = crop; else delete nq[qi].crop;
+      sr.qs = nq;
+      const f = nq.find(x => x.url) || nq[0];
+      sr.url = f.url; if (f.crop) sr.crop = f.crop; else delete sr.crop;
       aSave();
       return true;
     }
   });
   curKill = () => inst.destroy();
+  mqWatch();
   /* الأدمن اللي دخل قبل كده: استعادة جلسته تلقائيًا (بدون فتح لوحة الأدمن) ثم إعادة التشغيل بالأدوات */
   if (fbOn && !fbUser && spHasSession()){
     const tok = ++spTok, mine = curKill;
     ensureAuth().then(a => {
       const off = a.onAuthStateChanged(u => {
         try { off(); } catch (e) {}
-        if (u && tok === spTok && curKill === mine) spPlay(m, k, p);
+        if (u && tok === spTok && curKill === mine) spPlay(m, k, p, qi);
       });
     }).catch(() => {});
   }
@@ -3961,17 +4128,33 @@ $("#nwsave").onclick = () => {
   SETTINGS.news = $("#snews").value.split(/\n+/).map(x => x.trim()).filter(Boolean).join("\n");
   persistSettings();
 };
+function bcQRow(q, k){
+  const r = document.createElement("div");
+  r.className = "row";
+  r.innerHTML = '<input class="n" placeholder="اسم الجودة (مثال: FHD)"><input class="u l" placeholder="https://..."><button type="button" class="tst">تجربة</button>';
+  r.querySelector(".n").value = q.n || "";
+  r.querySelector(".u").value = q.url || "";
+  if (k === 0) r.querySelector(".u").id = "bcUrl";
+  if (q.crop) r._crop = q.crop;
+  r.querySelector(".tst").onclick = () => { spPreview(r, ".u", "حفظ البث"); $("#atp").scrollIntoView({behavior: "smooth", block: "center"}); };
+  addCp(r.querySelector(".tst"), r, ".u", ".n");
+  return r;
+}
 function fillBc(){
-  const c = SETTINGS.bc || {}, b = $("#bcBox");
-  $("#bcOn").checked = !!c.on; $("#bcUrl").value = c.url || ""; $("#bcName2").value = c.name || "";
-  if (c.crop) b._crop = c.crop; else delete b._crop;
+  const c = SETTINGS.bc || {};
+  $("#bcOn").checked = !!c.on; $("#bcName2").value = c.name || "";
+  const box = $("#bcQRows"); box.innerHTML = "";
+  bcQs().forEach((q, k) => box.appendChild(bcQRow(q, k)));
 }
 $("#bcOn").onchange = () => { SETTINGS.bc = Object.assign({}, SETTINGS.bc, {on: $("#bcOn").checked}); persistSettings(); };
-$("#bcTest").onclick = () => spPreview($("#bcBox"), "#bcUrl", "حفظ البث");
-addCp($("#bcTest"), $("#bcBox"), "#bcUrl");
 $("#bcSave").onclick = () => {
-  const b = $("#bcBox"), o = {on: $("#bcOn").checked, url: normUrl($("#bcUrl").value), name: $("#bcName2").value.trim()};
-  if (b._crop) o.crop = b._crop;
+  const qs = [...$("#bcQRows").children].map(r => {
+    const o = {n: r.querySelector(".n").value.trim(), url: normUrl(r.querySelector(".u").value)};
+    if (r._crop) o.crop = r._crop;
+    return o;
+  });
+  const o = {on: $("#bcOn").checked, name: $("#bcName2").value.trim(), qs, url: qs[0] ? qs[0].url : ""};
+  if (qs[0] && qs[0].crop) o.crop = qs[0].crop;
   SETTINGS.bc = o; persistSettings();
 };
 $("#msave").onclick = () => {
@@ -4011,17 +4194,25 @@ function toLocalInput(iso){
   return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()) + "T" + z(d.getHours()) + ":" + z(d.getMinutes());
 }
 
-function aRow(name, url, crop){
-  const r = document.createElement("div");
-  r.className = "row";
-  r.innerHTML = '<input class="n" placeholder="الاسم"><input class="u l" placeholder="رابط البث: m3u8 / mpd / mp4 / ts / embed / iframe / WebRTC"><button class="tst">تجربة</button><button class="d rm">✕</button>';
-  r.querySelector(".n").value = name || "";
-  r.querySelector(".u").value = url || "";
-  if (crop && typeof crop === "object") r._crop = crop;
-  r.querySelector(".tst").onclick = () => { spPreview(r); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
-  addCp(r.querySelector(".tst"), r, ".u", ".n");
-  r.querySelector(".rm").onclick = () => r.remove();
-  $("#arows").appendChild(r);
+function aRow(src){
+  src = src || {};
+  const card = document.createElement("div");
+  card.className = "srvc";
+  card.innerHTML = '<div class="sh"><span class="sno"></span><input class="sn" placeholder="اسم السيرفر"><button type="button" class="d rm">✕</button></div>';
+  card.querySelector(".sn").value = src.name || "";
+  qsOf(src).forEach(q => {
+    const r = document.createElement("div");
+    r.className = "row qrow";
+    r.innerHTML = '<input class="n" placeholder="اسم الجودة (مثال: FHD)"><input class="u l" placeholder="رابط البث: m3u8 / mpd / mp4 / ts / embed / iframe / WebRTC"><button type="button" class="tst">تجربة</button>';
+    r.querySelector(".n").value = q.n || "";
+    r.querySelector(".u").value = q.url || "";
+    if (q.crop && typeof q.crop === "object") r._crop = q.crop;
+    r.querySelector(".tst").onclick = () => { spPreview(r); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
+    addCp(r.querySelector(".tst"), r, ".u", ".n");
+    card.appendChild(r);
+  });
+  card.querySelector(".rm").onclick = () => card.remove();
+  $("#arows").appendChild(card);
 }
 
 function aReset(){
@@ -4071,9 +4262,18 @@ $("#asave").onclick = () => {
     sources: []
   };
   if (!m.home || !m.away || !m.time){ toast("اكتب اسمي الفريقين وحدّد الموعد"); return; }
-  document.querySelectorAll("#arows .row").forEach((r, i) => {
-    const url = normUrl(r.querySelector(".u").value);
-    if (url){ const sv = {name: r.querySelector(".n").value.trim() || "سيرفر " + (i + 1), url}; if (r._crop) sv.crop = r._crop; m.sources.push(sv); }
+  document.querySelectorAll("#arows .srvc").forEach((c, i) => {
+    const qs = [...c.querySelectorAll(".qrow")].map(r => {
+      const o = {n: r.querySelector(".n").value.trim(), url: normUrl(r.querySelector(".u").value)};
+      if (r._crop) o.crop = r._crop;
+      return o;
+    });
+    while (qs.length > 1 && !qs[qs.length - 1].url && !qs[qs.length - 1].n) qs.pop();
+    const f = qs.find(q => q.url);
+    if (!f) return;
+    const sv = {name: c.querySelector(".sn").value.trim() || "سيرفر " + (i + 1), url: f.url, qs};
+    if (f.crop) sv.crop = f.crop;
+    m.sources.push(sv);
   });
   const inf = infoFromForm(); if (inf) m.info = inf;
   if (editing >= 0){ const o = MATCHES[editing] || {}; ["fid","hid","aid"].forEach(k => { if (o[k] != null) m[k] = o[k]; }); MATCHES[editing] = m; } else MATCHES.push(m);
@@ -4151,7 +4351,7 @@ function aList(){
       $("#aleague").value = m.league || ""; $("#achan").value = m.channel || ""; $("#acomm").value = m.commentator || ""; $("#atime").value = toLocalInput(m.time);
       $("#asch").value = (m.scoreHome ?? ""); $("#asca").value = (m.scoreAway ?? ""); $("#aended").checked = !!m.ended; $("#anote").value = m.note || ""; infoToForm(m.info);
       $("#arows").innerHTML = "";
-      (m.sources && m.sources.length ? m.sources : [{}]).forEach(x => aRow(x.name, x.url, x.crop));
+      (m.sources && m.sources.length ? m.sources : [{}]).forEach(x => aRow(x));
       $("#aft").textContent = "تعديل مباراة";
       $("#acancel").style.display = "";
       adminTab("addm");
@@ -5829,7 +6029,7 @@ let adminTab = function(){};
     let t = "set";
     if (has(k, "#aft")) t = "addm";
     else if (has(k, "#stPaste")) t = "st";
-    else if (has(k, "#bcUrl")) t = "bc";
+    else if (has(k, "#bcQRows")) t = "bc";
     else if (has(k, "#atp")) t = "addm ch nba multi radio bc";
     else if (has(k, "#chRows")) t = "ch";
     else if (has(k, "#rdRows")) t = "radio";
