@@ -685,7 +685,7 @@ html:has(body.adm){scroll-padding-top:calc(var(--atabsH,0px) + 60px)}
 :is(#player,#atp,#tvp,#bcp,.np).sp .spmsg{position:absolute;inset:0;z-index:6;display:none;align-items:center;justify-content:center;text-align:center;padding:16px;background:rgba(0,0,0,.88);color:#d4d4d4;font-size:14px;line-height:1.7}
 :is(#player,#atp,#tvp,#bcp,.np).sp .spful{position:absolute;bottom:10px;inset-inline-end:auto;left:auto;right:10px;z-index:5;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;opacity:.7;cursor:pointer;transition:opacity .15s}
 :is(#player,#atp,#tvp,#bcp,.np).sp .spful:hover{opacity:1}
-:is(#player,#atp,#tvp,#bcp,.np).sp .spview{position:absolute;left:0;top:0;z-index:5;height:32px;padding:0 12px 0 9px;display:flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04)),rgba(18,18,22,.55);-webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);box-shadow:0 4px 14px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.2);color:#fff;font:inherit;font-size:12.5px;font-weight:800;line-height:1;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;opacity:.95;transition:opacity .35s,transform .15s}
+:is(#player,#atp,#tvp,#bcp,.np).sp .spview{position:absolute;left:0;top:0;z-index:30;height:32px;padding:0 12px 0 9px;display:flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04)),rgba(18,18,22,.72);text-shadow:0 1px 3px rgba(0,0,0,.8);-webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);box-shadow:0 4px 14px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.2);color:#fff;font:inherit;font-size:12.5px;font-weight:800;line-height:1;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;opacity:.95;transition:opacity .35s,transform .15s}
 :is(#player,#atp,#tvp,#bcp,.np).sp .spview.dim{opacity:.4}
 :is(#player,#atp,#tvp,#bcp,.np).sp .spview:active{transform:scale(.95);cursor:grabbing}
 :is(#player,#atp,#tvp,#bcp,.np).sp .spview svg{color:var(--team);width:16px;height:16px;flex:none;filter:drop-shadow(0 0 4px color-mix(in srgb,var(--team) 60%,transparent))}
@@ -2490,7 +2490,7 @@ function SmartPlayer(root, o){
   let V = null;                             /* اختيار الزائر لشكل الشاشة: fit=أصلي، fill=تكبير، وفاضي=ممتد (محفوظ على جهازه فقط) */
   let vpos = {x: 0, y: 0}, dimT = null;     /* مكان زرار الشكل (نسبة من مساحة المشغّل) والزائر يقدر يسحبه */
   try { const pv = JSON.parse(localStorage.getItem("sp_view_pos") || "null"); if (pv && isFinite(pv.x) && isFinite(pv.y)) vpos = {x: Math.min(1, Math.max(0, +pv.x)), y: Math.min(1, Math.max(0, +pv.y))}; } catch (e) {}
-  if (!admin){ try { const sv = localStorage.getItem("sp_view"); if (sv === "fit" || sv === "fill") V = sv; } catch (e) {} }
+  try { const sv = localStorage.getItem("sp_view"); if (sv === "fit" || sv === "fill") V = sv; } catch (e) {}
   let mode = o.kind;                       /* page | hls | video */
   /* قص ثابت لكل موقع (iframe): بيتحفظ باسم دومين الرابط ويتطبق على كل روابط نفس الموقع بس */
   const HK = mode === "page" ? spHost(o.url) : "";
@@ -2517,7 +2517,7 @@ function SmartPlayer(root, o){
     '<div class="spov"></div><div class="splgs"></div>' +
     '<div class="spsel"><div class="spbox"><b class="spl1">▶ ابدأ من هنا</b><b class="spl2">انتهي هنا ◀</b><i data-h="tl"></i><i data-h="tr"></i><i data-h="bl"></i><i data-h="br"></i><i data-h="tm"></i><i data-h="bm"></i><i data-h="ml"></i><i data-h="mr"></i><i data-h="mv">✥</i></div></div>' +
     '<button type="button" class="spful" title="ملء الشاشة" aria-label="ملء الشاشة">' + SP_FS_ICON + '</button>' +
-    (admin ? '' : '<button type="button" class="spview" aria-label="شكل الصورة">' + SP_FS_ICON + '<span></span></button>') +
+    '<button type="button" class="spview" aria-label="شكل الصورة">' + SP_FS_ICON + '<span></span></button>' +
     '<div class="spmsg"></div>';
   const fx = root.querySelector(".spx"), sel = root.querySelector(".spsel"), box = root.querySelector(".spbox");
   const vwb = root.querySelector(".spview"), ful = root.querySelector(".spful"), msgEl = root.querySelector(".spmsg"), ov = root.querySelector(".spov"), lgHost = root.querySelector(".splgs");
@@ -2609,6 +2609,7 @@ function SmartPlayer(root, o){
         ful.style.display = "";
         ful.style.top = identity ? "10px" : ""; ful.style.bottom = identity ? "auto" : "";
       } else ful.style.display = "";
+      if (vwb) vwb.style.display = (admin && !live) ? "none" : "";   /* الأدمن: مخفي وهو بيحدد/بيشوف الصفحة كاملة */
       placeView();
       if (selecting) drawBox();
     }catch(e){}
@@ -3505,7 +3506,8 @@ function SmartPlayer(root, o){
 
   /* ---------- تشغيل ---------- */
   cropOn = mode === "page" && hasRegion();
-  if (admin){ buildTools(); sync(); } else buildBar();
+  if (admin){ buildTools(); sync(); }
+  buildBar();
   if (mode === "page"){
     mountFrame();
     if (admin) T.frame = setTimeout(() => say("لو الشاشة فاضية فالموقع غالبًا بيمنع عرضه داخل صفحة تانية — جرّب «فتح في تبويب».", "err"), 6000);
