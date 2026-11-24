@@ -2280,6 +2280,8 @@ function streamKindRaw(u){
   if (/\.(mp4|m4v|webm|ogg|ogv|mov)$/.test(path)) return {k:"video", u};
   if (/\.(ts|m2ts)$/.test(path)) return {k:"mpegts", u, t:"mpegts"};
   if (/\.flv$/.test(path)) return {k:"mpegts", u, t:"flv"};
+  /* رابط http بدون امتداد (زي روابط IPTV): يتجرّب كبث فيديو تلقائيًا بدل ما يتفتح كصفحة */
+  if (location.protocol === "https:" && /^http:\/\//.test(low) && !/\.(html?|php|aspx?|jsp|cgi|js)$/.test(path) && !/(youtu\.be|youtube\.com)/.test(low)) return {k:"auto", u};
   return {k:"iframe", u};
 }
 
@@ -2301,6 +2303,7 @@ function loadLib(k){
 }
 
 const MSG_FAIL = "تعذر تشغيل هذا السيرفر، جرّب سيرفراً آخر";
+const MSG_AUTO = "تعذر تشغيل الرابط جوه الموقع: السيرفر غالبًا مش بيدعم https أو بيمنع التشغيل من موقع تاني (CORS)";
 
 /* يرجع دالة إيقاف (أو null) */
 function mountStream(raw, p, o){
@@ -2319,6 +2322,22 @@ function mountStream(raw, p, o){
   if (s.k === "nobrowser"){
     p.textContent = "روابط " + s.p + " لا تعمل مباشرة داخل المتصفح. حوّلها من سيرفر البث إلى HLS (m3u8) أو WebRTC ثم ضع الرابط الجديد";
     return null;
+  }
+  if (s.k === "auto"){
+    const pre = ["hls:", "ts:", "mp4:"];
+    let i = 0, cur = null, gone = false;
+    const next = () => {
+      if (gone) return;
+      if (cur){ try { cur(); } catch (e) {} cur = null; }
+      if (i >= pre.length){
+        p.textContent = o.fail || MSG_AUTO;
+        if (o.onFail){ try { o.onFail(); } catch (e) {} }
+        return;
+      }
+      cur = mountStream(pre[i++] + url, p, Object.assign({}, o, {onFail: next}));
+    };
+    next();
+    return () => { gone = true; if (cur){ try { cur(); } catch (e) {} cur = null; } };
   }
   if (s.k === "iframe"){
     const f = document.createElement("iframe");
