@@ -722,7 +722,7 @@ html:has(body.adm){scroll-padding-top:calc(var(--atabsH,0px) + 60px)}
 .sptools input[type=color]{width:42px;height:34px;padding:2px;border:1px solid var(--bd);border-radius:8px;background:var(--in);cursor:pointer}
 .sptools .spmv{display:grid;grid-template-columns:repeat(3,46px);gap:6px;justify-content:center;margin:8px 0}
 .sptools .spmv button{padding:6px 0;font-size:17px;line-height:1.3}
-:is(#player,#atp,#tvp,#bcp,.np).sp .spsel{position:absolute;inset:0;z-index:7;display:none;cursor:crosshair;touch-action:pan-y pinch-zoom;overflow:hidden;background:rgba(0,0,0,.08)}
+:is(#player,#atp,#tvp,#bcp,.np).sp .spsel{position:absolute;inset:0;z-index:7;display:none;cursor:crosshair;touch-action:none;overflow:hidden;background:rgba(0,0,0,.08)}
 :is(#player,#atp,#tvp,#bcp,.np).sp .spbox{position:absolute;display:none;border:2px solid #86efac;pointer-events:none;box-shadow:0 0 0 4000px rgba(0,0,0,.5)}
 :is(#player,#atp,#tvp,#bcp,.np).sp .sphint{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.82);color:#fff;padding:6px 10px;border-radius:8px;font-size:12.5px;white-space:nowrap}
 :is(#player,#atp,#tvp,#bcp,.np).sp .sphint button{border:0;background:#dc2626;color:#fff;border-radius:6px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer}
@@ -2857,7 +2857,7 @@ function SmartPlayer(root, o){
   function openBar(){
     closeBar();
     selBar = document.createElement("div"); selBar.className = "spbar2";
-    selBar.innerHTML = '<div class="t"></div><div class="b"><button type="button" data-b="ok">✔ تأكيد</button><button type="button" data-b="169">📐 16:9</button><button type="button" data-b="bd">⬇ شريط الصوت +</button><button type="button" data-b="bu">⬆ −</button>' +
+    selBar.innerHTML = '<div class="t"></div><div class="b"><button type="button" data-b="ok">✔ تأكيد</button><button type="button" data-b="169">📐 16:9</button><button type="button" data-b="bd">⬇ شريط الصوت +</button><button type="button" data-b="bu">⬆ −</button><button type="button" data-b="vh">↕ أطول الصفحة</button>' +
       (canCap ? '<button type="button" data-b="auto">🪄 كشف تلقائي</button>' : '') + '<button type="button" data-b="rl">⟳ إعادة تحميل</button><button type="button" data-b="x">✖ إلغاء</button></div>';
     selBar.addEventListener("click", e => {
       const b = e.target.closest("button"); if (!b) return;
@@ -2867,6 +2867,13 @@ function SmartPlayer(root, o){
         case "bd": if (vb) setBox(vb.l, vb.t, vb.r, Math.min(S.vh, vb.b + 40)); else barSay("حدّد الفيديو الأول بضغطة عليه"); break;
         case "bu": if (vb && vb.b - vb.t > SEL_MIN + 40) setBox(vb.l, vb.t, vb.r, vb.b - 40); break;
         case "auto": autoDetect(); break;
+        case "vh": {
+          const opts = [720, 1000, 1400, 2000, 3000, 4000], nx = opts.find(v => v > S.vh);
+          if (!nx) { barSay("الصفحة وصلت لأقصى طول (4000)"); break; }
+          S.vh = nx; sync(); apply(); drawBox();
+          barSay("طول الصفحة المعروضة بقى " + nx + " — اسكرول لأسفل لو الفيديو تحت");
+          break;
+        }
         case "rl": mountFrame(); barSay("اتعملت إعادة تحميل للصفحة"); break;
         case "x": cancelSelect(); break;
       }
@@ -2876,12 +2883,19 @@ function SmartPlayer(root, o){
   function closeBar(){ if (selBar){ selBar.remove(); selBar = null; } barNote = ""; }
 
   function startSelect(){
-    if (mode !== "page") return say("التحديد لصفحات الويب فقط", "err");
+    if (mode !== "page"){ say("التحديد لصفحات الويب فقط (روابط embed / iframe). الرابط ده فيديو مباشر فمفيش تحديد ليه.", "err"); try { toast("التحديد لروابط الصفحات (embed / iframe) فقط", 3500); } catch (e) {} return; }
     if (selecting) return;
     prevS = Object.assign({}, S);
     S.L = S.T = S.R = S.B = 0; S.po = 0; S.z = 1; S.x = 0; S.y = 0;
     selecting = true; cropOn = false; vb = null; box.style.display = "none"; sel.style.display = "block";
     openBar(); sync(); animate(); apply(); setTimeout(apply, 120);
+    /* إطار تلقائي فورًا: لو فيه قص قديم بيبدأ منه، وإلا إطار 16:9 في نص الصفحة — وبعدها تحرّكه وتكبّره بإصبعك */
+    const ps = prevS;
+    if (ps && (ps.L || ps.T || ps.R || ps.B)){
+      const l = SP_VW * ps.L / 100, r = SP_VW * (1 - ps.R / 100), tp = S.vh * ps.T / 100, bt = S.vh * (1 - ps.B / 100);
+      if (r - l >= SEL_MIN && bt - tp >= SEL_MIN) setBox(l, tp, r, bt); else autoFrameAt({x: SP_VW / 2, y: S.vh * 0.45});
+    } else autoFrameAt({x: SP_VW / 2, y: S.vh * 0.45});
+    setTimeout(() => { if (selecting) drawBox(); }, 160);
     try { root.scrollIntoView({block: "start", behavior: "smooth"}); } catch (e) {}
   }
   function cancelSelect(){
@@ -2942,12 +2956,14 @@ function SmartPlayer(root, o){
     sel.addEventListener("pointerdown", e => {
       if (e.target.closest("[data-h]")) return;
       gest = {id: e.pointerId, type: e.pointerType, x: e.clientX, y: e.clientY, t: Date.now(), moved: false, p0: pagePt(e)};
-      if (e.pointerType !== "touch"){ try { sel.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); }
+      try { sel.setPointerCapture(e.pointerId); } catch (_) {}
+      e.preventDefault();
     });
     sel.addEventListener("pointermove", e => {
       if (!gest || e.pointerId !== gest.id) return;
-      if (Math.hypot(e.clientX - gest.x, e.clientY - gest.y) > 8) gest.moved = true;
-      if (gest.type !== "touch" && gest.moved){
+      const th = gest.type === "touch" ? 22 : 8;   /* الإصبع بيتهز: لازم حركة أكبر عشان تتحسب سحب مش ضغطة */
+      if (Math.hypot(e.clientX - gest.x, e.clientY - gest.y) > th) gest.moved = true;
+      if (gest.moved){
         const p = pagePt(e), q = gest.p0;
         setBox(Math.min(q.x, p.x), Math.min(q.y, p.y), Math.max(q.x, p.x), Math.max(q.y, p.y));
       }
@@ -2955,10 +2971,6 @@ function SmartPlayer(root, o){
     sel.addEventListener("pointerup", e => {
       if (!gest || e.pointerId !== gest.id) return;
       const g0 = gest; gest = null;
-      if (g0.type === "touch"){
-        if (!g0.moved && Date.now() - g0.t < 600 && !inBox(g0.p0)) autoFrameAt(g0.p0);
-        return;
-      }
       if (!g0.moved){ if (!inBox(g0.p0)) autoFrameAt(g0.p0); return; }
       if (vb && (vb.r - vb.l < SEL_MIN || vb.b - vb.t < SEL_MIN)) autoFrameAt(g0.p0);
     });
