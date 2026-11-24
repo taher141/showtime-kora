@@ -2245,7 +2245,7 @@ function toEmbed(u){
 
 /* بروكسي روابط http: ضع هنا رابط سيرفر البروكسي (https) بعد ما ترفعه، مثال: "https://proxy.example.com"
    لو فاضي: روابط http بتتحوّل لـ https زي الأول (بتشتغل بس لو السيرفر بيدعم https) */
-const STREAM_PROXY = "";
+const STREAM_PROXY = "https://kora-proxy.tbbarakat.workers.dev";
 function fixHttp(u, k){
   if (location.protocol !== "https:" || !/^http:\/\//i.test(u)) return u;
   if (STREAM_PROXY && /^(hls|video|mpegts|dash)$/.test(k)) return STREAM_PROXY.replace(/\/+$/, "") + "/?u=" + encodeURIComponent(u);
