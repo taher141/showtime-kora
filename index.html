@@ -2615,7 +2615,7 @@ function SmartPlayer(root, o){
   /* قص ثابت لكل موقع (iframe): بيتحفظ باسم دومين الرابط ويتطبق على كل روابط نفس الموقع بس */
   const HK = mode === "page" ? spHost(o.url) : "";
   const cachedGC = () => { try { const c = JSON.parse(localStorage.getItem("sk_settings") || "null"); const v = c && c.crops && c.crops[HK]; return (v && typeof v === "object") ? v : null; } catch (e) { return null; } };
-  const GC = (HK && SETTINGS.crops && typeof SETTINGS.crops === "object" && SETTINGS.crops[HK] && typeof SETTINGS.crops[HK] === "object") ? SETTINGS.crops[HK] : ((HK && !admin) ? cachedGC() : null);
+  const GC = (HK && SETTINGS.crops && typeof SETTINGS.crops === "object" && SETTINGS.crops[HK] && typeof SETTINGS.crops[HK] === "object") ? SETTINGS.crops[HK] : (HK ? cachedGC() : null);
   const baseCrop = GC || o.crop;
   let S = spClean(baseCrop), savedJson = baseCrop ? spSer(S) : "", preloaded = false;
   let hls = null, dead = false, cropOn = false, selecting = false, selStart = null;
@@ -2956,6 +2956,7 @@ function SmartPlayer(root, o){
     sel.addEventListener("pointerdown", e => {
       if (e.target.closest("[data-h]")) return;
       gest = {id: e.pointerId, type: e.pointerType, x: e.clientX, y: e.clientY, t: Date.now(), moved: false, p0: pagePt(e)};
+      if (inBox(gest.p0)) gest.mv = Object.assign({}, vb);   /* السحب من جوه المربع = تحريك المربع (مش رسم مربع جديد) */
       try { sel.setPointerCapture(e.pointerId); } catch (_) {}
       e.preventDefault();
     });
@@ -2963,7 +2964,11 @@ function SmartPlayer(root, o){
       if (!gest || e.pointerId !== gest.id) return;
       const th = gest.type === "touch" ? 22 : 8;   /* الإصبع بيتهز: لازم حركة أكبر عشان تتحسب سحب مش ضغطة */
       if (Math.hypot(e.clientX - gest.x, e.clientY - gest.y) > th) gest.moved = true;
-      if (gest.moved){
+      if (gest.moved && gest.mv){
+        const p = pagePt(e), s = gest.mv, w = s.r - s.l, hh = s.b - s.t;
+        const l = clampN(s.l + p.x - gest.p0.x, 0, SP_VW - w), tp = clampN(s.t + p.y - gest.p0.y, 0, Math.max(0, S.vh - hh));
+        setBox(l, tp, l + w, tp + hh);
+      } else if (gest.moved){
         const p = pagePt(e), q = gest.p0;
         setBox(Math.min(q.x, p.x), Math.min(q.y, p.y), Math.max(q.x, p.x), Math.max(q.y, p.y));
       }
@@ -2972,6 +2977,7 @@ function SmartPlayer(root, o){
       if (!gest || e.pointerId !== gest.id) return;
       const g0 = gest; gest = null;
       if (!g0.moved){ if (!inBox(g0.p0)) autoFrameAt(g0.p0); return; }
+      if (g0.mv) return;
       if (vb && (vb.r - vb.l < SEL_MIN || vb.b - vb.t < SEL_MIN)) autoFrameAt(g0.p0);
     });
     sel.addEventListener("pointercancel", () => { gest = null; });
@@ -3652,15 +3658,18 @@ function SmartPlayer(root, o){
 
   /* الزائر: لو القص الثابت وصل (أو اتغيّر) بعد ما المشغّل اتفتح — نطبّقه فورًا بدل ما تفضل الصفحة من أولها */
   let onSet = null;
-  if (!admin && mode === "page" && HK){
+  if (mode === "page" && HK){
     onSet = () => {
       if (dead) return;
       const g = SETTINGS.crops && SETTINGS.crops[HK];
       if (!g || typeof g !== "object") return;
       const n = spClean(g);
-      if (spSer(n) === spSer(S)) return;
+      if (spSer(n) === spSer(S)){ if (admin && !selecting){ savedJson = spSer(S); sync(); } return; }
+      /* الأدمن: ما نكتبش فوق تعديلات لسه ما اتحفظتش أو تحديد شغّال */
+      if (admin && (selecting || (savedJson ? spSer(S) !== savedJson : (!preloaded && spSer(S) !== spSer(SP_BASE))))) return;
       const sbChanged = n.sb !== S.sb;
-      S = n; savedJson = spSer(S); cropOn = hasRegion();
+      S = n; savedJson = spSer(S); preloaded = false; cropOn = hasRegion();
+      if (admin) sync();
       if (sbChanged) mountFrame(); else { animate(); apply(); setTimeout(apply, 80); }
     };
     SP_SET_LIST.push(onSet);
