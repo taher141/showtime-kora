@@ -84,6 +84,17 @@ h1{font-size:22px;margin:0;color:var(--team);cursor:default;user-select:none;lin
 .ad img{display:block;width:100%;max-width:none;height:auto;margin:0}
 #admin{display:grid;gap:14px}
 #admin .box{background:var(--card);border-radius:12px;padding:14px}
+#libBox{overflow:visible}
+#libStripWrap{position:sticky;top:var(--atabsH,0px);z-index:19;background:var(--card);margin:12px -14px 10px;padding:8px 14px 0;box-shadow:0 1px 0 var(--bd2)}
+#libBox .league-strip{padding:2px 2px 8px}
+#libBox .league-chip{background:transparent;border:0;border-radius:0;padding:0;color:inherit;font:inherit}
+#libBox .league-chip:hover{background:transparent}
+#libBox .league-chip span{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#libBox .league-chip span.lc{font-size:10px;color:var(--muted);opacity:.85;margin-top:-2px}
+#libBox .league-chip.active span.lc{color:var(--team)}
+#libGBar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:2px 0 10px;font-size:13px;color:var(--muted)}
+#libGBar b{color:var(--text);font-size:14px}
+#libGBar button{padding:5px 10px;font-size:12px}
 #admin h2{font-size:16px;margin:0 0 12px;color:var(--text)}
 #admin label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
 #admin input,#admin textarea{width:100%;background:var(--in);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:9px 10px;font:inherit}
@@ -1214,7 +1225,10 @@ a.ln-card:active{transform:scale(.99)}
     <div class="box" id="libBox">
       <h2>🔗 مكتبة الروابط</h2>
       <p class="note" style="margin-top:0">مخزن لروابط القنوات: لكل قناة اسمها وعدد من السيرفرات. مش بتظهر للزوار كقائمة، هي بس مخزن ليك. من صفحة «إضافة مباراة» تقدر تسحب سيرفرات أي قناة للمباراة بضغطة، أو تخليها تتضاف تلقائي أول ما تكتب اسم القناة الناقلة. «تجربة» بتشغّل الرابط في المعاينة.</p>
-      <input id="libSearch" placeholder="بحث باسم القناة...">
+      <div id="libStripWrap"><div class="league-strip" id="libStrip" role="list"></div></div>
+      <div id="libGBar" class="hide"></div>
+      <input type="file" id="libGFile" accept="image/*" hidden>
+      <input id="libSearch" placeholder="بحث باسم القناة (بيدوّر في كل المجموعات)...">
       <p class="note" style="margin:6px 0 0">قايمة اختيار القنوات هنا هي نفس قايمة «القناة الناقلة» في إضافة مباراة بالظبط. أول مرة بتفتح المكتبة بتتملي بكل القنوات، وضيف الروابط واضغط «حفظ المكتبة».</p>
       <div id="libRows" style="margin-top:12px"></div>
       <div class="bar"><button id="libAdd">+ إضافة قناة</button><button id="libAll">+ كل القنوات من القايمة</button><button class="p" id="libSave">حفظ المكتبة</button></div>
@@ -4378,7 +4392,8 @@ function libCard(c){
   card.querySelector(".cn").addEventListener("change", () => {
     const me = card.querySelector(".cn"), k = libKey(me.value);
     if (k && [...document.querySelectorAll("#libRows .cn")].some(i => i !== me && libKey(i.value) === k)) toast("القناة دي موجودة بالفعل في المكتبة، ضيف السيرفرات في كارتها", 4000);
-    libNames();
+    const g = libGroupOf(me.value); if (g) libOpenG = g;
+    libNames(); libApplyView();
   });
   card.querySelector(".al").value = (c.aliases || []).join("، ");
   card.querySelector(".crm").onclick = () => { if (confirm("تحذف القناة دي من المكتبة؟ (المباريات اللي اتضافت بيها قبل كده مش هتتأثر)")){ card.remove(); libNames(); } };
@@ -4403,6 +4418,99 @@ function libCardData(card){
 function libCollect(){
   return [...document.querySelectorAll("#libRows .chc")].map(libCardData).filter(c => c.name || c.sources.length);
 }
+/* ===== مجموعات المكتبة: أيقونات بتفتح وتقفل قنوات كل مجموعة ===== */
+var libOpenG = "", LIBG = {};
+const LIB_GSTYLE = {"beIN Sports":["beIN","#5b2a86"],"ON Sport":["ON","#c9342a"],"Abu Dhabi Sports":["AD","#a8812a"],"Starzplay":["STARZ","#1f2937"],"UAE":["UAE","#0e7c4a"],"Qatar":["QA","#8a1538"],"Kuwait, Oman & Bahrain":["GCC","#1d6fb8"],"Egypt":["EG","#b91c1c"],"Maghreb":["MG","#0f766e"],"Iraq & Jordan":["IQ·JO","#4b5563"],"Other":["TV","#475569"]};
+function libBadge(g){
+  const st = LIB_GSTYLE[g] || [String(g).slice(0, 3), "#475569"], t = st[0];
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 76"><rect width="108" height="76" rx="12" fill="' + st[1] + '"/><text x="54" y="47" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="' + (t.length > 4 ? 21 : 28) + '" fill="#fff">' + t + '</text></svg>';
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+function libGLogo(g){ return LIBG[g] || libBadge(g); }
+function libGroupOf(name){
+  const k = libKey(name);
+  if (!k) return "";
+  for (const g of CHANNELS) if (g[1].some(x => libKey(x) === k)) return g[0];
+  return "Other";
+}
+function libStripBuild(){
+  const st = $("#libStrip"); st.innerHTML = "";
+  CHANNELS.forEach(g => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "league-chip"; b.dataset.g = g[0]; b.setAttribute("aria-pressed", "false");
+    const im = document.createElement("img"); im.alt = g[0]; im.draggable = false; im.src = libGLogo(g[0]);
+    const n = document.createElement("span"); n.textContent = g[0];
+    const c = document.createElement("span"); c.className = "lc";
+    b.append(im, n, c);
+    b.onclick = () => {
+      libOpenG = libOpenG === g[0] ? "" : g[0];
+      $("#libSearch").value = "";
+      libApplyView();
+      if (libOpenG){
+        const bar = $("#libGBar"), top = (parseInt(getComputedStyle(document.documentElement).getPropertyValue("--atabsH")) || 0) + $("#libStripWrap").offsetHeight + 8;
+        if (bar.getBoundingClientRect().top < top) window.scrollBy(0, bar.getBoundingClientRect().top - top);
+        b.scrollIntoView({inline: "center", block: "nearest", behavior: "smooth"});
+      }
+    };
+    st.appendChild(b);
+  });
+}
+function libChips(){
+  const cnt = {};
+  document.querySelectorAll("#libRows .chc").forEach(card => {
+    const d = libCardData(card), g = libGroupOf(d.name);
+    if (!g) return;
+    const o = cnt[g] || (cnt[g] = {n: 0, k: 0}); o.n++; if (d.sources.length) o.k++;
+  });
+  document.querySelectorAll("#libStrip .league-chip").forEach(b => {
+    const g = b.dataset.g, o = cnt[g] || {n: 0, k: 0};
+    b.classList.toggle("active", g === libOpenG);
+    b.setAttribute("aria-pressed", g === libOpenG ? "true" : "false");
+    b.querySelector(".lc").textContent = o.k + "/" + o.n;
+  });
+}
+function libApplyView(){
+  const q = libKey($("#libSearch").value);
+  document.querySelectorAll("#libRows .chc").forEach(card => {
+    const nm = card.querySelector(".cn").value, hay = libKey(nm + " " + card.querySelector(".al").value);
+    const show = q ? hay.includes(q) : (!nm.trim() || libGroupOf(nm) === libOpenG);
+    card.style.display = show ? "" : "none";
+  });
+  libChips();
+  const bar = $("#libGBar");
+  if (!libOpenG || q){ bar.classList.add("hide"); bar.innerHTML = ""; return; }
+  bar.classList.remove("hide");
+  bar.innerHTML = "<b></b><span></span><button type=\"button\" class=\"up\">🖼 لوجو المجموعة</button>" + (LIBG[libOpenG] ? "<button type=\"button\" class=\"d rm\">إزالة اللوجو</button>" : "");
+  bar.querySelector("b").textContent = libOpenG;
+  const n = [...document.querySelectorAll("#libRows .chc")].filter(c => libGroupOf(c.querySelector(".cn").value) === libOpenG).length;
+  bar.querySelector("span").textContent = n + " قناة · اضغط الأيقونة تاني عشان تقفل";
+  bar.querySelector(".up").onclick = () => $("#libGFile").click();
+  const rm = bar.querySelector(".rm");
+  if (rm) rm.onclick = () => { delete LIBG[libOpenG]; libStripBuild(); libApplyView(); toast("اتشال اللوجو، اضغط حفظ المكتبة"); };
+}
+$("#libGFile").onchange = ev => {
+  const f = ev.target, file = f.files && f.files[0]; if (!file || !libOpenG) return;
+  const g = libOpenG, url = URL.createObjectURL(file), img = new Image();
+  img.onload = () => {
+    const W = 216, H = 152, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+    const k = Math.min(W / img.width, H / img.height), w = img.width * k, h = img.height * k;
+    cv.getContext("2d").drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+    let d = cv.toDataURL("image/webp", 0.85);
+    if (!/^data:image\/webp/.test(d)) d = cv.toDataURL("image/png");
+    LIBG[g] = d; URL.revokeObjectURL(url); f.value = "";
+    libStripBuild(); libApplyView(); toast("اتحط اللوجو، اضغط حفظ المكتبة");
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); toast("تعذّر قراءة الصورة"); };
+  img.src = url;
+};
+/* سحب الشريط بالماوس زي شريط الترتيب */
+(function(){
+  const st = $("#libStrip"); let x0 = 0, sl = 0, down = false, moved = false;
+  st.addEventListener("pointerdown", e => { if (e.pointerType === "touch") return; down = true; moved = false; x0 = e.clientX; sl = st.scrollLeft; });
+  window.addEventListener("pointermove", e => { if (!down) return; const dx = e.clientX - x0; if (Math.abs(dx) > 5) moved = true; if (moved) st.scrollLeft = sl - dx; });
+  window.addEventListener("pointerup", () => { down = false; });
+  st.addEventListener("click", e => { if (moved){ e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+})();
 function libNames(){
   const names = libCollect().map(c => c.name).filter(Boolean);
   $("#libNames").innerHTML = names.map(n => '<option value="' + n.replace(/"/g, "&quot;") + '">').join("");
@@ -4411,33 +4519,34 @@ function libNames(){
   const o0 = document.createElement("option"); o0.value = ""; o0.textContent = names.length ? "اختار قناة من المكتبة..." : "المكتبة فاضية (ضيف قنوات من تبويب مكتبة الروابط)"; sel.appendChild(o0);
   names.forEach(n => { const o = document.createElement("option"); o.value = n; o.textContent = n; sel.appendChild(o); });
   if (names.includes(cur)) sel.value = cur;
+  libChips();
 }
 function fillLib(){
+  LIBG = Object.assign({}, SETTINGS.libG || {}); libOpenG = ""; $("#libSearch").value = "";
+  libStripBuild();
   $("#libRows").innerHTML = "";
   const l = libList();
   if (l.length) l.forEach(c => libCard(c));
   else CHANNELS.forEach(g => g[1].forEach(n => libCard({name: n})));
-  libNames();
+  libNames(); libApplyView();
 }
 function libImportAll(){
   const have = new Set([...document.querySelectorAll("#libRows .cn")].map(i => libKey(i.value)));
   let n = 0;
   CHANNELS.forEach(g => g[1].forEach(nm => { if (!have.has(libKey(nm))){ libCard({name: nm}); have.add(libKey(nm)); n++; } }));
-  libNames();
+  libNames(); libApplyView();
   toast(n ? "اتضاف " + n + " قناة من قايمة القنوات، ضيف روابطها واضغط حفظ المكتبة" : "كل القنوات موجودة بالفعل في المكتبة");
 }
 $("#libAll").onclick = libImportAll;
+$("#libRows").addEventListener("input", () => { clearTimeout(window._libCT); window._libCT = setTimeout(libChips, 300); });
 $("#libAdd").onclick = () => { const c = libCard({}); c.scrollIntoView({behavior:"smooth", block:"center"}); c.querySelector(".cn").focus(); };
 $("#libSave").onclick = () => {
   const l = libCollect();
   if (l.some(c => !c.name)){ toast("في قناة من غير اسم، اكتب اسمها أو احذفها"); return; }
-  SETTINGS.lib = l;
+  SETTINGS.lib = l; SETTINGS.libG = Object.assign({}, LIBG);
   persistSettings(); libNames();
 };
-$("#libSearch").oninput = () => {
-  const q = libKey($("#libSearch").value);
-  document.querySelectorAll("#libRows .chc").forEach(c => { c.style.display = !q || libKey(c.querySelector(".cn").value + " " + c.querySelector(".al").value).includes(q) ? "" : "none"; });
-};
+$("#libSearch").oninput = libApplyView;
 
 /* ---- مطابقة أسماء القنوات بالتقريب: بتتجاهل المسافات والشرطات وحالة الحروف وأشكال الحروف العربي والأرقام، وبتفهم كلمات زي سبورت/ماكس/اون ---- */
 const LIB_MAP = {"سبورتس":"sport","سبورت":"sport","sports":"sport","الرياضيه":"sport","رياضيه":"sport","اون":"on","ماكس":"max","بلس":"plus","بريميوم":"premium","اكسترا":"extra","ستارز":"starz","بلاي":"play","اسيا":"asia","ياس":"yas","ad":"ابوظبي","dhabi":"ابوظبي","abu":"","بي":"bei","ان":"n","بين":"bein","بيان":"bein","الكاس":"alkass","دبي":"dubai","الشارقه":"sharjah","الكويت":"kuwait","عمان":"oman","البحرين":"bahrain","النيل":"nile","للرياضه":"sport","الاهلي":"ahly","الزمالك":"zamalek","الاردن":"jordan","العراق":"iraq","الشروق":"echorouk","النهار":"ennahar","المغربيه":"morocco","ليبيا":"libya"};
