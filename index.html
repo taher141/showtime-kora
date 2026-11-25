@@ -320,6 +320,10 @@ main{max-width:960px;margin:0 auto;padding:16px}
 #admin .cmv select{width:100%;background:var(--in);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:8px;font:inherit}
 #admin .chc{border:1px solid var(--bd);border-radius:12px;padding:10px;margin-bottom:12px;background:var(--in)}
 #admin .chh2{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:8px;align-items:center}
+#libRows .chh2{grid-template-columns:minmax(0,1fr) auto auto;gap:6px}
+#libRows .chh2 .cb{min-width:0}
+#libRows .chh2 .cn{font-size:15px;font-weight:700}
+#libRows .chh2>button{padding:5px 8px;font-size:12px;white-space:nowrap;line-height:1.2}
 #admin .chh2 input.cc{width:46px;height:38px;padding:2px;cursor:pointer}
 .chl{width:30px;height:30px;flex:none;object-fit:contain;background:#fff;border-radius:8px;padding:2px}
 #tvList button.lgo{padding:0;height:66px;justify-content:center;border:2px solid var(--c);background-repeat:no-repeat;background-position:center;background-size:contain;text-shadow:none}
@@ -1714,10 +1718,16 @@ function logoTries(u){
   t.push({src:"https://images.weserv.nl/?url=" + encodeURIComponent(raw) + "&w=160&h=160&fit=contain&output=png", rp:"no-referrer"});
   return t;
 }
+const LOGO_OK = {};   /* رابط الشعار -> المحاولة اللي نجحت (بنفتحها مباشرة بدل ما نعيد المحاولات الفاشلة كل مرة) */
 function loadLogo(img, u, onFail){
-  const t = logoTries(u); let k = 0;
-  const next = () => { if (k >= t.length){ if (onFail) onFail(); return; } const x = t[k++]; img.referrerPolicy = x.rp; img.src = x.src; };
-  img.onerror = next; next();
+  const t = logoTries(u); let k = 0, cur = null;
+  img.addEventListener("load", () => { if (cur) LOGO_OK[u] = cur; });
+  const next = () => { if (k >= t.length){ if (onFail) onFail(); return; } const x = t[k++]; cur = x; img.referrerPolicy = x.rp; img.src = x.src; };
+  const kn = LOGO_OK[u];
+  if (kn){
+    cur = kn; img.referrerPolicy = kn.rp; img.src = kn.src;
+    img.onerror = () => { delete LOGO_OK[u]; k = 0; img.onerror = next; next(); };
+  } else { img.onerror = next; next(); }
 }
 function checkLogo(u){
   return new Promise(r => { if (!u) return r(true); const i = new Image(); i.onload = () => r(true); loadLogo(i, u, () => r(false)); });
@@ -1731,12 +1741,13 @@ function teamBox(name, logo, sub, isChan){
   w.className = "lgw";
   const ph = document.createElement("span");
   ph.className = "ph"; ph.textContent = (String(name || "").trim()[0] || "").toUpperCase();
-  w.appendChild(ph);
+  const lu0 = logo ? logoUrl(logo) : "";
+  if (!(lu0 && LOGO_OK[lu0])) w.appendChild(ph);
   if (logo){
     const l = document.createElement("img");
     l.alt = ""; l.className = "lg";
     l.onload = () => ph.remove();
-    loadLogo(l, logoUrl(logo), () => l.remove());
+    loadLogo(l, lu0, () => { l.remove(); if (!ph.isConnected) w.appendChild(ph); });
     w.appendChild(l);
   }
   d.appendChild(w);
@@ -1850,11 +1861,12 @@ function mcTeam(name, logo){
   const w = document.createElement("div"); w.className = "mc-lg";
   const ph = document.createElement("span"); ph.className = "ph";
   ph.textContent = (String(name || "").trim()[0] || "").toUpperCase();
-  w.appendChild(ph);
+  const lu0 = logo ? logoUrl(logo) : "";
+  if (!(lu0 && LOGO_OK[lu0])) w.appendChild(ph);
   if (logo){
     const l = document.createElement("img"); l.alt = "";
     l.onload = () => ph.remove();
-    loadLogo(l, logoUrl(logo), () => l.remove());
+    loadLogo(l, lu0, () => { l.remove(); if (!ph.isConnected) w.appendChild(ph); });
     w.appendChild(l);
   }
   const n = document.createElement("span"); n.className = "mc-n"; n.textContent = name || "";
@@ -2130,6 +2142,7 @@ function leagueAlias(name){
   }));
 })();
 
+var listSig = "";   /* بصمة آخر قايمة اتعرضت: لو ما اتغيرتش مش بنعيد بناءها فاللوجوهات ما بتومضش */
 function render(){
   try { renderStand(); } catch (e) {}
   if (pendingWatch){
@@ -2139,13 +2152,16 @@ function render(){
   }
   lastSig = sigNow();
   const box = $("#list");
-  box.innerHTML = "";
   const live = mode === "live";
   $("#sched").classList.toggle("hide", live);
   $("#liveTtl").classList.toggle("hide", !live);
   const rows = MATCHES.map((m, i) => ({m, i}))
     .filter(r => !expired(r.m) && (live ? isLive(r.m) : dayOffset(r.m) === filter))
     .sort((a, b) => new Date(a.m.time) - new Date(b.m.time));
+  const ls = sigNow() + "#" + rows.map(r => r.i + JSON.stringify(r.m)).join("|");
+  if (ls === listSig && box.firstChild) return;
+  listSig = ls;
+  box.innerHTML = "";
   if (!rows.length){
     box.innerHTML = '<div class="empty">' + (live ? "لا توجد مباريات مباشرة الآن" : "لا توجد مباريات في هذا اليوم") + "</div>";
     return;
@@ -4356,7 +4372,7 @@ function libCard(c){
   c = c || {};
   const card = document.createElement("div");
   card.className = "chc";
-  card.innerHTML = '<div class="chh2"><input class="cn" placeholder="اسم القناة (مثال: beIN Sports 1)"><button type="button" class="ap">طبّق على المباريات</button><button type="button" class="d crm">حذف القناة</button></div><input class="al" placeholder="أسماء تانية للقناة (اختياري، افصل بفاصلة) مثال: بي ان سبورت 1، bein 1" style="margin-bottom:8px"><div class="csrc"></div><div class="bar"><button type="button" class="cadd">+ سيرفر</button></div>';
+  card.innerHTML = '<div class="chh2"><input class="cn" placeholder="اسم القناة (مثال: beIN Sports 1)"><button type="button" class="ap" title="طبّق سيرفرات القناة على المباريات">طبّق</button><button type="button" class="d crm" title="حذف القناة">حذف</button></div><input class="al" placeholder="أسماء تانية للقناة (اختياري، افصل بفاصلة) مثال: بي ان سبورت 1، bein 1" style="margin-bottom:8px"><div class="csrc"></div><div class="bar"><button type="button" class="cadd">+ سيرفر</button></div>';
   card.querySelector(".cn").value = c.name || "";
   makeCombo(card.querySelector(".cn"), CHANNELS);
   card.querySelector(".cn").addEventListener("change", () => {
