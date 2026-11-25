@@ -1291,7 +1291,8 @@ a.ln-card:active{transform:scale(.99)}
       <div class="bar"><button class="p" id="fxPasteGo" type="button">تطبيق</button><button id="fxPasteReset" type="button">الرجوع للقايمة الأصلية</button></div>
       <p class="note" id="fxPasteMsg"></p>
       <p class="note" id="tlMsg"></p>
-      <div class="bar"><button id="tlGo" type="button">جلب الشعارات الآن</button></div>
+      <p class="note" id="fxAutoMsg"></p>
+      <div class="bar"><button id="fxAutoGo" type="button">جلب المباريات الآن</button><button id="tlGo" type="button">جلب الشعارات الآن</button></div>
       <div class="bar"><button class="p" id="fxAll">تحديث كل الأيام</button></div>
       <div id="fxBars"><div id="fxFilter" class="dayrow"></div><div id="fxDays" class="dayrow"></div></div>
       <div id="fxList"></div>
@@ -6099,7 +6100,10 @@ setInterval(() => {
   if (tlPending().length) tlRun(); else { tlMsg(); tlFill(); }
 }, 3000);
 (function(){ const b = document.getElementById("tlGo"); if (b) b.addEventListener("click", tlNow); })();
-function fxM(r){ return {home:r[1], away:r[2], homeLogo:tlLogo(r[1]), awayLogo:tlLogo(r[2]), league:r[3], time:r[0] + ":00+02:00"}; }
+const FX_DTF = new Intl.DateTimeFormat("en-CA", {timeZone:"Africa/Cairo", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hourCycle:"h23"});
+function fxCairo(ms){ const p = {}; FX_DTF.formatToParts(new Date(ms)).forEach(x => { p[x.type] = x.value; }); return p.year + "-" + p.month + "-" + p.day + "T" + p.hour + ":" + p.minute; }
+function fxTz(l){ const g = Date.parse(l + ":00Z"); if (isNaN(g)) return "+02:00"; for (const o of [2, 3]) if (fxCairo(g - o * 36e5) === l) return "+0" + o + ":00"; return "+02:00"; }
+function fxM(r){ return {home:r[1], away:r[2], homeLogo:tlLogo(r[1]), awayLogo:tlLogo(r[2]), league:r[3], time:r[0] + ":00" + fxTz(r[0])}; }
 function fxHas(m){
   const t = new Date(m.time).getTime();
   return MATCHES.some(x => normN(x.home) === normN(m.home) && normN(x.away) === normN(m.away) && Math.abs(new Date(x.time) - t) < 864e5);
@@ -6259,6 +6263,13 @@ fxBuild();
     if (fbOn && fbDb && fbUser) fbDb.doc("site/fixtures").delete().catch(() => msg("رجعت القايمة الأصلية على الجهاز ده بس (Firebase رفض المسح)."));
   };
 
+  /* بيستخدمها الجلب التلقائي: يطبّق القايمة ويحفظها زي اللصق بالظبط */
+  window.fxApplyRows = function(rows){
+    const ts = Date.now();
+    apply(rows, {}); lsSet(LS, {list: rows, ts});
+    if (fbOn && fbDb && fbUser) fbDb.doc("site/fixtures").set({list: toDocRows(rows), dict: lsGet(LS_D) || {}, ts}).catch(() => {});
+  };
+
   /* عند فتح الصفحة: القايمة المحفوظة على الجهاز */
   Object.assign(TL_DICT, lsGet(LS_D) || {});
   const loc = lsGet(LS);
@@ -6279,6 +6290,135 @@ fxBuild();
       lsSet(LS, {list: rows, ts: d.ts || 0}); lsSet(LS_D, Object.assign({}, lsGet(LS_D) || {}, d.dict || {}));
     }).catch(() => {});
   }, 4000);
+})();
+
+/* ===== جلب المباريات تلقائياً: بيشتغل لوحده لما تفتح الأدمن (زي الشعارات)، والأيام بتتجدد قدام ===== */
+(function(){
+  const LG = [
+    {ar:"الدوري الإنجليزي", sdb:"4328", api:39}, {ar:"الدوري الإسباني", sdb:"4335", api:140},
+    {ar:"الدوري الإيطالي", sdb:"4332", api:135}, {ar:"الدوري الألماني", sdb:"4331", api:78},
+    {ar:"الدوري الفرنسي", sdb:"4334", api:61}, {ar:"دوري أبطال أوروبا", sdb:"4480", api:2},
+    {ar:"الدوري المصري", sdb:"4829", api:233}, {ar:"الدوري السعودي", sdb:"4668", api:307},
+    {ar:"الدوري التركي", sdb:"4339", api:203}
+  ];
+  const DAYS = 7, EVERY = 3 * 36e5, KEY = "sk_fxauto_ts", SKIP_API = /^(FT|AET|PEN|PST|CANC|ABD|AWD|WO|SUSP|INT)$/;
+  const SKIP_SDB = /finished|^ft$|^aet$|^pen$|postponed|cancel|abandon/i;
+  let busy = false, next = 0;
+  const msg = t => { const e = document.getElementById("fxAutoMsg"); if (e) e.textContent = t; };
+  const nm = s => tlNrm(String(s || "").replace(/\b(fc|afc|cf|ac|as|ssc|sc|fk|sk|cd|ud)\b/gi, ""));
+  const lsGetN = () => { try { return Number(localStorage.getItem(KEY)) || 0; } catch (e) { return 0; } };
+  const lsSetN = v => { try { v ? localStorage.setItem(KEY, String(v)) : localStorage.removeItem(KEY); } catch (e) {} };
+  const adminOpen = () => !$("#admin").classList.contains("hide");
+  const dayEnd = () => fxCairo(Date.now() + DAYS * 864e5).slice(0, 10);
+
+  function revMap(){
+    const m = new Map();
+    Object.keys(TL_DICT).forEach(ar => String(TL_DICT[ar][0]).split("|").forEach(en => { const k = nm(en); if (k && !m.has(k)) m.set(k, ar); }));
+    return m;
+  }
+  function mkRow(rev, miss, lg, ms, home, away, tbc, hl, al){
+    const local = fxCairo(ms), today = fxCairo(Date.now()).slice(0, 10), day = local.slice(0, 10);
+    if (day < today || day > dayEnd()) return null;
+    const ar = en => { const a = rev.get(nm(en)); if (!a) miss.add(en); return a || String(en); };
+    const h = ar(home), a = ar(away);
+    if (hl && !TLOGOS[h]) TLOGOS[h] = hl;
+    if (al && !TLOGOS[a]) TLOGOS[a] = al;
+    return [local, h, a, lg, tbc ? 1 : 0];
+  }
+  async function sdbLeague(id){
+    let err = null;
+    for (const key of ["123", "3"]){
+      try { const j = await tlJson("https://www.thesportsdb.com/api/v1/json/" + key + "/eventsnextleague.php?id=" + id); return (j && j.events) || []; }
+      catch (e) { err = e; if (e && e.message === "rate") break; }
+    }
+    throw err;
+  }
+  function sdbRows(rev, miss, lg, evs){
+    const out = [];
+    evs.forEach(e => {
+      if (!e || (e.strSport && e.strSport !== "Soccer") || SKIP_SDB.test(e.strStatus || "")) return;
+      let ms = NaN;
+      if (e.strTimestamp){ let t = String(e.strTimestamp); if (!/(Z|[+-]\d\d:\d\d)$/i.test(t)) t += "Z"; ms = Date.parse(t); }
+      if (isNaN(ms) && e.dateEvent) ms = Date.parse(e.dateEvent + "T" + (e.strTime || "00:00:00") + "Z");
+      if (isNaN(ms) || !e.strHomeTeam || !e.strAwayTeam) return;
+      const r = mkRow(rev, miss, lg, ms, e.strHomeTeam, e.strAwayTeam, !e.strTime || e.strTime === "00:00:00", e.strHomeTeamBadge, e.strAwayTeamBadge);
+      if (r) out.push(r);
+    });
+    return out;
+  }
+  async function apiRows(rev, miss){
+    const out = [], ids = {}; LG.forEach(l => { ids[l.api] = l.ar; });
+    for (let i = 0; i < DAYS; i++){
+      msg("جاري جلب المباريات (API-Football): يوم " + (i + 1) + " من " + DAYS);
+      const d = fxCairo(Date.now() + i * 864e5).slice(0, 10);
+      const L = await fx("fixtures?date=" + d + "&timezone=Africa/Cairo");
+      L.forEach(f => {
+        const lg = ids[f.league && f.league.id]; if (!lg || SKIP_API.test((f.fixture.status || {}).short || "")) return;
+        const r = mkRow(rev, miss, lg, Date.parse(f.fixture.date), f.teams.home.name, f.teams.away.name, (f.fixture.status || {}).short === "TBD", f.teams.home.logo, f.teams.away.logo);
+        if (r) out.push(r);
+      });
+    }
+    return out;
+  }
+  function merge(fetched){
+    const today = fxCairo(Date.now()).slice(0, 10);
+    const base = FX.filter(r => r[0].slice(0, 10) >= today).map(r => r.slice());
+    let add = 0, upd = 0;
+    fetched.forEach(f => {
+      const t = Date.parse(f[0] + ":00Z");
+      const b = base.find(x => normN(x[1]) === normN(f[1]) && normN(x[2]) === normN(f[2]) && Math.abs(Date.parse(x[0] + ":00Z") - t) < 2 * 864e5);
+      if (b){ if (b[0] !== f[0] || (b[4] ? 1 : 0) !== f[4]){ b[0] = f[0]; b[4] = f[4]; upd++; } }
+      else { base.push(f); add++; }
+    });
+    base.sort((x, y) => x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0);
+    return {rows: base, add, upd};
+  }
+  async function run(){
+    if (busy) return; busy = true;
+    try {
+      const rev = revMap(), miss = new Set(); let rows = [], src = "TheSportsDB", ok = false;
+      const k = (document.getElementById("fxKey") || {}).value;
+      if (k && k.trim()){
+        try { rows = await apiRows(rev, miss); ok = true; src = "API-Football"; }
+        catch (e) { rows = []; miss.clear(); msg("مفتاح API-Football ما نفعش (" + ((e && e.message) || e).toString().slice(0, 80) + ")، هجرب المصدر المجاني…"); await tlSleep(1500); }
+      }
+      if (!ok){
+        let good = 0, fail = 0;
+        for (let i = 0; i < LG.length; i++){
+          if (!adminOpen()) break;
+          msg("جاري جلب المباريات: " + LG[i].ar + " (" + (i + 1) + " من " + LG.length + ")");
+          let evs = null;
+          for (let t = 0; t < 2 && evs === null; t++){
+            try { evs = await sdbLeague(LG[i].sdb); }
+            catch (e) { if (e && e.message === "rate" && t === 0){ msg("الخدمة طلبت استنى شوية، بيكمل بعد دقيقة"); await tlSleep(65000); } else break; }
+          }
+          if (evs === null){ fail++; } else { good++; rows = rows.concat(sdbRows(rev, miss, LG[i].ar, evs)); }
+          await tlSleep(2200);
+        }
+        ok = good > 0;
+        if (!ok){ next = Date.now() + 10 * 60000; msg("تعذّر الاتصال بمصدر المباريات دلوقتي، هحاول تاني بعد شوية."); return; }
+        if (fail) src += " (" + fail + " بطولات ما اتجابتش)";
+      }
+      const m = merge(rows);
+      tlSave();
+      window.fxApplyRows(m.rows);
+      lsSetN(Date.now());
+      const last = m.rows.length ? m.rows[m.rows.length - 1][0].slice(0, 10) : "";
+      let t = "اتحدّثت المباريات ✓ " + m.add + " جديدة · " + m.upd + " اتعدّلت" + (last ? " · لحد " + fxDay.format(new Date(last + "T12:00:00")) : "") + " (المصدر: " + src + ").";
+      if (miss.size) t += " أندية من غير اسم عربي: " + [...miss].slice(0, 8).join("، ") + (miss.size > 8 ? "…" : "") + ".";
+      msg(t);
+    } catch (e) {
+      next = Date.now() + 10 * 60000; msg("تعذّر جلب المباريات (" + ((e && e.message) || e).toString().slice(0, 80) + ")");
+    } finally { busy = false; }
+  }
+  setInterval(() => {
+    if (busy || Date.now() < next || !adminOpen()) return;
+    const maxD = FX.length ? FX.map(r => r[0].slice(0, 10)).sort().pop() : "";
+    const short = !maxD || maxD < fxCairo(Date.now() + 3 * 864e5).slice(0, 10);
+    const age = Date.now() - lsGetN();
+    if (age > EVERY || (short && age > 30 * 60000)) run();
+  }, 4000);
+  const b = document.getElementById("fxAutoGo"); if (b) b.addEventListener("click", () => { next = 0; lsSetN(0); run(); });
 })();
 
 /* ===== أدمن: لصق كود ترتيب الدوريات ===== */
