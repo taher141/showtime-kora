@@ -1107,7 +1107,7 @@ a.ln-card:active{transform:scale(.99)}
       <div class="bar"><button class="p" id="alogBtn">دخول</button></div>
     </div>
     <div id="apanel" style="display:grid;gap:14px">
-    <div class="atabs" id="atabs"><button type="button" id="aexit" aria-label="رجوع للموقع" title="رجوع للموقع"><span class="ic">🏠</span><span>الموقع</span></button><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="imp"><span class="ic">⬇️</span><span>استيراد</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="fxu"><span class="ic">🔄</span><span>تحديث المباريات</span></button><button type="button" data-at="st"><span class="ic">📊</span><span>الترتيب</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="radio"><span class="ic">📻</span><span>الراديو</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="bc"><span class="ic">📡</span><span>البث الرئيسي</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
+    <div class="atabs" id="atabs"><button type="button" id="aexit" aria-label="رجوع للموقع" title="رجوع للموقع"><span class="ic">🏠</span><span>الموقع</span></button><button type="button" class="on" data-at="addm"><span class="ic">➕</span><span>إضافة مباراة</span></button><button type="button" data-at="imp"><span class="ic">⬇️</span><span>استيراد</span></button><button type="button" data-at="list"><span class="ic">📋</span><span>المباريات</span></button><button type="button" data-at="fxu"><span class="ic">🔄</span><span>تحديث المباريات</span></button><button type="button" data-at="st"><span class="ic">📊</span><span>الترتيب</span></button><button type="button" data-at="ch"><span class="ic">📺</span><span>القنوات</span></button><button type="button" data-at="lib"><span class="ic">🔗</span><span>مكتبة الروابط</span></button><button type="button" data-at="radio"><span class="ic">📻</span><span>الراديو</span></button><button type="button" data-at="nba"><span class="ic">🏀</span><span>NBA</span></button><button type="button" data-at="multi"><span class="ic">🖥️</span><span>شاشات</span></button><button type="button" data-at="news"><span class="ic">📰</span><span>الأخبار</span></button><button type="button" data-at="bc"><span class="ic">📡</span><span>البث الرئيسي</span></button><button type="button" data-at="set"><span class="ic">⚙️</span><span>الإعدادات</span></button><button type="button" data-at="pub"><span class="ic">🚀</span><span>النشر</span></button></div>
     <div class="box">
       <h2 id="aft">إضافة مباراة</h2>
       <div class="g2">
@@ -1144,6 +1144,11 @@ a.ln-card:active{transform:scale(.99)}
     </details>
       <label>السيرفرات (أي رابط بث)</label>
       <p class="note" style="margin-top:0">الروابط المدعومة: m3u8 (HLS) · mpd (DASH) · mp4 / webm · ts / flv · embed أو iframe (الصق الكود كامل) · يوتيوب · WebRTC بصيغة WHEP. روابط RTMP لا تعمل داخل المتصفح، حوّلها إلى HLS من سيرفر البث. لو الرابط بلا امتداد واضح اكتب نوعه قبله مثل hls: أو dash: أو ts: أو iframe:</p>
+      <div class="bar" style="margin:0 0 10px;align-items:center">
+        <select id="aLibSel" style="flex:1;min-width:160px;background:var(--in);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:9px 10px;font:inherit"></select>
+        <button type="button" id="aLibAdd">🔗 إضافة سيرفرات من المكتبة</button>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;color:var(--text);font-size:14px;margin:0 0 10px"><input id="aLibAuto" type="checkbox" style="width:auto" checked> أضف سيرفرات القناة تلقائياً أول ما أكتب اسمها في «القناة الناقلة» (لو المباراة لسه من غير سيرفرات)</label>
       <div id="arows"></div>
       <div class="bar">
         <button id="aaddSrc">+ سيرفر</button>
@@ -1201,6 +1206,14 @@ a.ln-card:active{transform:scale(.99)}
       <div class="bar"><button id="chGAdd">+ إضافة مجموعة</button><button class="p" id="chSave">حفظ القنوات</button></div>
     </div>
     <datalist id="chNames"></datalist>
+    <datalist id="libNames"></datalist>
+    <div class="box" id="libBox">
+      <h2>🔗 مكتبة الروابط</h2>
+      <p class="note" style="margin-top:0">مخزن لروابط القنوات: لكل قناة اسمها وعدد من السيرفرات. مش بتظهر للزوار كقائمة، هي بس مخزن ليك. من صفحة «إضافة مباراة» تقدر تسحب سيرفرات أي قناة للمباراة بضغطة، أو تخليها تتضاف تلقائي أول ما تكتب اسم القناة الناقلة. «تجربة» بتشغّل الرابط في المعاينة.</p>
+      <input id="libSearch" placeholder="بحث باسم القناة...">
+      <div id="libRows" style="margin-top:12px"></div>
+      <div class="bar"><button id="libAdd">+ إضافة قناة</button><button class="p" id="libSave">حفظ المكتبة</button></div>
+    </div>
     <div class="box">
       <h2>📻 قائمة الراديو</h2>
       <p class="note" style="margin-top:0">أضف محطات الراديو التي تظهر للزائر عند الضغط على أيقونة الراديو بجانب التلفزيون. تقدر تضيف أي عدد من المحطات، ولكل محطة أكثر من مصدر بث، وكل مصدر يظهر للزائر كسيرفر مستقل (سيرفر 1، سيرفر 2...). الروابط تقبل أي نوع: mp3 أو aac أو ogg أو روابط Icecast / Shoutcast (حتى لو من غير امتداد) أو m3u8 أو pls أو m3u أو ts أو webrtc أو يوتيوب أو embed أو iframe، ويمكنك لصق كود iframe كامل. زر «تجربة» بجانب كل مصدر يشغّله في المعاينة بالأعلى.</p>
@@ -4080,7 +4093,7 @@ function showPanel(){
   $("#apanel").style.display = "grid";
   $("#alogout").classList.toggle("hide", !fbOn);
   if (fbOn) $("#apub").textContent = "النشر مباشر: أي مباراة تحفظها أو تحذفها تظهر لكل الزوار فوراً من غير رفع ملفات. ويمكنك أيضاً تنزيل نسخة احتياطية من هنا.";
-  $("#sday").value = SETTINGS.day || ""; $("#swa").value = SETTINGS.wa || ""; $("#sfb").value = SETTINGS.fb || ""; $("#smail").value = SETTINGS.mail || ""; fillBc(); try { fillSt(); } catch (e) {} try { fillLn(); } catch (e) {} fillMulti(); fillNba(); fillCh(); fillRd(); $("#nicon").value = SETTINGS.nbaIcon || ""; $("#snews").value = SETTINGS.news || "";
+  $("#sday").value = SETTINGS.day || ""; $("#swa").value = SETTINGS.wa || ""; $("#sfb").value = SETTINGS.fb || ""; $("#smail").value = SETTINGS.mail || ""; fillBc(); try { fillSt(); } catch (e) {} try { fillLn(); } catch (e) {} fillMulti(); fillNba(); fillCh(); fillRd(); fillLib(); $("#nicon").value = SETTINGS.nbaIcon || ""; $("#snews").value = SETTINGS.news || "";
   if (pruneOld()) aSave();
   aReset(); aList();
   ajDirty = true;
@@ -4260,7 +4273,7 @@ function aReset(){
   $("#aended").checked = false;
   $("#arows").innerHTML = ""; aRow();
   infoToForm(null);
-  editing = -1;
+  editing = -1; libAutoFrom = "";
   $("#aft").textContent = "إضافة مباراة";
   $("#acancel").style.display = "none";
 }
@@ -4320,6 +4333,200 @@ $("#asave").onclick = () => {
   aSave(); aReset();
   Promise.all([checkLogo(m.homeLogo), checkLogo(m.awayLogo)]).then(r => { if (!r[0] || !r[1]) toast("تم الحفظ، لكن رابط الشعار لا يفتح كصورة. استخدم رابط صورة مباشر ينتهي بـ png أو jpg أو svg", 6000); });
 };
+
+
+/* ===== مكتبة الروابط: مخزن قنوات وسيرفراتها، وربطها بالمباريات ===== */
+function libList(){ return Array.isArray(SETTINGS.lib) ? SETTINGS.lib : []; }
+function libKey(n){ return String(n || "").trim().toLowerCase(); }
+function libSrcRow(card, x){
+  x = x || {};
+  const r = document.createElement("div");
+  r.className = "row";
+  r.innerHTML = '<input class="sn" placeholder="اسم السيرفر"><input class="su l" placeholder="رابط البث (أي نوع أو كود iframe)"><button type="button" class="st2">تجربة</button><button type="button" class="d">حذف</button>';
+  r.querySelector(".sn").value = x.name || "";
+  r.querySelector(".su").value = x.url || "";
+  if (x.crop && typeof x.crop === "object") r._crop = x.crop;
+  r.querySelector(".st2").onclick = () => { spPreview(r, ".su", "حفظ المكتبة"); $("#atp").scrollIntoView({behavior:"smooth", block:"center"}); };
+  addCp(r.querySelector(".st2"), r, ".su", ".sn");
+  r.querySelector(".d").onclick = () => r.remove();
+  card.querySelector(".csrc").appendChild(r);
+}
+function libCard(c){
+  c = c || {};
+  const card = document.createElement("div");
+  card.className = "chc";
+  card.innerHTML = '<div class="chh2"><input class="cn" placeholder="اسم القناة (مثال: beIN Sports 1)"><button type="button" class="ap">طبّق على المباريات</button><button type="button" class="d crm">حذف القناة</button></div><input class="al" placeholder="أسماء تانية للقناة (اختياري، افصل بفاصلة) مثال: بي ان سبورت 1، bein 1" style="margin-bottom:8px"><div class="csrc"></div><div class="bar"><button type="button" class="cadd">+ سيرفر</button></div>';
+  card.querySelector(".cn").value = c.name || "";
+  card.querySelector(".al").value = (c.aliases || []).join("، ");
+  card.querySelector(".crm").onclick = () => { if (confirm("تحذف القناة دي من المكتبة؟ (المباريات اللي اتضافت بيها قبل كده مش هتتأثر)")){ card.remove(); libNames(); } };
+  card.querySelector(".cadd").onclick = () => libSrcRow(card);
+  card.querySelector(".ap").onclick = () => libApplyAll(card);
+  const src = (c.sources || []).filter(x => x && (x.url || "").trim());
+  (src.length ? src : [{}]).forEach(x => libSrcRow(card, x));
+  $("#libRows").appendChild(card);
+  return card;
+}
+function libCardData(card){
+  return {
+    name: card.querySelector(".cn").value.trim(),
+    aliases: card.querySelector(".al").value.split(/[,،;\n]+/).map(x => x.trim()).filter(Boolean),
+    sources: [...card.querySelectorAll(".csrc .row")].map(r => {
+      const o = {name: r.querySelector(".sn").value.trim(), url: normUrl(r.querySelector(".su").value)};
+      if (r._crop) o.crop = r._crop;
+      return o;
+    }).filter(x => x.url)
+  };
+}
+function libCollect(){
+  return [...document.querySelectorAll("#libRows .chc")].map(libCardData).filter(c => c.name || c.sources.length);
+}
+function libNames(){
+  const names = libCollect().map(c => c.name).filter(Boolean);
+  $("#libNames").innerHTML = names.map(n => '<option value="' + n.replace(/"/g, "&quot;") + '">').join("");
+  const sel = $("#aLibSel"), cur = sel.value;
+  sel.innerHTML = "";
+  const o0 = document.createElement("option"); o0.value = ""; o0.textContent = names.length ? "اختار قناة من المكتبة..." : "المكتبة فاضية (ضيف قنوات من تبويب مكتبة الروابط)"; sel.appendChild(o0);
+  names.forEach(n => { const o = document.createElement("option"); o.value = n; o.textContent = n; sel.appendChild(o); });
+  if (names.includes(cur)) sel.value = cur;
+}
+function fillLib(){
+  $("#libRows").innerHTML = "";
+  const l = libList();
+  (l.length ? l : [{}]).forEach(c => libCard(c));
+  libNames();
+}
+$("#libAdd").onclick = () => { const c = libCard({}); c.scrollIntoView({behavior:"smooth", block:"center"}); c.querySelector(".cn").focus(); };
+$("#libSave").onclick = () => {
+  const l = libCollect();
+  if (l.some(c => !c.name)){ toast("في قناة من غير اسم، اكتب اسمها أو احذفها"); return; }
+  SETTINGS.lib = l;
+  persistSettings(); libNames();
+};
+$("#libSearch").oninput = () => {
+  const q = libKey($("#libSearch").value);
+  document.querySelectorAll("#libRows .chc").forEach(c => { c.style.display = !q || libKey(c.querySelector(".cn").value + " " + c.querySelector(".al").value).includes(q) ? "" : "none"; });
+};
+
+/* ---- مطابقة أسماء القنوات بالتقريب: بتتجاهل المسافات والشرطات وحالة الحروف وأشكال الحروف العربي والأرقام، وبتفهم كلمات زي سبورت/ماكس/اون ---- */
+const LIB_MAP = {"سبورتس":"sport","سبورت":"sport","sports":"sport","الرياضيه":"sport","رياضيه":"sport","اون":"on","ماكس":"max","بلس":"plus","بريميوم":"premium","اكسترا":"extra","ستارز":"starz","بلاي":"play","اسيا":"asia","ياس":"yas","ad":"ابوظبي","dhabi":"ابوظبي","abu":"","بي":"bei","ان":"n","بين":"bein","بيان":"bein"};
+const LIB_NOISE = new Set(["قناه","القناه","channel","tv","hd","fhd","sd","live","بث","مباشر"]);
+function libTok(s){
+  s = String(s || "").toLowerCase()
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
+    .replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه").replace(/ؤ/g, "و").replace(/ئ/g, "ي")
+    .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+  const out = [];
+  (s.match(/[a-z]+|[0-9]+|[\u0600-\u06FF]+/g) || []).forEach(t => {
+    if (LIB_NOISE.has(t)) return;
+    if (Object.prototype.hasOwnProperty.call(LIB_MAP, t)) t = LIB_MAP[t];
+    if (t) out.push(t);
+  });
+  return out;
+}
+function libLev(a, b){
+  if (a === b) return 0;
+  let p = Array.from({length: b.length + 1}, (_, i) => i);
+  for (let i = 1; i <= a.length; i++){
+    const c = [i];
+    for (let j = 1; j <= b.length; j++) c[j] = Math.min(p[j] + 1, c[j - 1] + 1, p[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    p = c;
+  }
+  return p[b.length];
+}
+/* بترجع القناة المطابقة (c) أو قايمة القنوات المتقاربة (amb) لو الاسم يطابق أكتر من قناة */
+function libMatch(name){
+  const q = libTok(name);
+  if (!q.length) return {c: null, amb: []};
+  const qs = q.join(""), qd = q.filter(t => /^\d+$/.test(t)).join("-");
+  let best = 1e9, hits = [];
+  libCollect().forEach(c => {
+    let sc = 1e9;
+    [c.name].concat(c.aliases || []).forEach(nm => {
+      const t = libTok(nm);
+      if (!t.length) return;
+      const ns = t.join(""), nd = t.filter(x => /^\d+$/.test(x)).join("-");
+      if (ns === qs){ sc = 0; return; }
+      if (nd !== qd) return;   /* الأرقام لازم تتطابق: beIN 1 غير beIN 2 */
+      const d = libLev(qs, ns), lim = qs.length >= 12 ? 2 : (qs.length >= 6 ? 1 : 0);
+      if (d && d <= lim){ sc = Math.min(sc, d); return; }
+      if (q.every(x => t.includes(x))) sc = Math.min(sc, 10 + t.length - q.length);
+    });
+    if (sc < 1e9){ if (sc < best){ best = sc; hits = [c]; } else if (sc === best) hits.push(c); }
+  });
+  return {c: hits.length === 1 ? hits[0] : null, amb: hits.length > 1 ? hits : []};
+}
+
+/* إضافة سيرفرات القناة الناقصة لفورم المباراة (من غير تكرار نفس الرابط). auto=true بيعلّم السيرفرات إنها اتضافت تلقائي */
+var libAutoFrom = "";
+function libFillMatch(c, auto){
+  if (!c || !c.sources.length) return 0;
+  const have = new Set();
+  document.querySelectorAll("#arows .srvc").forEach(card => {
+    const us = [...card.querySelectorAll(".qrow .u")].map(i => normUrl(i.value)).filter(Boolean);
+    if (!us.length) card.remove(); else us.forEach(u => have.add(u));
+  });
+  let n = 0;
+  c.sources.forEach(sv => {
+    if (have.has(sv.url)) return;
+    aRow({name: sv.name, url: sv.url, crop: sv.crop});
+    if (auto){ const cards = document.querySelectorAll("#arows .srvc"); cards[cards.length - 1].dataset.lib = "1"; }
+    have.add(sv.url); n++;
+  });
+  if (!document.querySelector("#arows .srvc")) aRow();
+  return n;
+}
+function libAuto(){
+  if (!$("#aLibAuto").checked) return;
+  const n = $("#achan").value.trim();
+  if (!n) return;
+  const r = libMatch(n);
+  if (!r.c){
+    if (r.amb.length > 1) toast("الاسم قريب من أكتر من قناة في المكتبة: " + r.amb.map(x => x.name).join(" / ") + ". اختار واحدة من القايمة", 5000);
+    return;
+  }
+  const key = libKey(r.c.name);
+  if (libAutoFrom && libAutoFrom !== key) document.querySelectorAll("#arows .srvc[data-lib]").forEach(x => x.remove());
+  libAutoFrom = key;
+  const k = libFillMatch(r.c, true);
+  if (k) toast("اتعرّفت على «" + r.c.name + "» واتضاف " + k + " سيرفر تلقائي ✓ (اضغط حفظ المباراة)", 4000);
+}
+$("#aLibAdd").onclick = () => {
+  const n = $("#aLibSel").value;
+  if (!n){ toast("اختار قناة من القايمة الأول"); return; }
+  const c = libCollect().find(x => x.name === n);
+  const k = libFillMatch(c, false);
+  if (!$("#achan").value.trim()) $("#achan").value = n;
+  toast(k ? "اتضاف " + k + " سيرفر من «" + n + "»، اضغط حفظ المباراة" : "كل سيرفرات القناة دي موجودة بالفعل");
+};
+var libAT = null;
+$("#achan").addEventListener("input", () => { clearTimeout(libAT); libAT = setTimeout(libAuto, 700); });
+$("#achan").addEventListener("change", () => { clearTimeout(libAT); libAuto(); });
+
+/* تطبيق سيرفرات قناة على كل مبارياتها (بالتقريب في الاسم) وإضافة الناقص بس */
+function libApplyAll(card){
+  const cd = libCardData(card);
+  if (!cd.name || !cd.sources.length){ toast("اكتب اسم القناة وضيف سيرفر واحد على الأقل"); return; }
+  const jobs = [];
+  MATCHES.forEach(m => {
+    if (m.ended || !m.channel) return;
+    const r = libMatch(m.channel);
+    if (!r.c || libKey(r.c.name) !== libKey(cd.name)) return;
+    const have = new Set((m.sources || []).flatMap(sv => qsOf(sv).map(q => q.url)).filter(Boolean));
+    const add = cd.sources.filter(sv => !have.has(sv.url));
+    if (add.length) jobs.push([m, add]);
+  });
+  if (!jobs.length){ toast("مفيش مباريات قناتها «" + cd.name + "» ومحتاجة سيرفرات"); return; }
+  if (!confirm("هتتضاف سيرفرات «" + cd.name + "» الناقصة لـ " + jobs.length + " مباراة. تكمل؟")) return;
+  jobs.forEach(([m, add]) => {
+    m.sources = (m.sources || []).concat(add.map((sv, i) => {
+      const o = {name: sv.name || "سيرفر " + ((m.sources || []).length + i + 1), url: sv.url, qs: [{n: "", url: sv.url}]};
+      if (sv.crop){ o.crop = sv.crop; o.qs[0].crop = sv.crop; }
+      return o;
+    }));
+  });
+  aSave();
+  toast("اتطبقت على " + jobs.length + " مباراة ✓");
+}
 
 /* توسيط زر داخل شريطه أفقياً فقط، من غير ما الصفحة تتحرك لفوق أو لتحت */
 function centerIn(row, el, smooth){
@@ -4840,19 +5047,23 @@ $("#nsave").onclick = () => {
 /* لإضافة قناة أو معلّق: أضف الاسم داخل القوس المناسب في القائمتين التاليتين */
 const CHANNELS = [
   ["beIN Sports", ["beIN Sports 1","beIN Sports 2","beIN Sports 3","beIN Sports 4","beIN Sports 5","beIN Sports 6","beIN Sports 7","beIN Sports 8","beIN Sports 9","beIN Sports Premium 1","beIN Sports Premium 2","beIN Sports Premium 3","beIN Sports Max 1","beIN Sports Max 2","beIN Sports Max 3","beIN Sports Max 4","beIN Sports News"]],
-  ["SSC السعودية", ["SSC 1","SSC 2","SSC 3","SSC 4","SSC 5","SSC Extra 1","SSC Extra 2","SSC News","السعودية الرياضية"]],
-  ["الإمارات", ["أبوظبي الرياضية 1","أبوظبي الرياضية 2","دبي الرياضية 1","دبي الرياضية 2","دبي الرياضية 3","الشارقة الرياضية"]],
+  ["ON Sport (أون سبورت)", ["ON Sport","ON Sport Plus","ON Sport Max","ON Sport 2","ON Time Sports","ON Time Sports 2"]],
+  ["أبوظبي الرياضية", ["أبوظبي الرياضية 1","أبوظبي الرياضية 2","أبوظبي الرياضية 3","أبوظبي الرياضية 4","أبوظبي الرياضية إكسترا","ياس سبورتس","AD Fight"]],
+  ["ستارز بلاي (Starzplay)", ["Starzplay","أبوظبي الرياضية بريميوم 1","أبوظبي الرياضية بريميوم 2","أبوظبي الرياضية آسيا 1","أبوظبي الرياضية آسيا 2"]],
+  ["الإمارات", ["دبي الرياضية 1","دبي الرياضية 2","دبي الرياضية 3","الشارقة الرياضية"]],
   ["قطر", ["الكأس 1","الكأس 2","الكأس 3","الكأس 4"]],
   ["الكويت وعمان والبحرين", ["الكويت الرياضية","عمان الرياضية","البحرين الرياضية"]],
-  ["مصر", ["أون سبورت","أون سبورت 2","أون تايم سبورتس","أون تايم سبورتس 2","النيل للرياضة","قناة الأهلي","قناة الزمالك","القناة الأولى المصرية"]],
+  ["مصر", ["النيل للرياضة","قناة الأهلي","قناة الزمالك","القناة الأولى المصرية"]],
   ["المغرب العربي", ["الرياضية المغربية","الأولى المغربية","الجزائرية الأرضية","الشروق TV","النهار TV","الوطنية 1 التونسية","الوطنية 2 التونسية","ليبيا الرياضية"]],
   ["العراق والأردن", ["الرياضية العراقية","الأردن الرياضية"]],
   ["قنوات أخرى", ["شاهد VIP","يوتيوب","ESPN","Sky Sports","TNT Sports","DAZN","Eurosport","Canal+","Fox Sports"]]
 ];
 const COMMENTATORS = [
-  ["معلّقو beIN", ["عصام الشوالي","حفيظ دراجي","رؤوف خليف","خليل البلوشي","يوسف سيف","علي سعيد الكعبي","عدنان حمد"]],
-  ["السعودية والمغرب", ["فهد العتيبي","جواد بدة"]],
-  ["مصر", ["مدحت شلبي","أحمد الطيب","علاء صادق"]]
+  ["معلّقو beIN", ["عصام الشوالي","حفيظ دراجي","رؤوف خليف","خليل البلوشي","يوسف سيف","علي سعيد الكعبي","عدنان حمد","أحمد البلوشي","حسن العيدروس","باسم الزير","علي محمد علي","محمد بركات","جواد بدة","محمد نضال","أحمد سوكو","محمد المبروكي","أحمد عبده"]],
+  ["معلّقو ON Sport", ["هشام معمر","طارق حسن","طارق الأدور","زياد الدكروري","مدحت شلبي"]],
+  ["معلّقو أبوظبي الرياضية", ["فارس عوض","فيصل الهندي","عيسى الحربين","أحمد الحامد","حازم عبد السلام"]],
+  ["السعودية", ["فهد العتيبي"]],
+  ["مصر", ["أحمد الطيب","علاء صادق"]]
 ];
 
 function makeCombo(id, groups){
@@ -4874,7 +5085,7 @@ function makeCombo(id, groups){
     const q = typed ? inp.value.trim().toLowerCase() : "";
     list.innerHTML = "";
     let n = 0;
-    groups.forEach(g => {
+    (typeof groups === "function" ? groups() : groups).forEach(g => {
       const items = g[1].filter(x => !q || x.toLowerCase().includes(q));
       if (!items.length) return;
       const h = document.createElement("div");
@@ -4883,7 +5094,7 @@ function makeCombo(id, groups){
       items.forEach(x => {
         const b = document.createElement("button");
         b.type = "button"; b.textContent = x;
-        b.onclick = () => { inp.value = x; typed = false; close(); };
+        b.onclick = () => { inp.value = x; typed = false; close(); inp.dispatchEvent(new Event("change", {bubbles: true})); };
         list.appendChild(b); n++;
       });
     });
@@ -4897,7 +5108,7 @@ function makeCombo(id, groups){
   tg.onclick = () => { if (list.classList.contains("hide")){ inp.blur(); open(); } else close(); };
   document.addEventListener("pointerdown", e => { if (!wrap.contains(e.target)) close(); });
 }
-makeCombo("achan", CHANNELS);
+makeCombo("achan", () => { const n = libCollect().map(c => c.name).filter(Boolean); return (n.length ? [["📚 مكتبة الروابط", n]] : []).concat(CHANNELS); });
 makeCombo("acomm", COMMENTATORS);
 
 
@@ -6067,10 +6278,11 @@ let adminTab = function(){};
   const has = (k, sel) => !!k.querySelector(sel);
   kids.forEach(k => {
     let t = "set";
-    if (has(k, "#aft")) t = "addm";
+    if (has(k, "#libRows")) t = "lib";
+    else if (has(k, "#aft")) t = "addm";
     else if (has(k, "#stPaste")) t = "st";
     else if (has(k, "#bcQRows")) t = "bc";
-    else if (has(k, "#atp")) t = "addm ch nba multi radio bc";
+    else if (has(k, "#atp")) t = "addm ch nba multi radio bc lib";
     else if (has(k, "#chRows")) t = "ch";
     else if (has(k, "#rdRows")) t = "radio";
     else if (has(k, "#nrows")) t = "nba";
