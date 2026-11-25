@@ -6348,18 +6348,25 @@ fxBuild();
     return out;
   }
   async function apiRows(rev, miss){
-    const out = [], ids = {}; LG.forEach(l => { ids[l.api] = l.ar; });
+    const out = [], ids = {}, failed = new Set(); let err = "";
+    LG.forEach(l => { ids[l.api] = l.ar; });
     for (let i = 0; i < DAYS; i++){
       msg("جاري جلب المباريات (API-Football): يوم " + (i + 1) + " من " + DAYS);
       const d = fxCairo(Date.now() + i * 864e5).slice(0, 10);
-      const L = await fx("fixtures?date=" + d + "&timezone=Africa/Cairo");
+      let L;
+      try { L = await fx("fixtures?date=" + d + "&timezone=Africa/Cairo"); }
+      catch (e) {
+        err = (e && e.message) || String(e); failed.add(d);
+        if (!/plan|date|season/i.test(err)){ for (let j = i + 1; j < DAYS; j++) failed.add(fxCairo(Date.now() + j * 864e5).slice(0, 10)); break; }
+        continue;
+      }
       L.forEach(f => {
         const lg = ids[f.league && f.league.id]; if (!lg || SKIP_API.test((f.fixture.status || {}).short || "")) return;
         const r = mkRow(rev, miss, lg, Date.parse(f.fixture.date), f.teams.home.name, f.teams.away.name, (f.fixture.status || {}).short === "TBD", f.teams.home.logo, f.teams.away.logo);
         if (r) out.push(r);
       });
     }
-    return out;
+    return {rows: out, failed, err};
   }
   function merge(fetched, rev){
     const today = fxCairo(Date.now()).slice(0, 10);
@@ -6375,17 +6382,19 @@ fxBuild();
     base.sort((x, y) => x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0);
     return {rows: base, add, upd};
   }
+  const why = e => /plan|free/i.test(e) ? "الخطة المجانية ما بتسمحش بالتواريخ دي" : /token|key|invalid|suspend/i.test(e) ? "المفتاح غلط أو مش مفعّل" : /limit|request/i.test(e) ? "طلبات اليوم خلصت" : "رفض من API";
   async function run(){
     if (busy) return; busy = true;
     try {
-      const rev = revMap(), miss = new Set(); let rows = [], src = "TheSportsDB", ok = false;
+      const rev = revMap(), miss = new Set(); let rows = [], src = "TheSportsDB", ok = false, failed = null, apiErr = "";
       const k = (document.getElementById("fxKey") || {}).value;
       if (k && k.trim()){
-        try { rows = await apiRows(rev, miss); ok = true; src = "API-Football"; }
-        catch (e) { rows = []; miss.clear(); msg("مفتاح API-Football ما نفعش (" + ((e && e.message) || e).toString().slice(0, 80) + ")، هجرب المصدر المجاني…"); await tlSleep(1500); }
+        const r = await apiRows(rev, miss); apiErr = r.err;
+        if (r.failed.size < DAYS){ rows = r.rows; ok = true; src = "API-Football"; if (r.failed.size) failed = r.failed; }
+        else { miss.clear(); }
       }
-      if (!ok){
-        let good = 0, fail = 0;
+      if (!ok || failed){
+        let good = 0, fail = 0, sdb = [];
         for (let i = 0; i < LG.length; i++){
           if (!adminOpen()) break;
           msg("جاري جلب المباريات: " + LG[i].ar + " (" + (i + 1) + " من " + LG.length + ")");
@@ -6394,11 +6403,12 @@ fxBuild();
             try { evs = await sdbLeague(LG[i].sdb); }
             catch (e) { if (e && e.message === "rate" && t === 0){ msg("الخدمة طلبت استنى شوية، بيكمل بعد دقيقة"); await tlSleep(65000); } else break; }
           }
-          if (evs === null){ fail++; } else { good++; rows = rows.concat(sdbRows(rev, miss, LG[i].ar, evs)); }
+          if (evs === null){ fail++; } else { good++; sdb = sdb.concat(sdbRows(rev, miss, LG[i].ar, evs)); }
           await tlSleep(2200);
         }
-        ok = good > 0;
-        if (!ok){ next = Date.now() + 10 * 60000; msg("تعذّر الاتصال بمصدر المباريات دلوقتي، هحاول تاني بعد شوية."); return; }
+        if (!ok && !good){ next = Date.now() + 10 * 60000; msg("تعذّر الاتصال بمصدر المباريات دلوقتي، هحاول تاني بعد شوية." + (apiErr ? " (API-Football: " + why(apiErr) + " — " + apiErr.slice(0, 160) + ")" : "")); return; }
+        if (failed){ rows = rows.concat(sdb.filter(r => failed.has(r[0].slice(0, 10)))); src = "API-Football + TheSportsDB"; }
+        else { rows = sdb; ok = true; }
         if (fail) src += " (" + fail + " بطولات ما اتجابتش)";
       }
       const m = merge(rows, rev);
@@ -6407,10 +6417,11 @@ fxBuild();
       lsSetN(Date.now());
       const last = m.rows.length ? m.rows[m.rows.length - 1][0].slice(0, 10) : "";
       let t = "اتحدّثت المباريات ✓ " + m.add + " جديدة · " + m.upd + " اتعدّلت" + (last ? " · لحد " + fxDay.format(new Date(last + "T12:00:00")) : "") + " (المصدر: " + src + ").";
+      if (apiErr) t += " ملحوظة API-Football: " + why(apiErr) + " — " + apiErr.slice(0, 160);
       if (miss.size) t += " أندية من غير اسم عربي: " + [...miss].slice(0, 8).join("، ") + (miss.size > 8 ? "…" : "") + ".";
       msg(t);
     } catch (e) {
-      next = Date.now() + 10 * 60000; msg("تعذّر جلب المباريات (" + ((e && e.message) || e).toString().slice(0, 80) + ")");
+      next = Date.now() + 10 * 60000; msg("تعذّر جلب المباريات (" + ((e && e.message) || e).toString().slice(0, 120) + ")");
     } finally { busy = false; }
   }
   setInterval(() => {
