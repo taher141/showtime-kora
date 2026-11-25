@@ -5981,7 +5981,7 @@ let fxLg = "";
 const fxDay = new Intl.DateTimeFormat("ar", {weekday:"long", day:"numeric", month:"long"});
 /* ===== شعارات الأندية: تتجلب تلقائياً من TheSportsDB مرة واحدة وتتحفظ على الجهاز ===== */
 const TL_DICT = {"آيك أثينا":["AEK Athens","Greece"],"آيندهوفن":["PSV Eindhoven|PSV","Netherlands"],"أتالانتا":["Atalanta","Italy"],"أتلتيك بلباو":["Athletic Bilbao|Athletic Club","Spain"],"أتلتيكو مدريد":["Atletico Madrid","Spain"],"أرسنال":["Arsenal","England"],"أستون فيلا":["Aston Villa","England"],"ألافيس":["Alaves|Deportivo Alaves","Spain"],"أودينيزي":["Udinese","Italy"],"أوساسونا":["Osasuna","Spain"],"أوغسبورغ":["Augsburg|FC Augsburg","Germany"],"إسكو كارا":["ASKO Kara|Asko de Kara","Togo"],"إلتشي":["Elche","Spain"],"إنتر ميلان":["Inter Milan|Internazionale","Italy"],"إيبسويتش تاون":["Ipswich Town|Ipswich","England"],"إيفرتون":["Everton","England"],"الأهلي":["Al Ahly","Egypt"],"الإفريقي التونسي":["Club Africain","Tunisia"],"الجونة":["El Gouna|Al Gouna","Egypt"],"الرجاء المغربي":["Raja Casablanca|Raja CA","Morocco"],"الزمالك":["Zamalek","Egypt"],"المغرب الفاسي":["Maghreb de Fes|Maghreb Fez|MAS Fes","Morocco"],"بادربورن":["Paderborn|SC Paderborn","Germany"],"بارما":["Parma","Italy"],"باريس إف سي":["Paris FC","France"],"باريس سان جيرمان":["Paris Saint-Germain|Paris SG","France"],"باير ليفركوزن":["Bayer Leverkusen","Germany"],"بايرن ميونخ":["Bayern Munich","Germany"],"برايتون":["Brighton|Brighton and Hove Albion","England"],"برشلونة":["Barcelona","Spain"],"بريميرو دي أغوستو":["Primeiro de Agosto|1º de Agosto","Angola"],"برينتفورد":["Brentford","England"],"بودو غليمت":["Bodo Glimt|Bodo/Glimt","Norway"],"بورتو":["Porto|FC Porto","Portugal"],"بورنموث":["Bournemouth","England"],"بوروسيا دورتموند":["Borussia Dortmund","Germany"],"بوروسيا مونشنغلادباخ":["Borussia Monchengladbach|Monchengladbach","Germany"],"بيراميدز":["Pyramids FC|Pyramids","Egypt"],"تشيلسي":["Chelsea","England"],"توتنهام":["Tottenham|Tottenham Hotspur","England"],"تورينو":["Torino","Italy"],"تولوز":["Toulouse","France"],"جنوى":["Genoa","Italy"],"حوريا":["Horoya|Horoya AC","Guinea"],"خيتافي":["Getafe","Spain"],"ديبورتيفو لا كورونيا":["Deportivo La Coruna|Deportivo","Spain"],"روما":["AS Roma|Roma","Italy"],"ريال بيتيس":["Real Betis","Spain"],"ريال سوسيداد":["Real Sociedad","Spain"],"ريال مدريد":["Real Madrid","Spain"],"ساسولو":["Sassuolo","Italy"],"سبورتينغ لشبونة":["Sporting CP|Sporting Lisbon","Portugal"],"سلافيا براغ":["Slavia Prague","Czech Republic"],"سلوفان براتيسلافا":["Slovan Bratislava","Slovakia"],"سندرلاند":["Sunderland","England"],"سيلتا فيغو":["Celta Vigo","Spain"],"شاختار دونيتسك":["Shakhtar Donetsk","Ukraine"],"شالكه":["Schalke 04|Schalke","Germany"],"شتوتغارت":["VfB Stuttgart|Stuttgart","Germany"],"صباح":["Sabah FK|Sabah","Azerbaijan"],"غلطة سراي":["Galatasaray","Turkey"],"فالنسيا":["Valencia","Spain"],"فايكنغ":["Viking FK|Viking","Norway"],"فروزينوني":["Frosinone","Italy"],"فنربخشة":["Fenerbahce","Turkey"],"فولهام":["Fulham","England"],"فياريال":["Villarreal","Spain"],"فيردر بريمن":["Werder Bremen","Germany"],"فينورد":["Feyenoord","Netherlands"],"فينيسيا":["Venezia","Italy"],"فيورنتينا":["Fiorentina","Italy"],"كالياري":["Cagliari","Italy"],"كريستال بالاس":["Crystal Palace","England"],"كلوب بروج":["Club Brugge","Belgium"],"كوفنتري سيتي":["Coventry City|Coventry","England"],"كولن":["FC Koln|1. FC Koln|Koln","Germany"],"كومو":["Como","Italy"],"لاسك لينز":["LASK Linz|LASK","Austria"],"لانس":["RC Lens|Lens","France"],"لايبزيغ":["RB Leipzig","Germany"],"لوريان":["Lorient","France"],"ليتشي":["Lecce","Italy"],"ليدز يونايتد":["Leeds United","England"],"ليفربول":["Liverpool","England"],"ليل":["Lille","France"],"مانشستر سيتي":["Manchester City","England"],"مانشستر يونايتد":["Manchester United","England"],"ملقة":["Malaga","Spain"],"مولودية الجزائر":["MC Alger|Mouloudia Alger","Algeria"],"مونزا":["Monza","Italy"],"ميلان":["AC Milan","Italy"],"نابولي":["Napoli","Italy"],"نوتنغهام فورست":["Nottingham Forest","England"],"نيس":["OGC Nice|Nice","France"],"نيوكاسل يونايتد":["Newcastle United","England"],"هابويل بئر السبع":["Hapoel Beer Sheva|Hapoel Be'er Sheva","Israel"],"هال سيتي":["Hull City","England"],"هامبورغ":["Hamburger SV|Hamburg","Germany"],"هوفنهايم":["Hoffenheim|TSG Hoffenheim","Germany"],"يانج أفريكانز":["Young Africans|Yanga","Tanzania"],"يوفنتوس":["Juventus","Italy"]};
-Object.assign(TL_DICT, {"راسينغ سانتاندير":["Racing de Santander|Racing Santander","Spain"],"بريست":["Brest|Stade Brestois","France"],"الفتح":["Al-Fateh|Al Fateh","Saudi Arabia"],"الرياض":["Al-Riyadh|Al Riyadh","Saudi Arabia"],"ألانيا سبور":["Alanyaspor","Turkey"],"أبها":["Abha","Saudi Arabia"],"الشباب":["Al Shabab|Al-Shabab","Saudi Arabia"],"الفيصلي":["Al-Faisaly|Al Faisaly","Saudi Arabia"],"الدرعية":["Al Diriyah|Al-Diriyah","Saudi Arabia"]});
+Object.assign(TL_DICT, {"راسينغ سانتاندير":["Racing de Santander|Racing Santander","Spain"],"بريست":["Brest|Stade Brestois","France"],"الفتح":["Al-Fateh|Al Fateh","Saudi Arabia"],"الرياض":["Al-Riyadh|Al Riyadh","Saudi Arabia"],"ألانيا سبور":["Alanyaspor","Turkey"],"أبها":["Abha","Saudi Arabia"],"الشباب":["Al Shabab|Al-Shabab","Saudi Arabia"],"الفيصلي":["Al-Faisaly|Al Faisaly","Saudi Arabia"],"الدرعية":["Al Diriyah|Al-Diriyah","Saudi Arabia"],"فرايبورغ":["Freiburg|SC Freiburg","Germany"],"الهلال":["Al-Hilal|Al Hilal","Saudi Arabia"],"القادسية":["Al-Qadsiah|Al Qadsiah","Saudi Arabia"],"النصر":["Al-Nassr|Al Nassr","Saudi Arabia"],"الأهلي السعودي":["Al-Ahli|Al Ahli","Saudi Arabia"],"الاتحاد":["Al-Ittihad|Al Ittihad","Saudi Arabia"],"آمد":["Amed|Amed SK","Turkey"],"قاسم باشا":["Kasimpasa|Kasımpaşa","Turkey"]});
 let TLOGOS = {}, TLMISS = {}, tlLast = "", tlCur = "";
 try { TLOGOS = JSON.parse(localStorage.getItem("sk_tlogos2") || "{}") || {}; TLMISS = JSON.parse(localStorage.getItem("sk_tlmiss2") || "{}") || {}; } catch (e) {}
 function tlSave(){ try { localStorage.setItem("sk_tlogos2", JSON.stringify(TLOGOS)); localStorage.setItem("sk_tlmiss2", JSON.stringify(TLMISS)); } catch (e) {} }
@@ -6747,16 +6747,16 @@ function demoMatches(){
   ];
 }
 
-/* ===== جلب الترتيب تلقائياً: بيشتغل لوحده لما تفتح الأدمن (كل 12 ساعة)، ونفس مفتاح API بتاع المباريات ===== */
+/* ===== جلب الترتيب تلقائياً: بيشتغل لوحده لما تفتح الأدمن (كل 12 ساعة). المصادر بالترتيب: ESPN ثم API-Football ثم TheSportsDB، وأي جدول ناقص (أقل من 8 فرق) بيتتجاهل ===== */
 (function(){
   const LG = [
-    {ar:"الدوري الإنجليزي", sdb:"4328", api:39}, {ar:"الدوري الإسباني", sdb:"4335", api:140},
-    {ar:"الدوري الإيطالي", sdb:"4332", api:135}, {ar:"الدوري الألماني", sdb:"4331", api:78},
-    {ar:"الدوري الفرنسي", sdb:"4334", api:61}, {ar:"دوري أبطال أوروبا", sdb:"4480", api:2, ucl:true},
-    {ar:"الدوري المصري", sdb:"4829", api:233}, {ar:"الدوري السعودي", sdb:"4668", api:307},
-    {ar:"الدوري التركي", sdb:"4339", api:203}
+    {ar:"الدوري الإنجليزي", espn:"eng.1", sdb:"4328", api:39}, {ar:"الدوري الإسباني", espn:"esp.1", sdb:"4335", api:140},
+    {ar:"الدوري الإيطالي", espn:"ita.1", sdb:"4332", api:135}, {ar:"الدوري الألماني", espn:"ger.1", sdb:"4331", api:78},
+    {ar:"الدوري الفرنسي", espn:"fra.1", sdb:"4334", api:61}, {ar:"دوري أبطال أوروبا", espn:"uefa.champions", sdb:"4480", api:2, ucl:true},
+    {ar:"الدوري المصري", espn:"egy.1", sdb:"4829", api:233}, {ar:"الدوري السعودي", espn:"ksa.1", sdb:"4668", api:307},
+    {ar:"الدوري التركي", espn:"tur.1", sdb:"4339", api:203}
   ];
-  const EVERY = 12 * 36e5, KEY = "sk_stauto_ts";
+  const EVERY = 12 * 36e5, KEY = "sk_stauto_ts", MIN = 8;
   let busy = false, next = 0;
   const msg = t => { const e = document.getElementById("stAutoMsg"); if (e) e.textContent = t; };
   const lsGetN = () => { try { return Number(localStorage.getItem(KEY)) || 0; } catch (e) { return 0; } };
@@ -6766,10 +6766,10 @@ function demoMatches(){
   const season = () => { const d = fxCairo(Date.now()), y = +d.slice(0, 4), m = +d.slice(5, 7); return m >= 7 ? y : y - 1; };
   const int = x => { const n = parseInt(x, 10); return isNaN(n) ? 0 : n; };
 
-  function zonesFromDesc(rows){
+  function zonesFromDesc(descs){
     const out = []; let cur = null;
-    rows.forEach(x => {
-      const d = String(x.description || ""); let lab = "";
+    descs.forEach(d0 => {
+      const d = String(d0 || ""); let lab = "";
       if (/relegation/i.test(d)) lab = /play/i.test(d) ? "ملحق الهبوط" : "هبوط";
       else if (/champions league/i.test(d)) lab = "أبطال أوروبا";
       else if (/europa league/i.test(d)) lab = "الدوري الأوروبي";
@@ -6778,11 +6778,21 @@ function demoMatches(){
     });
     return out.map(a => a[0] + ":" + a[1]);
   }
+  async function viaEspn(lg){
+    const j = await tlJson("https://site.api.espn.com/apis/v2/sports/soccer/" + lg.espn + "/standings");
+    let best = null;
+    ((j && j.children) || []).forEach(c => { const e = c && c.standings && c.standings.entries; if (e && (!best || e.length > best.length)) best = e; });
+    if (!best && j && j.standings && j.standings.entries) best = j.standings.entries;
+    if (!best || best.length < MIN) throw new Error("empty");
+    const st = (e, names) => { for (const n of names){ const a = (e.stats || []).find(x => x.name === n); if (a && a.value !== undefined && a.value !== null) return int(a.value); } return 0; };
+    const list = best.slice().sort((a, b) => (st(a, ["rank"]) || 999) - (st(b, ["rank"]) || 999));
+    return {rows: list.map(e => ({name: (e.team && (e.team.displayName || e.team.name)) || "", p: st(e, ["gamesPlayed"]), w: st(e, ["wins"]), d: st(e, ["ties", "draws"]), l: st(e, ["losses"]), gd: st(e, ["pointDifferential", "goalDifference"]), pts: st(e, ["points"])})), z: lg.ucl ? [] : zonesFromDesc(list.map(e => e.note && e.note.description))};
+  }
   async function viaApi(lg, yr){
     const R = await fx("standings?league=" + lg.api + "&season=" + yr);
     const g = R && R[0] && R[0].league && R[0].league.standings && R[0].league.standings[0];
-    if (!g || g.length < 2) throw new Error("empty");
-    return {rows: g.map(x => ({name: x.team.name, p: int(x.all.played), w: int(x.all.win), d: int(x.all.draw), l: int(x.all.lose), gd: int(x.goalsDiff), pts: int(x.points)})), z: lg.ucl ? [] : zonesFromDesc(g)};
+    if (!g || g.length < MIN) throw new Error("empty");
+    return {rows: g.map(x => ({name: x.team.name, p: int(x.all.played), w: int(x.all.win), d: int(x.all.draw), l: int(x.all.lose), gd: int(x.goalsDiff), pts: int(x.points)})), z: lg.ucl ? [] : zonesFromDesc(g.map(x => x.description))};
   }
   async function viaSdb(lg, yr){
     let err = null, j = null;
@@ -6792,7 +6802,7 @@ function demoMatches(){
     }
     if (err) throw err;
     const t = (j && j.table) || [];
-    if (t.length < 2) throw new Error("empty");
+    if (t.length < MIN) throw new Error("partial");
     t.sort((a, b) => int(a.intRank) - int(b.intRank));
     return {rows: t.map(x => ({name: x.strTeam, p: int(x.intPlayed), w: int(x.intWin), d: int(x.intDraw), l: int(x.intLoss), gd: int(x.intGoalDifference), pts: int(x.intPoints)})), z: []};
   }
@@ -6802,40 +6812,47 @@ function demoMatches(){
       const rev = window.fxRev(), nm = window.fxNm, miss = new Set(), yr = season();
       const k = (document.getElementById("fxKey") || {}).value; let useApi = !!(k && k.trim());
       const old = SETTINGS.stand && Array.isArray(SETTINGS.stand.l) ? SETTINGS.stand.l : [];
-      const list = old.slice(); let ok = 0, changed = 0, apiN = 0; const bad = [];
+      const list = old.slice(); let ok = 0, changed = 0, removed = 0; const bad = [], used = new Set();
       for (let i = 0; i < LG.length; i++){
         if (!adminOpen()) break;
         const lg = LG[i]; msg("جاري جلب الترتيب: " + lg.ar + " (" + (i + 1) + " من " + LG.length + ")");
-        let res = null;
-        if (useApi){
-          try { res = await viaApi(lg, yr); apiN++; }
+        let res = null, src = "";
+        try { res = await viaEspn(lg); src = "ESPN"; } catch (e) {}
+        if (!res && useApi){
+          try { res = await viaApi(lg, yr); src = "API-Football"; }
           catch (e) { if (/plan|free|season|token|key|limit|request/i.test((e && e.message) || "")) useApi = false; }
         }
         if (!res){
           for (let t = 0; t < 2 && !res; t++){
-            try { res = await viaSdb(lg, yr); }
+            try { res = await viaSdb(lg, yr); src = "TheSportsDB"; }
             catch (e) { if (e && e.message === "rate" && t === 0){ msg("الخدمة طلبت استنى شوية، بيكمل بعد دقيقة"); await tlSleep(65000); } else break; }
           }
-          await tlSleep(2200);
+          await tlSleep(1500);
         }
-        if (!res){ bad.push(lg.ar); continue; }
+        if (!res){
+          bad.push(lg.ar);
+          const j0 = list.findIndex(x => x.n === lg.ar);
+          if (j0 >= 0 && Array.isArray(list[j0].r) && list[j0].r.length <= 5){ list.splice(j0, 1); changed++; removed++; }
+          continue;
+        }
+        used.add(src);
         const ar = en => { const a = rev.get(nm(en)); if (!a) miss.add(en); return a || String(en); };
         const r = res.rows.map(x => [ar(x.name), x.p, x.w, x.d, x.l, x.gd, x.pts].join("|"));
         const j = list.findIndex(x => x.n === lg.ar);
         let z = j >= 0 && Array.isArray(list[j].z) && list[j].z.length ? list[j].z : res.z;
         if (!z.length && lg.ucl) z = ["دور الـ16:8", "الملحق:16", "خروج:12"];
-        const same = j >= 0 && JSON.stringify([list[j].r, list[j].z || []]) === JSON.stringify([r, z]);
         ok++;
-        if (same) continue;
+        if (j >= 0 && JSON.stringify([list[j].r, list[j].z || []]) === JSON.stringify([r, z])) continue;
         const o = {n: lg.ar, u: stToday(), z, r};
         if (j >= 0) list[j] = o; else list.push(o);
         changed++;
       }
-      if (!ok){ next = Date.now() + 10 * 60000; msg("تعذّر جلب الترتيب دلوقتي، هحاول تاني بعد شوية."); return; }
-      if (changed){ SETTINGS.stand = {l: list}; stSig = ""; persistSettings(); fillSt(); }
+      if (!ok && !removed){ next = Date.now() + 10 * 60000; msg("تعذّر جلب الترتيب دلوقتي (المصادر ما رجّعتش جدول كامل)، هحاول تاني بعد شوية."); return; }
+      if (changed){ if (list.length) SETTINGS.stand = {l: list}; else delete SETTINGS.stand; stSig = ""; persistSettings(); fillSt(); }
       lsSetN(Date.now());
-      let t = "الترتيب اتحدّث ✓ " + ok + " دوري، اتغيّر منهم " + changed + " (المصدر: " + (apiN ? "API-Football" + (apiN < ok ? " + TheSportsDB" : "") : "TheSportsDB") + ").";
-      if (bad.length) t += " ما اتجابش: " + bad.join("، ") + ".";
+      let t = "الترتيب اتحدّث ✓ " + ok + " دوري، اتغيّر منهم " + changed + (used.size ? " (المصدر: " + [...used].join(" + ") + ")" : "") + ".";
+      if (bad.length) t += " ما اتجابش جدول كامل: " + bad.join("، ") + ".";
+      if (removed) t += " اتشالت " + removed + " جداول ناقصة (5 فرق بس) كانت اتحفظت قبل كده.";
       if (miss.size) t += " أندية من غير اسم عربي: " + [...miss].slice(0, 8).join("، ") + (miss.size > 8 ? "…" : "") + ".";
       msg(t);
     } catch (e) {
@@ -6846,7 +6863,7 @@ function demoMatches(){
     if (busy || Date.now() < next || !adminOpen() || !canWrite() || !window.fxBusy || window.fxBusy()) return;
     if (Date.now() - lsGetN() > EVERY) run();
   }, 5000);
-  const b = document.getElementById("stAutoGo"); if (b) b.addEventListener("click", () => { if (!canWrite()){ msg("لازم تكون مسجّل دخول الأدمن الأول."); return; } next = 0; lsSetN(0); run(); });
+  const bt = document.getElementById("stAutoGo"); if (bt) bt.addEventListener("click", () => { if (!canWrite()){ msg("لازم تكون مسجّل دخول الأدمن الأول."); return; } next = 0; lsSetN(0); run(); });
 })();
 
 let draft = null;
