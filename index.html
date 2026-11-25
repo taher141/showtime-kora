@@ -95,6 +95,15 @@ h1{font-size:22px;margin:0;color:var(--team);cursor:default;user-select:none;lin
 #libGBar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:2px 0 10px;font-size:13px;color:var(--muted)}
 #libGBar b{color:var(--text);font-size:14px}
 #libGBar button{padding:5px 10px;font-size:12px}
+#libSRow{display:flex;gap:8px;align-items:center;flex-wrap:nowrap}
+#libSRow input{flex:1;min-width:0;width:auto}
+#libSRow button{flex:none;white-space:nowrap;padding:8px 11px;font-size:13px}
+#libSRow button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+#libGAdd{display:flex;gap:8px;margin:8px 0 0}
+#libGAdd input{flex:1;min-width:0;width:auto}
+#libRows .alrow{display:flex;gap:8px;margin-bottom:8px}
+#libRows .alrow .al{flex:1;min-width:0}
+#libRows .alrow .gsel{flex:none;max-width:44%;background:var(--in);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:8px;font:inherit;font-size:13px}
 #admin h2{font-size:16px;margin:0 0 12px;color:var(--text)}
 #admin label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
 #admin input,#admin textarea{width:100%;background:var(--in);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:9px 10px;font:inherit}
@@ -333,8 +342,8 @@ main{max-width:960px;margin:0 auto;padding:16px}
 #admin .chh2{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:8px;align-items:center}
 #libRows .chh2{grid-template-columns:minmax(0,1fr) auto auto;gap:6px}
 #libRows .chh2 .cb{min-width:0}
-#libRows .chh2 .cn{font-size:15px;font-weight:700}
-#libRows .chh2>button{padding:5px 8px;font-size:12px;white-space:nowrap;line-height:1.2}
+#libRows .chh2 .cn{font-size:14px;font-weight:700;padding-top:7px;padding-bottom:7px}
+#libRows .chh2>button{padding:8px 14px;font-size:13.5px;white-space:nowrap;line-height:1.2}
 #admin .chh2 input.cc{width:46px;height:38px;padding:2px;cursor:pointer}
 .chl{width:30px;height:30px;flex:none;object-fit:contain;background:#fff;border-radius:8px;padding:2px}
 #tvList button.lgo{padding:0;height:66px;justify-content:center;border:2px solid var(--c);background-repeat:no-repeat;background-position:center;background-size:contain;text-shadow:none}
@@ -1228,7 +1237,8 @@ a.ln-card:active{transform:scale(.99)}
       <div id="libStripWrap"><div class="league-strip" id="libStrip" role="list"></div></div>
       <div id="libGBar" class="hide"></div>
       <input type="file" id="libGFile" accept="image/*" hidden>
-      <input id="libSearch" placeholder="بحث باسم القناة (بيدوّر في كل المجموعات)...">
+      <div id="libSRow"><input id="libSearch" placeholder="بحث باسم القناة..."><button type="button" id="libShowAll" title="إظهار كل القنوات من كل المجموعات">📋 كل القنوات</button><button type="button" id="libGNew" title="إضافة مجموعة جديدة">+ مجموعة</button></div>
+      <div id="libGAdd" class="hide"><input id="libGName" placeholder="اسم المجموعة الجديدة"><button type="button" class="p" id="libGOk">إضافة</button></div>
       <p class="note" style="margin:6px 0 0">قايمة اختيار القنوات هنا هي نفس قايمة «القناة الناقلة» في إضافة مباراة بالظبط. أول مرة بتفتح المكتبة بتتملي بكل القنوات، وضيف الروابط واضغط «حفظ المكتبة».</p>
       <div id="libRows" style="margin-top:12px"></div>
       <div class="bar"><button id="libAdd">+ إضافة قناة</button><button id="libAll">+ كل القنوات من القايمة</button><button class="p" id="libSave">حفظ المكتبة</button></div>
@@ -4386,16 +4396,20 @@ function libCard(c){
   c = c || {};
   const card = document.createElement("div");
   card.className = "chc";
-  card.innerHTML = '<div class="chh2"><input class="cn" placeholder="اسم القناة (مثال: beIN Sports 1)"><button type="button" class="ap" title="طبّق سيرفرات القناة على المباريات">طبّق</button><button type="button" class="d crm" title="حذف القناة">حذف</button></div><input class="al" placeholder="أسماء تانية للقناة (اختياري، افصل بفاصلة) مثال: بي ان سبورت 1، bein 1" style="margin-bottom:8px"><div class="csrc"></div><div class="bar"><button type="button" class="cadd">+ سيرفر</button></div>';
+  card.innerHTML = '<div class="chh2"><input class="cn" placeholder="اسم القناة (مثال: beIN Sports 1)"><button type="button" class="ap" title="طبّق سيرفرات القناة على المباريات">طبّق</button><button type="button" class="d crm" title="حذف القناة">حذف</button></div><div class="alrow"><input class="al" placeholder="أسماء تانية للقناة (اختياري، افصل بفاصلة) مثال: بي ان سبورت 1، bein 1"><select class="gsel" title="المجموعة"></select></div><div class="csrc"></div><div class="bar"><button type="button" class="cadd">+ سيرفر</button></div>';
   card.querySelector(".cn").value = c.name || "";
-  makeCombo(card.querySelector(".cn"), CHANNELS);
+  makeCombo(card.querySelector(".cn"), () => chanList(true));
   card.querySelector(".cn").addEventListener("change", () => {
     const me = card.querySelector(".cn"), k = libKey(me.value);
     if (k && [...document.querySelectorAll("#libRows .cn")].some(i => i !== me && libKey(i.value) === k)) toast("القناة دي موجودة بالفعل في المكتبة، ضيف السيرفرات في كارتها", 4000);
-    const g = libGroupOf(me.value); if (g) libOpenG = g;
+    const g0 = libGroupFromList(me.value); if (g0){ card.dataset.g = g0; libFillGsel(card); }
+    const g = libGroupOfCard(card); if (g && !libShowAll) libOpenG = g;
     libNames(); libApplyView();
   });
   card.querySelector(".al").value = (c.aliases || []).join("، ");
+  card.dataset.g = c.g || "";
+  libFillGsel(card);
+  card.querySelector(".gsel").onchange = () => { card.dataset.g = card.querySelector(".gsel").value; if (!libShowAll) libOpenG = libGroupOfCard(card); libApplyView(); };
   card.querySelector(".crm").onclick = () => { if (confirm("تحذف القناة دي من المكتبة؟ (المباريات اللي اتضافت بيها قبل كده مش هتتأثر)")){ card.remove(); libNames(); } };
   card.querySelector(".cadd").onclick = () => libSrcRow(card);
   card.querySelector(".ap").onclick = () => libApplyAll(card);
@@ -4407,6 +4421,7 @@ function libCard(c){
 function libCardData(card){
   return {
     name: card.querySelector(".cn").value.trim(),
+    g: libGroupOfCard(card),
     aliases: card.querySelector(".al").value.split(/[,،;\n]+/).map(x => x.trim()).filter(Boolean),
     sources: [...card.querySelectorAll(".csrc .row")].map(r => {
       const o = {name: r.querySelector(".sn").value.trim(), url: normUrl(r.querySelector(".su").value)};
@@ -4419,10 +4434,11 @@ function libCollect(){
   return [...document.querySelectorAll("#libRows .chc")].map(libCardData).filter(c => c.name || c.sources.length);
 }
 /* ===== مجموعات المكتبة: أيقونات بتفتح وتقفل قنوات كل مجموعة ===== */
-var libOpenG = "", LIBG = {};
+var libOpenG = "", LIBG = {}, LIBGRP = [], libShowAll = false;
 const LIB_GSTYLE = {"beIN Sports":["beIN","#5b2a86"],"ON Sport":["ON","#c9342a"],"Abu Dhabi Sports":["AD","#a8812a"],"Starzplay":["STARZ","#1f2937"],"UAE":["UAE","#0e7c4a"],"Qatar":["QA","#8a1538"],"Kuwait, Oman & Bahrain":["GCC","#1d6fb8"],"Egypt":["EG","#b91c1c"],"Maghreb":["MG","#0f766e"],"Iraq & Jordan":["IQ·JO","#4b5563"],"Other":["TV","#475569"]};
 function libBadge(g){
-  const st = LIB_GSTYLE[g] || [String(g).slice(0, 3), "#475569"], t = st[0];
+  let hh = 0; for (const ch of String(g)) hh = (hh * 31 + ch.charCodeAt(0)) % 360;
+  const st = LIB_GSTYLE[g] || [String(g).trim().slice(0, 3).toUpperCase(), "hsl(" + hh + ",45%,38%)"], t = st[0];
   const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 76"><rect width="108" height="76" rx="12" fill="' + st[1] + '"/><text x="54" y="47" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="' + (t.length > 4 ? 21 : 28) + '" fill="#fff">' + t + '</text></svg>';
   return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
 }
@@ -4430,12 +4446,64 @@ function libGLogo(g){ return LIBG[g] || libBadge(g); }
 function libGroupOf(name){
   const k = libKey(name);
   if (!k) return "";
-  for (const g of CHANNELS) if (g[1].some(x => libKey(x) === k)) return g[0];
-  return "Other";
+  for (const g of CHANNELS) if (LIBGRP.includes(g[0]) && g[1].some(x => libKey(x) === k)) return g[0];
+  return LIBGRP.includes("Other") ? "Other" : "";
 }
+function libGroupOfCard(card){
+  const g = card.dataset.g;
+  if (g && LIBGRP.includes(g)) return g;
+  return libGroupOf(card.querySelector(".cn").value);
+}
+function libFillGsel(card){
+  const sel = card.querySelector(".gsel"), cur = libGroupOfCard(card);
+  sel.innerHTML = "";
+  LIBGRP.forEach(g => { const o = document.createElement("option"); o.value = g; o.textContent = g; sel.appendChild(o); });
+  if (cur) sel.value = cur;
+}
+function libRefreshGsels(){ document.querySelectorAll("#libRows .chc").forEach(libFillGsel); }
+/* القايمة اللي بتظهر في «القناة الناقلة» وفي اسم القناة: مجموعات المكتبة بقنواتها (ولو المكتبة فاضية بتظهر القايمة الأصلية) */
+function chanList(withDef){
+  const cards = [...document.querySelectorAll("#libRows .chc")];
+  if (!LIBGRP.length || !cards.length) return CHANNELS;
+  const out = LIBGRP.map(g => [g, []]), idx = {}, seen = new Set();
+  out.forEach(o => idx[o[0]] = o[1]);
+  const add = (g, n) => { const k = libKey(n); if (!k || seen.has(k) || !idx[g]) return; seen.add(k); idx[g].push(n); };
+  cards.forEach(card => add(libGroupOfCard(card), card.querySelector(".cn").value.trim()));
+  if (withDef) CHANNELS.forEach(cg => cg[1].forEach(n => add(cg[0], n)));
+  return out.filter(o => o[1].length);
+}
+function libGroupFromList(name){
+  const k = libKey(name);
+  if (!k) return "";
+  for (const g of chanList(true)) if (g[1].some(x => libKey(x) === k)) return g[0];
+  return "";
+}
+function libGAddDo(){
+  const n = $("#libGName").value.trim();
+  if (!n){ toast("اكتب اسم المجموعة"); return; }
+  if (LIBGRP.some(g => libKey(g) === libKey(n))){ toast("المجموعة دي موجودة بالفعل"); return; }
+  LIBGRP.push(n); libOpenG = n; libShowAll = false;
+  $("#libGName").value = ""; $("#libGAdd").classList.add("hide");
+  libStripBuild(); libRefreshGsels(); libApplyView();
+  const ch = document.querySelector('#libStrip .league-chip[data-g="' + n.replace(/"/g, '\\"') + '"]'); if (ch) ch.scrollIntoView({inline: "center", block: "nearest", behavior: "smooth"});
+  toast("اتضافت مجموعة «" + n + "»، ضيف قنواتها واضغط حفظ المكتبة");
+}
+function libGDel(g){
+  const cards = [...document.querySelectorAll("#libRows .chc")].filter(c => libGroupOfCard(c) === g);
+  if (!confirm("تحذف المجموعة «" + g + "»" + (cards.length ? " و" + cards.length + " قناة جواها" : "") + " من المكتبة؟ (لازم تدوس حفظ المكتبة عشان تتثبت)")) return;
+  cards.forEach(c => c.remove());
+  LIBGRP = LIBGRP.filter(x => x !== g); delete LIBG[g];
+  libOpenG = "";
+  libStripBuild(); libRefreshGsels(); libNames(); libApplyView();
+  toast("اتحذفت المجموعة «" + g + "»");
+}
+$("#libGNew").onclick = () => { const r = $("#libGAdd"); r.classList.toggle("hide"); if (!r.classList.contains("hide")) $("#libGName").focus(); };
+$("#libGOk").onclick = libGAddDo;
+$("#libGName").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); libGAddDo(); } });
+$("#libShowAll").onclick = () => { libShowAll = !libShowAll; if (libShowAll) libOpenG = ""; $("#libSearch").value = ""; libApplyView(); };
 function libStripBuild(){
   const st = $("#libStrip"); st.innerHTML = "";
-  CHANNELS.forEach(g => {
+  LIBGRP.forEach(gn => { const g = [gn];
     const b = document.createElement("button");
     b.type = "button"; b.className = "league-chip"; b.dataset.g = g[0]; b.setAttribute("aria-pressed", "false");
     const im = document.createElement("img"); im.alt = g[0]; im.draggable = false; im.src = libGLogo(g[0]);
@@ -4443,6 +4511,7 @@ function libStripBuild(){
     const c = document.createElement("span"); c.className = "lc";
     b.append(im, n, c);
     b.onclick = () => {
+      libShowAll = false;
       libOpenG = libOpenG === g[0] ? "" : g[0];
       $("#libSearch").value = "";
       libApplyView();
@@ -4458,7 +4527,7 @@ function libStripBuild(){
 function libChips(){
   const cnt = {};
   document.querySelectorAll("#libRows .chc").forEach(card => {
-    const d = libCardData(card), g = libGroupOf(d.name);
+    const d = libCardData(card), g = d.g;
     if (!g) return;
     const o = cnt[g] || (cnt[g] = {n: 0, k: 0}); o.n++; if (d.sources.length) o.k++;
   });
@@ -4471,20 +4540,23 @@ function libChips(){
 }
 function libApplyView(){
   const q = libKey($("#libSearch").value);
+  $("#libShowAll").classList.toggle("on", libShowAll);
+  $("#libShowAll").textContent = libShowAll ? "📋 إخفاء الكل" : "📋 كل القنوات";
   document.querySelectorAll("#libRows .chc").forEach(card => {
     const nm = card.querySelector(".cn").value, hay = libKey(nm + " " + card.querySelector(".al").value);
-    const show = q ? hay.includes(q) : (!nm.trim() || libGroupOf(nm) === libOpenG);
+    const show = q ? hay.includes(q) : (libShowAll || !nm.trim() || libGroupOfCard(card) === libOpenG);
     card.style.display = show ? "" : "none";
   });
   libChips();
   const bar = $("#libGBar");
-  if (!libOpenG || q){ bar.classList.add("hide"); bar.innerHTML = ""; return; }
+  if (!libOpenG || q || libShowAll){ bar.classList.add("hide"); bar.innerHTML = ""; return; }
   bar.classList.remove("hide");
-  bar.innerHTML = "<b></b><span></span><button type=\"button\" class=\"up\">🖼 لوجو المجموعة</button>" + (LIBG[libOpenG] ? "<button type=\"button\" class=\"d rm\">إزالة اللوجو</button>" : "");
+  bar.innerHTML = "<b></b><span></span><button type=\"button\" class=\"up\">🖼 لوجو المجموعة</button>" + (LIBG[libOpenG] ? "<button type=\"button\" class=\"d rm\">إزالة اللوجو</button>" : "") + "<button type=\"button\" class=\"d gdel\">🗑 حذف المجموعة</button>";
   bar.querySelector("b").textContent = libOpenG;
-  const n = [...document.querySelectorAll("#libRows .chc")].filter(c => libGroupOf(c.querySelector(".cn").value) === libOpenG).length;
+  const n = [...document.querySelectorAll("#libRows .chc")].filter(c => libGroupOfCard(c) === libOpenG).length;
   bar.querySelector("span").textContent = n + " قناة · اضغط الأيقونة تاني عشان تقفل";
   bar.querySelector(".up").onclick = () => $("#libGFile").click();
+  bar.querySelector(".gdel").onclick = () => libGDel(libOpenG);
   const rm = bar.querySelector(".rm");
   if (rm) rm.onclick = () => { delete LIBG[libOpenG]; libStripBuild(); libApplyView(); toast("اتشال اللوجو، اضغط حفظ المكتبة"); };
 }
@@ -4522,28 +4594,29 @@ function libNames(){
   libChips();
 }
 function fillLib(){
-  LIBG = Object.assign({}, SETTINGS.libG || {}); libOpenG = ""; $("#libSearch").value = "";
+  LIBG = Object.assign({}, SETTINGS.libG || {}); libOpenG = ""; libShowAll = false; $("#libSearch").value = "";
+  LIBGRP = Array.isArray(SETTINGS.libGrp) && SETTINGS.libGrp.length ? SETTINGS.libGrp.slice() : CHANNELS.map(g => g[0]);
   libStripBuild();
   $("#libRows").innerHTML = "";
   const l = libList();
   if (l.length) l.forEach(c => libCard(c));
-  else CHANNELS.forEach(g => g[1].forEach(n => libCard({name: n})));
+  else CHANNELS.forEach(g => g[1].forEach(n => libCard({name: n, g: g[0]})));
   libNames(); libApplyView();
 }
 function libImportAll(){
   const have = new Set([...document.querySelectorAll("#libRows .cn")].map(i => libKey(i.value)));
   let n = 0;
-  CHANNELS.forEach(g => g[1].forEach(nm => { if (!have.has(libKey(nm))){ libCard({name: nm}); have.add(libKey(nm)); n++; } }));
+  CHANNELS.forEach(g => { if (!LIBGRP.includes(g[0])) return; g[1].forEach(nm => { if (!have.has(libKey(nm))){ libCard({name: nm, g: g[0]}); have.add(libKey(nm)); n++; } }); });
   libNames(); libApplyView();
   toast(n ? "اتضاف " + n + " قناة من قايمة القنوات، ضيف روابطها واضغط حفظ المكتبة" : "كل القنوات موجودة بالفعل في المكتبة");
 }
 $("#libAll").onclick = libImportAll;
 $("#libRows").addEventListener("input", () => { clearTimeout(window._libCT); window._libCT = setTimeout(libChips, 300); });
-$("#libAdd").onclick = () => { const c = libCard({}); c.scrollIntoView({behavior:"smooth", block:"center"}); c.querySelector(".cn").focus(); };
+$("#libAdd").onclick = () => { const c = libCard({g: libOpenG}); c.scrollIntoView({behavior:"smooth", block:"center"}); c.querySelector(".cn").focus(); };
 $("#libSave").onclick = () => {
   const l = libCollect();
   if (l.some(c => !c.name)){ toast("في قناة من غير اسم، اكتب اسمها أو احذفها"); return; }
-  SETTINGS.lib = l; SETTINGS.libG = Object.assign({}, LIBG);
+  SETTINGS.lib = l; SETTINGS.libG = Object.assign({}, LIBG); SETTINGS.libGrp = LIBGRP.slice();
   persistSettings(); libNames();
 };
 $("#libSearch").oninput = libApplyView;
@@ -5249,7 +5322,7 @@ function makeCombo(id, groups){
   tg.onclick = () => { if (list.classList.contains("hide")){ inp.blur(); open(); } else close(); };
   document.addEventListener("pointerdown", e => { if (!wrap.contains(e.target)) close(); });
 }
-makeCombo("achan", () => { const n = libCollect().filter(c => c.name && c.sources.length).map(c => c.name); return (n.length ? [["📚 Library (channels with servers)", n]] : []).concat(CHANNELS); });
+makeCombo("achan", () => { const n = libCollect().filter(c => c.name && c.sources.length).map(c => c.name); return (n.length ? [["📚 Library (channels with servers)", n]] : []).concat(chanList(false)); });
 makeCombo("acomm", COMMENTATORS);
 
 
