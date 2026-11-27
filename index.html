@@ -1079,6 +1079,72 @@ a.ln-card:active{transform:scale(.99)}
 .mframe .scnt{flex:none;font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;font-size:14px;font-weight:700;color:var(--muted);background:var(--card2);border:1px solid var(--bd2);border-radius:12px;padding:7px 14px;white-space:nowrap}
 .mframe .ttl{font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;color:var(--text);font-size:20px;font-weight:800;margin:2px 0 12px}
 @media(max-width:380px){.mframe{padding:12px 9px 10px}.mframe .st{font-size:18px}.mframe .st svg{width:22px;height:22px}.mframe .scnt{font-size:12.5px;padding:6px 10px}}
+
+/* ===== (تعديل) السلايدر الحي: بيتلون بلون المظهر المختار ===== */
+.slw{
+  border:1.5px solid color-mix(in srgb,var(--team) 78%,#000);
+  background:
+    radial-gradient(60% 55% at 50% 0,color-mix(in srgb,var(--team) 44%,transparent),transparent 70%),
+    radial-gradient(45% 60% at 8% 100%,color-mix(in srgb,var(--acc) 38%,transparent),transparent 70%),
+    radial-gradient(45% 60% at 92% 100%,color-mix(in srgb,var(--team) 28%,transparent),transparent 70%),
+    linear-gradient(180deg,color-mix(in srgb,var(--team) 16%,#020812),color-mix(in srgb,var(--team) 6%,#01040b) 55%,color-mix(in srgb,var(--team) 12%,#020812));
+  background-size:170% 170%,170% 170%,170% 170%,100% 100%;
+  background-position:0% 0%,100% 100%,0% 100%,0 0;
+  animation:slglow 9s ease-in-out infinite alternate,slpulse 4s ease-in-out infinite;
+}
+.slw::before{
+  background:linear-gradient(135deg,var(--team),var(--acc));
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 260' preserveAspectRatio='xMidYMin slice'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%2322d3ee' stop-opacity='0'/%3E%3Cstop offset='.5' stop-color='%2322d3ee' stop-opacity='.6'/%3E%3Cstop offset='1' stop-color='%2322d3ee' stop-opacity='0'/%3E%3C/linearGradient%3E%3CradialGradient id='b'%3E%3Cstop offset='0' stop-color='%2322d3ee' stop-opacity='.4'/%3E%3Cstop offset='1' stop-color='%2322d3ee' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpolygon points='0,0 95,0 0,70' fill='%230b8bfb' opacity='.16'/%3E%3Cpolygon points='400,0 305,0 400,70' fill='%230b8bfb' opacity='.16'/%3E%3Cpath d='M0 46 L128 0' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Cpath d='M400 46 L272 0' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Cpath d='M0 232 L70 260' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Cpath d='M400 232 L330 260' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Ccircle cx='200' cy='-18' r='88' fill='none' stroke='%2322d3ee' stroke-opacity='.45' stroke-width='2'/%3E%3Ccircle cx='200' cy='-18' r='66' fill='none' stroke='%230b8bfb' stroke-opacity='.55' stroke-width='1.5' stroke-dasharray='6 5'/%3E%3Cellipse cx='200' cy='258' rx='160' ry='12' fill='url%28%23b%29'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 260' preserveAspectRatio='xMidYMin slice'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%2322d3ee' stop-opacity='0'/%3E%3Cstop offset='.5' stop-color='%2322d3ee' stop-opacity='.6'/%3E%3Cstop offset='1' stop-color='%2322d3ee' stop-opacity='0'/%3E%3C/linearGradient%3E%3CradialGradient id='b'%3E%3Cstop offset='0' stop-color='%2322d3ee' stop-opacity='.4'/%3E%3Cstop offset='1' stop-color='%2322d3ee' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpolygon points='0,0 95,0 0,70' fill='%230b8bfb' opacity='.16'/%3E%3Cpolygon points='400,0 305,0 400,70' fill='%230b8bfb' opacity='.16'/%3E%3Cpath d='M0 46 L128 0' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Cpath d='M400 46 L272 0' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Cpath d='M0 232 L70 260' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Cpath d='M400 232 L330 260' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Ccircle cx='200' cy='-18' r='88' fill='none' stroke='%2322d3ee' stroke-opacity='.45' stroke-width='2'/%3E%3Ccircle cx='200' cy='-18' r='66' fill='none' stroke='%230b8bfb' stroke-opacity='.55' stroke-width='1.5' stroke-dasharray='6 5'/%3E%3Cellipse cx='200' cy='258' rx='160' ry='12' fill='url%28%23b%29'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+  animation:slfloat 6s ease-in-out infinite alternate;
+}
+.slw::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 42%,color-mix(in srgb,var(--team) 22%,transparent) 50%,transparent 58%);
+  transform:translateX(-120%);animation:slsweep 7s ease-in-out infinite;
+}
+@keyframes slglow{
+  0%{background-position:0% 0%,100% 100%,0% 100%,0 0}
+  100%{background-position:100% 100%,0% 0%,100% 0%,0 0}
+}
+@keyframes slpulse{
+  0%,100%{box-shadow:0 0 0 1px color-mix(in srgb,var(--team) 22%,transparent),0 0 18px color-mix(in srgb,var(--team) 30%,transparent),inset 0 0 24px color-mix(in srgb,var(--team) 14%,transparent)}
+  50%{box-shadow:0 0 0 1px color-mix(in srgb,var(--team) 38%,transparent),0 0 30px color-mix(in srgb,var(--team) 48%,transparent),inset 0 0 34px color-mix(in srgb,var(--team) 24%,transparent)}
+}
+@keyframes slfloat{0%{opacity:.65}100%{opacity:1}}
+@keyframes slsweep{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+@media(prefers-reduced-motion:reduce){.slw,.slw::before,.slw::after{animation:none}}
+
+/* ===== (تعديل) أزرار أمس / اليوم / غداً: لون لكل زر، باهت وينور عند الاختيار ===== */
+#tabs button[data-f="-1"]{--tc:#38bdf8;--tt:#04283d}
+#tabs button[data-f="0"]{--tc:#f87171;--tt:#4a0d0d}
+#tabs button[data-f="1"]{--tc:#fb923c;--tt:#3d1a00}
+#tabs button{
+  background:color-mix(in srgb,var(--tc) 13%,var(--card));
+  border:2px solid color-mix(in srgb,var(--tc) 32%,transparent);
+  color:color-mix(in srgb,var(--tc) 72%,var(--text));
+  transition:background .2s,border-color .2s,color .2s,box-shadow .2s,transform .15s;
+}
+#tabs button:hover{background:color-mix(in srgb,var(--tc) 22%,var(--card))}
+#tabs button:active{transform:scale(.97)}
+#tabs button.on{
+  background:var(--tc);border-color:var(--tc);color:var(--tt);font-weight:800;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--tc) 28%,transparent),0 6px 20px color-mix(in srgb,var(--tc) 60%,transparent);
+}
+:root[data-theme=light] #tabs button{color:color-mix(in srgb,var(--tc) 55%,#0f1b2d)}
+:root[data-theme=light] #tabs button.on{color:var(--tt)}
+
+/* ===== (تعديل) تصغير بعض الخطوط واللوجوهات ===== */
+#schedTxt{font-size:18px}
+.st:has(>#schedTxt) svg{width:23px;height:23px}
+.mc-mid.cd .mc-pill.cdn{font-size:23px}
+.mc-mid.cd .mc-pill.soon{font-size:16px}
+@media(max-width:640px){
+  .mc-mid.cd .mc-pill.cdn{font-size:16px}
+  .mc-mid.cd .mc-pill.soon{font-size:12px}
+  .mcard .mc-lg{width:54px;height:54px}
+  .mcard .mc-lg .ph{font-size:19px}
+}
 </style>
 <script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(/^(obsidian|carbon|midnight|emerald|ivory)$/.test(t))d.setAttribute("data-pal",t);else if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
 </head>
