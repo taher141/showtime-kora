@@ -1059,6 +1059,26 @@ a.ln-card:active{transform:scale(.99)}
 .sl-dots i{display:block;width:5px;height:5px;border-radius:50%;background:var(--bd);transition:width .2s,background .2s}
 .sl-dots i.on{width:16px;border-radius:4px;background:var(--team)}
 @media(min-width:900px){#sl{max-width:700px;margin:0 auto}}
+
+/* ===== تحديث: خلفية السلايدر + كروت كحلي + إطار أهم المباريات ===== */
+.slw{--text:#fff;--muted:#a8c4ec;--in:rgba(2,9,22,.78);--card2:rgba(18,64,130,.6);--bd:#2a5fa8;border:1.5px solid #1f7ae0;background:radial-gradient(60% 55% at 50% 0,rgba(34,211,238,.38),transparent 70%),radial-gradient(45% 60% at 8% 100%,rgba(11,139,251,.32),transparent 70%),radial-gradient(45% 60% at 92% 100%,rgba(34,211,238,.24),transparent 70%),linear-gradient(180deg,#041636,#030c1e 55%,#04122a);box-shadow:0 0 0 1px rgba(34,211,238,.16),0 0 22px rgba(11,139,251,.35),inset 0 0 28px rgba(11,139,251,.18)}
+.slw::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 260' preserveAspectRatio='xMidYMin slice'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%2322d3ee' stop-opacity='0'/%3E%3Cstop offset='.5' stop-color='%2322d3ee' stop-opacity='.6'/%3E%3Cstop offset='1' stop-color='%2322d3ee' stop-opacity='0'/%3E%3C/linearGradient%3E%3CradialGradient id='b'%3E%3Cstop offset='0' stop-color='%2322d3ee' stop-opacity='.4'/%3E%3Cstop offset='1' stop-color='%2322d3ee' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpolygon points='0,0 95,0 0,70' fill='%230b8bfb' opacity='.16'/%3E%3Cpolygon points='400,0 305,0 400,70' fill='%230b8bfb' opacity='.16'/%3E%3Cpath d='M0 46 L128 0' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Cpath d='M400 46 L272 0' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Cpath d='M0 232 L70 260' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Cpath d='M400 232 L330 260' stroke='url%28%23a%29' stroke-width='3' fill='none'/%3E%3Ccircle cx='200' cy='-18' r='88' fill='none' stroke='%2322d3ee' stroke-opacity='.45' stroke-width='2'/%3E%3Ccircle cx='200' cy='-18' r='66' fill='none' stroke='%230b8bfb' stroke-opacity='.55' stroke-width='1.5' stroke-dasharray='6 5'/%3E%3Cellipse cx='200' cy='258' rx='160' ry='12' fill='url%28%23b%29'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.slw .slt,.slw .sl-dots{position:relative;z-index:1}
+.slw .sl-ar{background:rgba(3,12,30,.82)}
+.slw .sl-dots i{background:rgba(255,255,255,.3)}
+.slw .sl-dots i.on{background:var(--team)}
+.slw .sl-tm{border-color:rgba(255,255,255,.88)}
+:root:not([data-theme]):not([data-color]):not([data-pal]){--mc-bg:#06193a;--mc-bd:#1f6fd6;--mc-t:#fff;--mc-lg:#fff;--mc-lgb:#2a7be6;--mc-info:#041230;--mc-ib:#123f78;--mc-it:#cfe0fa;--mc-end:#16345f}
+:root:not([data-theme]):not([data-color]):not([data-pal]) .mcard{border-width:1.5px;box-shadow:0 0 0 1px rgba(31,111,214,.22),0 6px 16px rgba(0,0,0,.4)}
+:root:not([data-theme]):not([data-color]):not([data-pal]) .mc-lg{border-radius:50%;border-width:3px}
+.mframe{border:1.5px solid var(--bd);border-radius:22px;background:var(--card);padding:14px 12px 12px;box-shadow:0 0 0 1px color-mix(in srgb,var(--team) 12%,transparent),0 8px 22px rgba(0,0,0,.28)}
+.mframe .sched{gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd2)}
+.mframe .shd{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}
+.mframe .st{display:flex;align-items:center;gap:10px;margin:0;font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;font-size:21px;font-weight:800;color:var(--text);line-height:1.3}
+.mframe .st svg{width:26px;height:26px;flex:none;fill:none;stroke:var(--team);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mframe .scnt{flex:none;font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;font-size:14px;font-weight:700;color:var(--muted);background:var(--card2);border:1px solid var(--bd2);border-radius:12px;padding:7px 14px;white-space:nowrap}
+.mframe .ttl{font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;color:var(--text);font-size:20px;font-weight:800;margin:2px 0 12px}
+@media(max-width:380px){.mframe{padding:12px 9px 10px}.mframe .st{font-size:18px}.mframe .st svg{width:22px;height:22px}.mframe .scnt{font-size:12.5px;padding:6px 10px}}
 </style>
 <script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(/^(obsidian|carbon|midnight|emerald|ivory)$/.test(t))d.setAttribute("data-pal",t);else if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
 </head>
@@ -1095,8 +1115,12 @@ a.ln-card:active{transform:scale(.99)}
 <div id="sl" class="hide"></div>
 <main>
   <section id="home">
+    <div class="mframe" id="mframe">
     <div class="sched" id="sched">
-      <h2 class="st">جدول المباريات <span id="schedDay"></span></h2>
+      <div class="shd">
+        <h2 class="st"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01" stroke-width="2.4"/></svg><span id="schedTxt">أهم مباريات اليوم</span><span id="schedDay" class="hide"></span></h2>
+        <span class="scnt" id="schedCnt"></span>
+      </div>
       <div class="tabs2">
         <div class="tabs" id="tabs">
           <button data-f="-1">أمس</button>
@@ -1107,6 +1131,7 @@ a.ln-card:active{transform:scale(.99)}
     </div>
     <h2 class="ttl hide" id="liveTtl">المباريات المباشرة الآن</h2>
     <div id="list" class="list"></div>
+    </div>
 
     <div class="league-strip-wrap" aria-label="شعارات الدوريات والبطولات">
       <div class="league-strip-title"><span>ترتيب الدوريات والبطولات</span><small>اضغط على شعار الدوري لعرض ترتيبه</small></div>
@@ -2448,6 +2473,11 @@ function render(){
   const rows = MATCHES.map((m, i) => ({m, i}))
     .filter(r => !expired(r.m) && (live ? isLive(r.m) : dayOffset(r.m) === filter))
     .sort((a, b) => new Date(a.m.time) - new Date(b.m.time));
+  try {
+    const n = rows.length, cn = $("#schedCnt"), tt = $("#schedTxt");
+    if (tt) tt.textContent = filter === -1 ? "مباريات الأمس" : (filter === 1 ? "مباريات الغد" : "أهم مباريات اليوم");
+    if (cn) cn.textContent = n === 0 ? "لا مباريات" : (n === 1 ? "مباراة واحدة" : (n === 2 ? "مباراتان" : (n <= 10 ? n + " مباريات" : n + " مباراة")));
+  } catch (e) {}
   const ls = sigNow() + "#" + rows.map(r => r.i + JSON.stringify(r.m)).join("|");
   if (ls === listSig && box.firstChild) return;
   listSig = ls;
