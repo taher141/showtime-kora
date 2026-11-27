@@ -1252,6 +1252,15 @@ a.ln-card:active{transform:scale(.99)}
   50%{box-shadow:0 0 10px var(--bc),0 0 24px color-mix(in srgb,var(--bc) 80%,transparent),inset 0 0 18px color-mix(in srgb,var(--bc) 45%,transparent)}
 }
 @media(prefers-reduced-motion:reduce){.slw .sl-row .sl-tm,.slw .sl-time{animation:none}}
+/* ===== (تعديل) تصغير مربع/خط التوقيت وزر انتهت/لم تبدأ، وتخفيف الوميض ===== */
+.slw .sl-time{min-width:96px;padding:4px 20px;font-size:16px;border-width:2px}
+.slw .sl-time.rs{font-size:18px;letter-spacing:.5px}
+.slw .sl-btn.off{width:auto;min-width:0;padding:5px 16px;font-size:12px;border-radius:10px}
+.slw .sl-mid{margin-top:-16px}
+@keyframes slbx2{
+  0%,100%{box-shadow:0 0 4px color-mix(in srgb,var(--bc) 55%,transparent),0 0 8px color-mix(in srgb,var(--bc) 25%,transparent),inset 0 0 6px color-mix(in srgb,var(--bc) 15%,transparent)}
+  50%{box-shadow:0 0 6px color-mix(in srgb,var(--bc) 75%,transparent),0 0 12px color-mix(in srgb,var(--bc) 40%,transparent),inset 0 0 10px color-mix(in srgb,var(--bc) 25%,transparent)}
+}
 </style>
 <script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(/^(obsidian|carbon|midnight|emerald|ivory)$/.test(t))d.setAttribute("data-pal",t);else if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
 </head>
