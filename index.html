@@ -1223,6 +1223,18 @@ a.ln-card:active{transform:scale(.99)}
 .sl-tw{filter:drop-shadow(0 0 4px color-mix(in srgb,var(--bc) 65%,transparent))}
 .slw .sl-time{background:var(--bc)}
 .slw .sl-time::before{inset:1.5px;background:rgba(2,9,22,.5)}
+/* ===== (تعديل) حواف مضيئة بوميض، أعرض شوية، وخلفية المربع شبه شفافة وفاتحة ===== */
+.sl-s[data-sh="0"]{--sAi:inset(0 round 19px);--sBi:inset(0 round 19px)}
+.sl-s[data-sh="3"]{--sAi:inset(0 round 27px 5px 27px 5px);--sBi:inset(0 round 5px 27px 5px 27px)}
+.slw .sl-row .sl-tm::before{inset:3px;background:linear-gradient(160deg,rgba(255,255,255,.12),color-mix(in srgb,var(--bc) 10%,transparent))}
+.slw .sl-time::before{inset:3px;background:linear-gradient(160deg,rgba(255,255,255,.14),color-mix(in srgb,var(--bc) 14%,rgba(2,9,22,.25)))}
+@keyframes slbx{
+  0%,100%{filter:drop-shadow(0 0 3px color-mix(in srgb,var(--bc) 75%,transparent)) drop-shadow(0 0 8px color-mix(in srgb,var(--bc) 45%,transparent))}
+  50%{filter:drop-shadow(0 0 6px var(--bc)) drop-shadow(0 0 18px color-mix(in srgb,var(--bc) 90%,transparent))}
+}
+.slw .sl-row{animation:slbx 1.8s ease-in-out infinite}
+.sl-tw{animation:slbx 1.8s ease-in-out infinite .3s}
+@media(prefers-reduced-motion:reduce){.slw .sl-row,.sl-tw{animation:none}}
 </style>
 <script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(/^(obsidian|carbon|midnight|emerald|ivory)$/.test(t))d.setAttribute("data-pal",t);else if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
 </head>
