@@ -1002,8 +1002,54 @@ a.ln-card:active{transform:scale(.99)}
   #admin :is(#fxList,#alist) .fxc .fxa small{font-size:14px}
   #admin :is(#fxList,#alist) .fxc .fxa button{padding:8px 22px;font-size:14px}
 }
+/* ===== مظاهر وكروت جديدة ===== */
+:root[data-pal=obsidian]{--wt:#f3f5fa;--bg:#05060a;--card:#0c0e15;--card2:#141824;--team:#5eead4;--onteam:#04201c;--text:#f3f5fa;--muted:#8b93a7;--bd:#222838;--bd2:#12151f;--in:#080a10;--acc:#5eead4;--accd:#14b8a6;--g:#34d399;--amb:#fbbf24;--ctx:#f3f5fa;--mc-bg:#0d1018;--mc-bd:#2a3350;--mc-t:#f3f5fa;--mc-lg:#161b29;--mc-lgb:#273049;--mc-info:#0a0d14;--mc-ib:#1e2538;--mc-it:#b8c0d4;--mc-end:#2a3350}
+:root[data-pal=carbon]{--wt:#f6f3ec;--bg:#0a0a0b;--card:#121214;--card2:#1a1a1e;--team:#f5c76b;--onteam:#241a00;--text:#f6f3ec;--muted:#9a968b;--bd:#2a2822;--bd2:#17161a;--in:#0d0d0f;--acc:#f5c76b;--accd:#d9a441;--g:#f5c76b;--amb:#fb923c;--ctx:#f6f3ec;--mc-bg:#111113;--mc-bd:#3a3326;--mc-t:#f6f3ec;--mc-lg:#1b1a1d;--mc-lgb:#2e2b25;--mc-info:#0c0c0e;--mc-ib:#24221e;--mc-it:#cfc8b8;--mc-end:#2e2b25}
+:root[data-pal=midnight]{--wt:#eef4ff;--bg:#050b1a;--card:#0b1428;--card2:#121e3a;--team:#38bdf8;--onteam:#001828;--text:#eef4ff;--muted:#8a9bbd;--bd:#1c2b4d;--bd2:#0f1a33;--in:#07101f;--acc:#38bdf8;--accd:#0ea5e9;--g:#38bdf8;--amb:#a3e635;--ctx:#eef4ff;--mc-bg:#0a1226;--mc-bd:#24407a;--mc-t:#eef4ff;--mc-lg:#111c38;--mc-lgb:#233a6b;--mc-info:#081022;--mc-ib:#1a2a50;--mc-it:#b6c6e6;--mc-end:#24407a}
+:root[data-pal=emerald]{--wt:#ecfdf5;--bg:#03100c;--card:#08191a;--card2:#0f2a26;--team:#34d399;--onteam:#021f14;--text:#ecfdf5;--muted:#7fa898;--bd:#17403a;--bd2:#0c2420;--in:#051410;--acc:#34d399;--accd:#10b981;--g:#34d399;--amb:#facc15;--ctx:#ecfdf5;--mc-bg:#07181a;--mc-bd:#1c4f45;--mc-t:#ecfdf5;--mc-lg:#0e2926;--mc-lgb:#1c4f45;--mc-info:#06151a;--mc-ib:#173b36;--mc-it:#a7d9c5;--mc-end:#1c4f45}
+:root[data-pal=ivory]{--wt:#14141a;--bg:#f6f6f2;--card:#ffffff;--card2:#ecece6;--team:#4f46e5;--onteam:#ffffff;--text:#14141a;--muted:#6b6b78;--bd:#dcdcd3;--bd2:#e8e8e1;--in:#f9f9f6;--acc:#4f46e5;--accd:#4338ca;--g:#4f46e5;--amb:#d97706;--ctx:#14141a;--mc-bg:#ffffff;--mc-bd:#d6d6ee;--mc-t:#14141a;--mc-lg:#f1f1fb;--mc-lgb:#dcdcf0;--mc-info:#f4f4fa;--mc-ib:#e4e4f2;--mc-it:#3b3b52;--mc-end:#1f1f33}
+
+:root[data-pal] .w{color:var(--team)}
+:root[data-pal=ivory] .ad{background:#000}
+:root[data-pal=ivory] .ad img{mix-blend-mode:normal}
+:root[data-pal=ivory] #tvList button.on{color:#fff;background-image:linear-gradient(135deg,var(--c),transparent 110%);text-shadow:0 1px 2px rgba(0,0,0,.4)}
+:root[data-pal=ivory] .sttbl tbody tr:nth-child(even) td{background:rgba(0,0,0,.025)}
+
+/* ===== كارت ستاديوم ===== */
+#menu #cardBtn{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#menu #cardBtn .ti{color:var(--team);font-weight:700;font-size:13px}
+.mcard.nc{--mc-t:#fff;--mc-it:#dbe4f3;color:#fff;padding:0;border:1.5px solid var(--team);border-radius:18px;text-align:center;background:radial-gradient(circle,rgba(255,255,255,.6) 0 1.2px,transparent 1.7px) 0 36px/15px 15px repeat-x,radial-gradient(70% 55% at 50% 0%,color-mix(in srgb,var(--team) 40%,transparent),transparent 72%),linear-gradient(180deg,color-mix(in srgb,var(--team) 14%,#04060c),#04060c 60%,color-mix(in srgb,var(--team) 22%,#04060c));box-shadow:0 0 0 1px #000,0 0 16px color-mix(in srgb,var(--team) 38%,transparent),inset 0 0 20px color-mix(in srgb,var(--team) 22%,transparent)}
+.nc>*:not(.nc-wm):not(.mc-play){position:relative;z-index:1}
+.nc-wm{position:absolute;inset:14px 20%;z-index:0;background:var(--wm) center/contain no-repeat;opacity:.2;-webkit-mask-image:radial-gradient(closest-side,#000 25%,transparent 98%);mask-image:radial-gradient(closest-side,#000 25%,transparent 98%);pointer-events:none}
+.nc-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 12px 6px;font-weight:700;font-size:12px;border-bottom:1px solid color-mix(in srgb,var(--team) 35%,transparent);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--team) 20%,transparent))}
+.nc-head .ncd,.nc-head .ncl{display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap}
+.nc-head .ncl span{overflow:hidden;text-overflow:ellipsis}
+.nc-head svg{width:16px;height:16px;fill:none;stroke:var(--team);stroke-width:2;flex:none}
+.nc-head .ncl img{width:18px;height:18px;object-fit:contain;background:#fff;border-radius:6px;padding:2px;box-sizing:content-box;flex:none}
+.nc .mc-top{padding:8px 8px 0;align-items:center}
+.nc .mc-tm{gap:6px}
+.nc .mc-lg{background:none;border:0;border-radius:0;filter:drop-shadow(0 4px 8px rgba(0,0,0,.6))}
+.nc .mc-lg img{border-radius:0}
+.nc .mc-lg .ph{color:var(--team)}
+.nc .mc-n{color:#fff;font-size:13px;font-weight:800;padding:5px 12px;width:100%;max-width:150px;background:linear-gradient(180deg,color-mix(in srgb,var(--team) 24%,#05070d),#05070d);clip-path:polygon(7% 0,93% 0,100% 100%,0 100%);border-bottom:2px solid var(--team)}
+.nc .mc-mid{height:auto;gap:7px}
+.nc .mc-big{color:#fff;font-weight:800;text-shadow:0 0 14px color-mix(in srgb,var(--team) 75%,transparent)}
+.nc .mc-pill{color:#fff;font-weight:800;border:1px solid var(--team);background:linear-gradient(180deg,color-mix(in srgb,var(--team) 55%,#000),color-mix(in srgb,var(--team) 28%,#000));box-shadow:0 0 12px color-mix(in srgb,var(--team) 45%,transparent)}
+.nc .mc-pill.live{background:linear-gradient(180deg,#ef4444,#991b1b);border-color:#f87171;box-shadow:0 0 12px rgba(239,68,68,.6)}
+.nc .mc-pill.end{background:linear-gradient(180deg,#475569,#1e293b);border-color:#64748b;box-shadow:none}
+.nc .mc-pill.cdn{background:linear-gradient(180deg,var(--amb),color-mix(in srgb,var(--amb) 55%,#000));border-color:var(--amb)}
+.nc-bot{display:flex;gap:6px;padding:7px 8px 8px;align-items:stretch;border-top:1px solid color-mix(in srgb,var(--team) 30%,transparent);background:rgba(0,0,0,.38)}
+.nc-chip{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;gap:5px;padding:5px 8px;border-radius:12px;border:1px solid color-mix(in srgb,var(--team) 45%,transparent);background:rgba(0,0,0,.45);font-size:12px;font-weight:700;color:#fff}
+.nc-chip .t{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;unicode-bidi:plaintext}
+.nc-chip .bein{display:inline-flex;align-items:center;gap:3px;overflow:visible}
+.nc-chip .bein img{height:14px;width:auto;border-radius:3px}
+.nc-chip .bein b{font-size:12px}
+.nc-play{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:5px 14px;border-radius:12px;font-weight:800;font-size:13px;color:#fff;border:1px solid var(--team);background:linear-gradient(180deg,color-mix(in srgb,var(--team) 65%,#000),color-mix(in srgb,var(--team) 32%,#000));box-shadow:0 0 12px color-mix(in srgb,var(--team) 40%,transparent)}
+.nc-play svg{width:13px;height:13px;fill:#fff}
+@media(min-width:641px){.nc .mc-n{font-size:17px;max-width:210px}.nc-head{font-size:15px;padding:10px 20px 8px}.nc-chip{font-size:15px;padding:8px 12px}.nc-play{font-size:16px;padding:8px 22px}.nc-bot{padding:10px 16px 12px}.nc .mc-top{padding:12px 20px 0}.nc-head .ncl img{width:26px;height:26px}.nc-head svg{width:20px;height:20px}}
+@media(min-width:1024px){.nc .mc-top{grid-template-columns:1fr minmax(240px,320px) 1fr}}
 </style>
-<script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
+<script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(/^(obsidian|carbon|midnight|emerald|ivory)$/.test(t))d.setAttribute("data-pal",t);else if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
 </head>
 <body>
 <header>
@@ -1020,8 +1066,9 @@ a.ln-card:active{transform:scale(.99)}
     <button data-m="home" class="on">الصفحة الرئيسية</button>
     <button data-m="live">البث المباشر</button>
     <button type="button" id="menuNba">🏀 NBA</button>
+    <button type="button" id="cardBtn" aria-label="شكل الكروت"><span class="tl">🏟️ شكل الكروت</span><span class="ti"></span></button>
     <button id="themeBtn" aria-label="اختر لونك المفضل" aria-expanded="false"><span class="tl">🎨 اختر لونك المفضل</span><span class="ti"></span></button>
-    <div id="themeRow" class="hide" role="group" aria-label="اختر لونك المفضل"><button type="button" data-t="dark" style="--c:#0a1220" title="داكن" aria-label="داكن"></button><button type="button" data-t="black" style="--c:linear-gradient(135deg,#000 40%,#22d3ee 70%,#a78bfa);--r:#a78bfa" title="أسود" aria-label="أسود"></button><button type="button" data-t="light" style="--c:#0d9488" title="أخضر مائي" aria-label="أخضر مائي"></button><button type="button" data-t="blue" style="--c:#2563eb" title="أزرق" aria-label="أزرق"></button><button type="button" data-t="purple" style="--c:#7c3aed" title="بنفسجي" aria-label="بنفسجي"></button><button type="button" data-t="orange" style="--c:#ea580c" title="برتقالي" aria-label="برتقالي"></button><button type="button" data-t="pink" style="--c:#db2777" title="وردي" aria-label="وردي"></button></div>
+    <div id="themeRow" class="hide" role="group" aria-label="اختر لونك المفضل"><button type="button" data-t="dark" style="--c:#0a1220" title="داكن" aria-label="داكن"></button><button type="button" data-t="black" style="--c:linear-gradient(135deg,#000 40%,#22d3ee 70%,#a78bfa);--r:#a78bfa" title="أسود" aria-label="أسود"></button><button type="button" data-t="light" style="--c:#0d9488" title="أخضر مائي" aria-label="أخضر مائي"></button><button type="button" data-t="blue" style="--c:#2563eb" title="أزرق" aria-label="أزرق"></button><button type="button" data-t="purple" style="--c:#7c3aed" title="بنفسجي" aria-label="بنفسجي"></button><button type="button" data-t="orange" style="--c:#ea580c" title="برتقالي" aria-label="برتقالي"></button><button type="button" data-t="pink" style="--c:#db2777" title="وردي" aria-label="وردي"></button><button type="button" data-t="obsidian" style="--c:linear-gradient(135deg,#05060a 45%,#5eead4);--r:#5eead4" title="أوبسيديان" aria-label="أوبسيديان"></button><button type="button" data-t="carbon" style="--c:linear-gradient(135deg,#0a0a0b 45%,#f5c76b);--r:#f5c76b" title="كربون ذهبي" aria-label="كربون ذهبي"></button><button type="button" data-t="midnight" style="--c:linear-gradient(135deg,#050b1a 45%,#38bdf8);--r:#38bdf8" title="منتصف الليل" aria-label="منتصف الليل"></button><button type="button" data-t="emerald" style="--c:linear-gradient(135deg,#03100c 45%,#34d399);--r:#34d399" title="زمردي" aria-label="زمردي"></button><button type="button" data-t="ivory" style="--c:linear-gradient(135deg,#f6f6f2 45%,#4f46e5);--r:#4f46e5" title="عاجي فاتح" aria-label="عاجي فاتح"></button></div>
   </div>
 </header>
 <div id="ov" class="hide"></div>
@@ -1421,20 +1468,22 @@ window.addEventListener("scroll", function(){ if (window.scrollX) window.scrollT
   set(); window.addEventListener("resize", set);
   if (window.ResizeObserver) new ResizeObserver(set).observe(h);
 })();
-const THEMES = ["dark", "black", "light", "blue", "purple", "orange", "pink"];
-const THEME_DOT = {dark: "#0a1220", black: "linear-gradient(135deg,#000 40%,#22d3ee 70%,#a78bfa)", light: "#0d9488", blue: "#2563eb", purple: "#7c3aed", orange: "#ea580c", pink: "#db2777"};
+const PALS = ["obsidian", "carbon", "midnight", "emerald", "ivory"];
+const THEMES = ["dark", "black", "light", "blue", "purple", "orange", "pink"].concat(PALS);
+const THEME_DOT = {dark: "#0a1220", black: "linear-gradient(135deg,#000 40%,#22d3ee 70%,#a78bfa)", light: "#0d9488", blue: "#2563eb", purple: "#7c3aed", orange: "#ea580c", pink: "#db2777", obsidian: "linear-gradient(135deg,#05060a 45%,#5eead4)", carbon: "linear-gradient(135deg,#0a0a0b 45%,#f5c76b)", midnight: "linear-gradient(135deg,#050b1a 45%,#38bdf8)", emerald: "linear-gradient(135deg,#03100c 45%,#34d399)", ivory: "linear-gradient(135deg,#f6f6f2 45%,#4f46e5)"};
 function setTheme(t){
   if (THEMES.indexOf(t) < 0) t = "dark";
   const d = document.documentElement;
-  d.removeAttribute("data-color");
-  if (t === "dark") d.removeAttribute("data-theme");
+  d.removeAttribute("data-color"); d.removeAttribute("data-pal");
+  if (PALS.indexOf(t) >= 0) { d.removeAttribute("data-theme"); d.setAttribute("data-pal", t); }
+  else if (t === "dark") d.removeAttribute("data-theme");
   else if (t === "black") { d.removeAttribute("data-theme"); d.setAttribute("data-color", "black"); }
   else { d.setAttribute("data-theme", "light"); if (t !== "light") d.setAttribute("data-color", t); }
   themeUi(t); adTheme(t);
   try { localStorage.setItem("sk_theme", t); } catch (e) {}
 }
 /* بانر شعارات الدوريات: الإطار الأخضر/التركواز بيتحوّل للون المظهر المختار (الداكن الرئيسي والأخضر المائي بيفضلوا الأصل) */
-const AD_HUE = {blue: 218, purple: 262, orange: 24, pink: 332, black: 275};
+const AD_HUE = {blue: 218, purple: 262, orange: 24, pink: 332, black: 275, obsidian: 172, carbon: 42, midnight: 199, emerald: 148, ivory: 243};
 function adHsl2Rgb(h, s, l){
   const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2;
   let r, g, b;
@@ -1479,8 +1528,21 @@ function themeUi(t){
 }
 function themeCur(){
   const d = document.documentElement;
+  if (d.getAttribute("data-pal")) return d.getAttribute("data-pal");
   return d.getAttribute("data-theme") === "light" ? (d.getAttribute("data-color") || "light") : (d.getAttribute("data-color") === "black" ? "black" : "dark");
 }
+let CARD_STYLE = "stadium"; try { CARD_STYLE = localStorage.getItem("sk_cards") === "classic" ? "classic" : "stadium"; } catch (e) {}
+function cardUi(){ const b = $("#cardBtn"); if (b) b.querySelector(".ti").textContent = CARD_STYLE === "stadium" ? "ستاديوم" : "كلاسيك"; }
+$("#cardBtn").onclick = (e) => {
+  e.stopPropagation();
+  CARD_STYLE = CARD_STYLE === "stadium" ? "classic" : "stadium";
+  try { localStorage.setItem("sk_cards", CARD_STYLE); } catch (x) {}
+  cardUi(); listSig = "";
+  try { render(); } catch (x) {}
+  try { if (typeof aList === "function") aList(); } catch (x) {}
+  try { if (typeof fxBuild === "function" && typeof FX !== "undefined" && FX.length) fxBuild(); } catch (x) {}
+};
+cardUi();
 $("#themeBtn").onclick = (e) => {
   e.stopPropagation();
   const r = $("#themeRow"); r.classList.toggle("hide");
@@ -1955,6 +2017,46 @@ function mcInfoRow(m){
   });
   return info;
 }
+
+/* ===== شكل الكروت: كلاسيك / ستاديوم ===== */
+const NC_BALL = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='none' stroke='%23000' stroke-width='6'/%3E%3Cpath d='M50 30l18 13-7 21H39l-7-21z' fill='%23000'/%3E%3C/svg%3E";
+function ncLogo(n){
+  n = String(n || "").trim();
+  const cs = Array.from(document.querySelectorAll(".league-chip[data-league]"));
+  const c = cs.find(x => x.dataset.league === n) || cs.find(x => n && (x.dataset.league.includes(n) || n.includes(x.dataset.league)));
+  const im = c && c.querySelector("img");
+  return {im, u: (im && im.complete && im.naturalWidth > 0 && (im.currentSrc || im.src)) || NC_BALL};
+}
+function ncWrap(el, m, st, note){
+  if (CARD_STYLE !== "stadium") return el;
+  const top = el.querySelector(".mc-top"), inf = el.querySelector(".mc-info");
+  if (!top || !inf) return el;
+  el.classList.add("nc");
+  const lg = ncLogo(m.league);
+  const wm = document.createElement("div"); wm.className = "nc-wm"; wm.style.setProperty("--wm", "url('" + lg.u + "')");
+  const head = document.createElement("div"); head.className = "nc-head";
+  let ds = ""; try { ds = new Intl.DateTimeFormat("ar-EG-u-nu-latn", {weekday: "long", day: "numeric", month: "long"}).format(new Date(m.time)); } catch (e) {}
+  const dt = document.createElement("div"); dt.className = "ncd";
+  dt.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>';
+  const ds1 = document.createElement("span"); ds1.textContent = ds; dt.appendChild(ds1);
+  const lgd = document.createElement("div"); lgd.className = "ncl";
+  const li = document.createElement("img"); li.alt = ""; li.src = lg.u;
+  if (lg.im && lg.u === NC_BALL) lg.im.addEventListener("load", () => { const u = ncLogo(m.league).u; li.src = u; wm.style.setProperty("--wm", "url('" + u + "')"); }, {once: true});
+  const ln = document.createElement("span"); ln.textContent = (m.league && String(m.league).trim()) || "";
+  lgd.append(li, ln); head.append(dt, lgd);
+  const bot = document.createElement("div"); bot.className = "nc-bot";
+  if (st !== "ended" && el.classList.contains("click")){
+    const p = document.createElement("div"); p.className = "nc-play";
+    p.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 6 3.5z"/></svg><span>شاهد المباراة</span>';
+    bot.appendChild(p);
+  }
+  const cells = Array.from(inf.children).slice(0, 2).filter(c => !/غير معروف/.test(c.textContent));
+  cells.forEach(c => { c.className = "nc-chip"; bot.appendChild(c); });
+  if (!cells.length && !bot.firstChild){ const c = document.createElement("div"); c.className = "nc-chip"; c.textContent = "🏆 " + ln.textContent; bot.appendChild(c); }
+  inf.remove();
+  el.insertBefore(wm, el.firstChild); el.insertBefore(head, top); top.after(bot);
+  return el;
+}
 function mcCard(m, i){
   const st = stateOf(m), note = noteOf(m);
   const el = document.createElement("div");
@@ -1998,7 +2100,7 @@ function mcCard(m, i){
     el.style.cursor = "pointer";
     el.onclick = () => openMatch(i);
   }
-  return el;
+  return ncWrap(el, m, st, note);
 }
 
 /* الضغطة الأولى تعتّم الكارت وتظهر زر التشغيل، والثانية تفتح البث */
@@ -4836,7 +4938,7 @@ function aList(){
     const ed = document.createElement("button"); ed.type = "button"; ed.className = "ed"; ed.textContent = "تعديل";
     const rm = document.createElement("button"); rm.type = "button"; rm.className = "d rm"; rm.textContent = "حذف";
     a.append(sm, ed, rm);
-    d.append(top, mcInfoRow(m), a);
+    d.append(top, mcInfoRow(m), a); ncWrap(d, m, st, note);
     ed.onclick = () => {
       editing = i;
       $("#ahome").value = m.home; $("#aaway").value = m.away;
@@ -6143,7 +6245,7 @@ function fxCard(r){
   if (has){ const g = document.createElement("button"); g.type = "button"; g.className = "go"; g.textContent = "فتح في المباريات"; g.onclick = () => fxGo(r); a.append(g); }
   a.append(bt);
   el.append(top, info, a);
-  return el;
+  return ncWrap(el, mm, "soon", "");
 }
 const FX_ORDER = ["الدوري الإنجليزي", "الدوري الإسباني", "الدوري الإيطالي", "دوري أبطال أوروبا", "الدوري المصري"];
 let fxDayK = null;
