@@ -1204,6 +1204,25 @@ a.ln-card:active{transform:scale(.99)}
 #admin #libRows .csrc .row>input.su{padding:7px 9px;font-size:13px}
 #admin #libRows .csrc .row>input.sn{padding:5px 8px;font-size:12.5px}
 #admin #libRows .csrc .row>button{padding:6px 9px;font-size:12px;white-space:nowrap;line-height:1.2}
+/* ===== (تعديل) كروت السلايدر: شفافة أكتر، أشكال بسيطة (4)، إطار رفيع بلون مختلف لكل كارت ===== */
+.sl-s{--bc:#fb923c}
+.sl-s[data-sh="0"]{--sA:inset(0 round 22px);--sB:inset(0 round 22px);--sAi:inset(0 round 20.5px);--sBi:inset(0 round 20.5px)}
+.sl-s[data-sh="1"]{--sA:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);--sB:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);--sAi:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);--sBi:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px)}
+.sl-s[data-sh="2"]{--sA:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));--sB:polygon(20px 0,100% 0,100% calc(100% - 20px),calc(100% - 20px) 100%,0 100%,0 20px);--sAi:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));--sBi:polygon(20px 0,100% 0,100% calc(100% - 20px),calc(100% - 20px) 100%,0 100%,0 20px)}
+.sl-s[data-sh="3"]{--sA:inset(0 round 30px 8px 30px 8px);--sB:inset(0 round 8px 30px 8px 30px);--sAi:inset(0 round 28.5px 6.5px 28.5px 6.5px);--sBi:inset(0 round 6.5px 28.5px 6.5px 28.5px)}
+.sl-s[data-c="0"]{--bc:#fb923c}
+.sl-s[data-c="1"]{--bc:#22d3ee}
+.sl-s[data-c="2"]{--bc:#a78bfa}
+.sl-s[data-c="3"]{--bc:#f472b6}
+.sl-s[data-c="4"]{--bc:#34d399}
+.sl-s[data-c="5"]{--bc:#fbbf24}
+.sl-s[data-sh="3"] .sl-tm{padding-bottom:14px!important}
+.slw .sl-row{filter:drop-shadow(0 0 4px color-mix(in srgb,var(--bc) 65%,transparent))}
+.slw .sl-row .sl-tm{background:var(--bc)}
+.slw .sl-row .sl-tm::before{inset:1.5px;background:rgba(2,9,22,.32)}
+.sl-tw{filter:drop-shadow(0 0 4px color-mix(in srgb,var(--bc) 65%,transparent))}
+.slw .sl-time{background:var(--bc)}
+.slw .sl-time::before{inset:1.5px;background:rgba(2,9,22,.5)}
 </style>
 <script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(/^(obsidian|carbon|midnight|emerald|ivory)$/.test(t))d.setAttribute("data-pal",t);else if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
 </head>
@@ -2502,7 +2521,7 @@ function slBg(){
   const k = (slIdx + slLap) % bs.length;
   bs.forEach((b, j) => b.classList.toggle("on", j === k));
 }
-function slShapes(){ document.querySelectorAll("#slt .sl-s").forEach((el, k) => { el.dataset.sh = (k + slLap) % 6; }); }
+function slShapes(){ document.querySelectorAll("#slt .sl-s").forEach((el, k) => { el.dataset.sh = (k + slLap) % 4; el.dataset.c = (k + slLap) % 6; }); }
 function slGo(i, how){
   const tr = $("#slt"); if (!tr) return;
   const n = tr.children.length; if (!n) return;
