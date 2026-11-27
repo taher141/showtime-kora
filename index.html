@@ -1235,6 +1235,23 @@ a.ln-card:active{transform:scale(.99)}
 .slw .sl-row{animation:slbx 1.8s ease-in-out infinite}
 .sl-tw{animation:slbx 1.8s ease-in-out infinite .3s}
 @media(prefers-reduced-motion:reduce){.slw .sl-row,.sl-tw{animation:none}}
+/* ===== (تعديل) مربعات شفافة من جوه بإطار مضيء فقط (زي المرجع)، وأشكال بزوايا مختلفة ===== */
+.sl-s{--rA:24px;--rB:24px}
+.sl-s[data-sh="0"]{--rA:24px;--rB:24px}
+.sl-s[data-sh="1"]{--rA:10px;--rB:10px}
+.sl-s[data-sh="2"]{--rA:34px 10px 34px 10px;--rB:10px 34px 10px 34px}
+.sl-s[data-sh="3"]{--rA:40px 40px 12px 12px;--rB:40px 40px 12px 12px}
+.slw .sl-row,.sl-tw{filter:none!important;animation:none!important}
+.slw .sl-row .sl-tm,.slw .sl-row .sl-tm:last-child{clip-path:none!important;background:linear-gradient(180deg,color-mix(in srgb,var(--bc) 14%,transparent),rgba(2,9,22,.14))!important;border:3px solid var(--bc)!important;border-radius:var(--rA)!important;animation:slbx2 1.8s ease-in-out infinite}
+.slw .sl-row .sl-tm:last-child{border-radius:var(--rB)!important}
+.slw .sl-row .sl-tm::before,.slw .sl-time::before{content:none!important}
+.slw .sl-n{background:rgba(2,9,22,.55)}
+.slw .sl-time{clip-path:none!important;border:2.5px solid var(--bc);border-radius:999px;background:rgba(2,9,22,.55)!important;padding:7px 34px;animation:slbx2 1.8s ease-in-out infinite .3s}
+@keyframes slbx2{
+  0%,100%{box-shadow:0 0 6px color-mix(in srgb,var(--bc) 80%,transparent),0 0 14px color-mix(in srgb,var(--bc) 40%,transparent),inset 0 0 10px color-mix(in srgb,var(--bc) 25%,transparent)}
+  50%{box-shadow:0 0 10px var(--bc),0 0 24px color-mix(in srgb,var(--bc) 80%,transparent),inset 0 0 18px color-mix(in srgb,var(--bc) 45%,transparent)}
+}
+@media(prefers-reduced-motion:reduce){.slw .sl-row .sl-tm,.slw .sl-time{animation:none}}
 </style>
 <script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(/^(obsidian|carbon|midnight|emerald|ivory)$/.test(t))d.setAttribute("data-pal",t);else if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
 </head>
