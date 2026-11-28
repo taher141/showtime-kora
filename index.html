@@ -1340,6 +1340,16 @@ a.ln-card:active{transform:scale(.99)}
 .sds-r .tn img{width:16px;height:16px;object-fit:contain;flex:none}
 .sds-r .pt{font-weight:800;color:var(--team)}
 .sds-f{flex:none;margin:auto 8px 8px;padding:7px 10px;border-radius:10px;border:1.5px solid color-mix(in srgb,var(--team) 68%,#000);background:transparent;color:var(--text);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit}
+/* ===== (تعديل) أيقونات الدوريات على اليسار + تدوير كل 5 ثواني + أخبار بدون روابط ===== */
+.sds-rail{border-inline-end:none;border-inline-start:1px solid var(--bd2)}
+.sds-p{animation:sdfade .45s ease}
+@keyframes sdfade{from{opacity:0}to{opacity:1}}
+.sds-pg{flex:none;height:3px;margin:0 8px 6px;border-radius:2px;background:var(--bd2);overflow:hidden}
+.sds-pg i{display:block;height:100%;background:var(--team);transform-origin:right;animation:sdpg 5s linear forwards}
+@keyframes sdpg{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+#sdSi:hover .sds-pg i{animation-play-state:paused}
+.sdn-i{cursor:default}
+@media(prefers-reduced-motion:reduce){.sds-p,.sds-pg i{animation:none}}
 </style>
 <script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(/^(obsidian|carbon|midnight|emerald|ivory)$/.test(t))d.setAttribute("data-pal",t);else if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
 </head>
@@ -7180,7 +7190,7 @@ function lnLoadImg(img, u, onFail){
   img.onerror = next; next();
 }
 function lnCard(it, lg, big){
-  const a = document.createElement(it.l && /^https?:\/\//i.test(it.l) ? "a" : "article");
+  const a = document.createElement("article");
   a.className = "ln-card" + (big ? " ln-big" : "");
   if (a.tagName === "A"){ a.href = it.l; a.target = "_blank"; a.rel = "noopener noreferrer"; }
   const col = LN_COL[lg] || "#27395c", tag = it.g || "خبر";
@@ -7533,7 +7543,7 @@ if (fbOn){
 <script>
 /* أعمدة اللاب: أخبار (يمين) + ترتيب (يسار) جنب السلايدر/البث الرئيسي */
 (function(){
-  var sdSel="", sdNSig="", sdSSig="", retry=0, sdUser=0;
+  var sdSel="", sdNSig="", sdSSig="", retry=0, sdUser=0, sdT=null, sdHover=0;
   var mq=window.matchMedia("(min-width:1024px)");
   function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
   function newsItems(){
@@ -7549,21 +7559,18 @@ if (fbOn){
     var l=el("div","sdn-l");
     if(!items.length) l.appendChild(el("div","sd-empty","لا توجد أخبار حالياً"));
     items.forEach(function(it){
-      var a=el(it.l&&/^https?:\/\//i.test(it.l)?"a":"article","sdn-i");
-      if(a.tagName==="A"){a.href=it.l;a.target="_blank";a.rel="noopener noreferrer"}
+      var a=el("article","sdn-i");
       var tag=it.g||"خبر", m=el("div","sdn-m"); m.appendChild(el("span","sdn-tag"+(tag==="عاجل"?" hot":""),tag)); if(it.s) m.appendChild(el("span","",it.s)); a.appendChild(m);
       if(it.i){var im=document.createElement("img"); im.alt=""; im.loading="lazy"; try{lnLoadImg(im,it.i,function(){im.remove()})}catch(e){im.remove()} a.appendChild(im)}
       a.appendChild(el("div","sdn-t",it.t)); l.appendChild(a);
     });
     box.appendChild(l);
   }
-  function quiet(chip,n){
-    try{
-      if(typeof activeLeagueLabel!=="undefined"&&activeLeagueLabel===n) return;
-      var pn=document.getElementById("stand"); if(pn) pn.scrollIntoView=function(){};
-      chip.click();
-      requestAnimationFrame(function(){requestAnimationFrame(function(){ if(pn) delete pn.scrollIntoView })});
-    }catch(e){}
+  function rotList(){return chips().filter(function(c){return findTable(c.dataset.league)}).map(function(c){return c.dataset.league})}
+  function sdStopT(){ if(sdT){clearTimeout(sdT); sdT=null} }
+  function sdSchedule(){
+    sdStopT(); var L=rotList(); if(L.length<2||sdHover) return;
+    sdT=setTimeout(function(){ sdT=null; var L2=rotList(); if(L2.length<2) return; var i=L2.indexOf(sdSel); sdSel=L2[(i+1)%L2.length]; buildSt() },5000);
   }
   function chips(){return Array.prototype.slice.call(document.querySelectorAll("#leagueStrip .league-chip"))}
   function findTable(name){
@@ -7572,7 +7579,6 @@ if (fbOn){
   }
   function buildSt(){
     var box=document.getElementById("sdSi"), cs=chips();
-    try{ if(typeof activeLeagueLabel!=="undefined"&&activeLeagueLabel&&activeLeagueLabel!==sdSel&&cs.some(function(c){return c.dataset.league===activeLeagueLabel})) sdSel=activeLeagueLabel; }catch(e){}
     var srcs=cs.map(function(c){var i=c.querySelector("img");return i?(i.getAttribute("src")?1:0):0}).join("");
     var sig=cs.map(function(c){return c.dataset.league}).join("|")+"#"+sdSel+"#"+JSON.stringify(SETTINGS.stand||null)+"#"+srcs;
     if(sig===sdSSig&&box.firstChild) return; sdSSig=sig; box.innerHTML="";
@@ -7585,10 +7591,10 @@ if (fbOn){
     cs.forEach(function(c){
       var n=c.dataset.league, b=el("button","sds-ic"+(n===sdSel?" on":"")+(findTable(n)?"":" nt")); b.type="button"; b.title=n; b.setAttribute("aria-label",n);
       var ci=c.querySelector("img"); if(ci){var im=document.createElement("img"); im.alt=""; im.src=ci.currentSrc||ci.src||""; b.appendChild(im)}
-      b.onclick=function(){sdSel=n; sdUser=1; quiet(c,n); buildSt()}; rail.appendChild(b);
+      b.onclick=function(){sdSel=n; sdUser=1; buildSt()}; rail.appendChild(b);
     });
     var cur=cs.find(function(c){return c.dataset.league===sdSel}), tb=findTable(sdSel);
-    var t=el("div","sds-t"); var ci2=cur&&cur.querySelector("img"); if(ci2&&(ci2.currentSrc||ci2.src)){var li=document.createElement("img"); li.alt=""; li.src=ci2.currentSrc||ci2.src; t.appendChild(li)} t.appendChild(el("span","",sdSel)); pan.appendChild(t);
+    var t=el("div","sds-t"); var ci2=cur&&cur.querySelector("img"); if(ci2&&(ci2.currentSrc||ci2.src)){var li=document.createElement("img"); li.alt=""; li.src=ci2.currentSrc||ci2.src; t.appendChild(li)} t.appendChild(el("span","",sdSel)); pan.appendChild(t); if(rotList().length>1){var pgr=el("div","sds-pg"); pgr.appendChild(document.createElement("i")); pan.appendChild(pgr)}
     if(!tb){ pan.appendChild(el("div","sd-empty","لا يوجد ترتيب مسجل لهذا الدوري")) }
     else{
       var u=stUnpack(tb), zc=[]; try{zc=stZones(u).z}catch(e){}
@@ -7602,9 +7608,10 @@ if (fbOn){
         row.appendChild(el("span","",r[1])); row.appendChild(el("span","",r[5]==null?"—":r[5])); row.appendChild(el("span","pt",r[6])); tw.appendChild(row);
       });
       pan.appendChild(tw);
-      var f=el("button","sds-f","الترتيب الكامل ←"); f.type="button"; f.onclick=function(){ var pn=document.getElementById("stand"); if(typeof activeLeagueLabel!=="undefined"&&activeLeagueLabel===sdSel&&pn){ pn.scrollIntoView({behavior:"smooth",block:"nearest"}) } else if(cur) cur.click() }; pan.appendChild(f);
+
     }
-    wrap.appendChild(rail); wrap.appendChild(pan); box.appendChild(wrap);
+    wrap.appendChild(pan); wrap.appendChild(rail); box.appendChild(wrap);
+    sdSchedule();
     if(!retry&&srcs.indexOf("0")>-1){retry=1;setTimeout(function(){sdSSig="";sideSync()},2500)}
   }
   window.sideSync=function(){
@@ -7617,14 +7624,15 @@ if (fbOn){
     st.classList.toggle("sdon",on);
     document.getElementById("sdN").classList.toggle("off",!nOn);
     document.getElementById("sdS").classList.toggle("off",!sOn);
-    if(!on) return;
-    if(nOn) buildNews(); if(sOn) buildSt();
+    if(!on){ sdStopT(); return }
+    if(nOn) buildNews(); if(sOn){ buildSt(); if(!sdT&&!sdHover) sdSchedule() } else sdStopT();
   };
   if(mq.addEventListener) mq.addEventListener("change",function(){window.sideSync()});
   var a=document.getElementById("sdNOn"), b=document.getElementById("sdSOn");
   if(a) a.onchange=function(){SETTINGS.sideNews=a.checked; persistSettings()};
   if(b) b.onchange=function(){SETTINGS.sideSt=b.checked; persistSettings()};
-  chips().forEach(function(c){ c.addEventListener("click",function(){ setTimeout(function(){ sdSSig=""; window.sideSync() },0) }) });
+  var sb=document.getElementById("sdSi");
+  if(sb){ sb.addEventListener("mouseenter",function(){sdHover=1; sdStopT()}); sb.addEventListener("mouseleave",function(){sdHover=0; sdSSig=""; if(sb.firstChild) buildSt()}) }
   setTimeout(window.sideSync,300);
 })();
 </script>
