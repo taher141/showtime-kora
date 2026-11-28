@@ -1350,6 +1350,11 @@ a.ln-card:active{transform:scale(.99)}
 #sdSi:hover .sds-pg i{animation-play-state:paused}
 .sdn-i{cursor:default}
 @media(prefers-reduced-motion:reduce){.sds-p,.sds-pg i{animation:none}}
+/* ===== (تعديل) صفوف الترتيب الجانبي: التفاصيل يمين، والاسم + الشعار يسار؛ وعمود أوسع ===== */
+.sds-r{grid-template-columns:22px 24px 28px 32px minmax(0,1fr)}
+.sds-r .tn{justify-content:flex-end;text-align:start}
+.sds-r .tn b{flex:0 1 auto}
+@media(min-width:1024px){#stage.sdon{grid-template-columns:minmax(190px,290px) minmax(0,700px) minmax(190px,290px);max-width:1320px}}
 </style>
 <script>try{var t=localStorage.getItem("sk_theme");if(t&&t!=="dark"){var d=document.documentElement;if(/^(obsidian|carbon|midnight|emerald|ivory)$/.test(t))d.setAttribute("data-pal",t);else if(t==="black")d.setAttribute("data-color","black");else{d.setAttribute("data-theme","light");if(t!=="light")d.setAttribute("data-color",t)}}}catch(e){}</script>
 </head>
@@ -2479,7 +2484,7 @@ function renderStand(){
     const sec=document.createElement("section"); sec.className="league-detail-section";
     const title=document.createElement("h3"); title.textContent="جدول الترتيب"; sec.appendChild(title);
     let h = '<thead><tr><th class="n">#</th><th class="t">الفريق</th><th class="c">لعب</th><th class="c">ف</th><th class="c">ت</th><th class="c">خ</th>' + (hasGd ? '<th class="g">+/-</th>' : '') + '<th class="pt">نقاط</th></tr></thead><tbody>';
-    lg.r.forEach((r, i) => { const gd=r[5]; h += '<tr><td class="n"'+(zz.z[i]?' style="--z:'+zz.z[i]+'"':'')+'>'+(i+1)+'</td><td class="t">'+stEsc(r[0])+'</td><td class="c">'+r[1]+'</td><td class="c">'+r[2]+'</td><td class="c">'+r[3]+'</td><td class="c">'+r[4]+'</td>'+(hasGd?'<td class="g"><bdi>'+(gd===null||gd===undefined?'':(gd>0?'+':'')+gd)+'</bdi></td>':'')+'<td class="pt">'+r[6]+'</td></tr>'; });
+    lg.r.forEach((r, i) => { const gd=r[5]; h += '<tr><td class="n"'+(zz.z[i]?' style="--z:'+zz.z[i]+'"':'')+'>'+(i+1)+'</td><td class="t">'+stEsc(window.arTeam?window.arTeam(r[0]):r[0])+'</td><td class="c">'+r[1]+'</td><td class="c">'+r[2]+'</td><td class="c">'+r[3]+'</td><td class="c">'+r[4]+'</td>'+(hasGd?'<td class="g"><bdi>'+(gd===null||gd===undefined?'':(gd>0?'+':'')+gd)+'</bdi></td>':'')+'<td class="pt">'+r[6]+'</td></tr>'; });
     let u=""; if(lg.u){ let f=lg.u; try{const d=new Date(lg.u+"T12:00:00");if(!isNaN(d))f=new Intl.DateTimeFormat("ar",{day:"numeric",month:"long",year:"numeric"}).format(d);}catch(e){} u="آخر تحديث: "+f; }
     const wrap=document.createElement("div"); wrap.className="stwrap"; wrap.innerHTML='<table class="sttbl">'+h+'</tbody></table>';
     sec.appendChild(wrap);
@@ -7545,6 +7550,8 @@ if (fbOn){
 (function(){
   var sdSel="", sdNSig="", sdSSig="", retry=0, sdUser=0, sdT=null, sdHover=0;
   var mq=window.matchMedia("(min-width:1024px)");
+  var _rev=null,_revT=0;
+  window.arTeam=function(n){ try{ var now=Date.now(); if(!_rev||now-_revT>10000){_rev=window.fxRev();_revT=now} var a=_rev.get(window.fxNm(n)); return a||n }catch(e){return n} };
   function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
   function newsItems(){
     var a=[];
@@ -7598,14 +7605,15 @@ if (fbOn){
     if(!tb){ pan.appendChild(el("div","sd-empty","لا يوجد ترتيب مسجل لهذا الدوري")) }
     else{
       var u=stUnpack(tb), zc=[]; try{zc=stZones(u).z}catch(e){}
-      var tw=el("div","sds-tb"), hd=el("div","sds-r h"); ["#","الفريق","لعب","ف","نقاط"].forEach(function(x,i){hd.appendChild(el("span",i===1?"tn":"",x))}); tw.appendChild(hd);
+      var tw=el("div","sds-tb"), hd=el("div","sds-r h"); ["#","لعب","ف","نقاط","الفريق"].forEach(function(x,i){hd.appendChild(el("span",i===4?"tn":"",x))}); tw.appendChild(hd);
       u.r.forEach(function(r,i){
         var row=el("div","sds-r"); if(zc[i]) row.style.borderInlineStartColor=zc[i];
-        row.appendChild(el("span","",i+1));
-        var tn=el("span","tn"); var lg=""; try{lg=typeof tlLogo==="function"?tlLogo(r[0]):""}catch(e){}
+        var nmAr=window.arTeam(r[0]);
+        row.appendChild(el("span","",i+1)); row.appendChild(el("span","",r[1])); row.appendChild(el("span","",r[5]==null?"—":r[5])); row.appendChild(el("span","pt",r[6]));
+        var tn=el("span","tn"); tn.appendChild(el("b","",nmAr));
+        var lg=""; try{lg=typeof tlLogo==="function"?(tlLogo(nmAr)||tlLogo(r[0])):""}catch(e){}
         if(lg){var im=document.createElement("img"); im.alt=""; im.loading="lazy"; try{loadLogo(im,lg,function(){im.remove()})}catch(e){im.remove()} tn.appendChild(im)}
-        tn.appendChild(el("b","",r[0])); row.appendChild(tn);
-        row.appendChild(el("span","",r[1])); row.appendChild(el("span","",r[5]==null?"—":r[5])); row.appendChild(el("span","pt",r[6])); tw.appendChild(row);
+        row.appendChild(tn); tw.appendChild(row);
       });
       pan.appendChild(tw);
 
